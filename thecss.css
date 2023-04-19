@@ -15,10 +15,8 @@ body{
 .flex1{
     display: flex;
     padding-right: 5%;
-    
+    flex-direction: column;
+    margin-left: 95%;
+    margin-right: 95%;
 }
 
-.flex2{
-    display: flex;
-    padding-left: 5%;
-}
