@@ -3,6 +3,9 @@ body{
 }
 
 .title{
-    text-align: center;
-    border: 5px solid lightgreen;
+    text-align: center;   
+}
+
+.ont{
+    display: flex;
 }
