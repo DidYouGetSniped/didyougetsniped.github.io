@@ -11,13 +11,16 @@ body{
     margin-left: 98%;
     margin-right: 98%;
     justify-content: space-around;
+    column-gap: 3%;
 }
 
 .flex1{
     display: flex;
     padding-right: 5%;
+    justify-content: space-around;
 }
 
 .flex2{
  display: flex;
+ justify-content: space-around;
 }
