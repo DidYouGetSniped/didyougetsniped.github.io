@@ -15,10 +15,10 @@ body{
 .flex1{
     display: flex;
     padding-right: 5%;
-    justify-content: space-around;
+    
 }
 
 .flex2{
     display: flex;
-    justify-content: space-around;
+    padding-left: 5%;
 }
