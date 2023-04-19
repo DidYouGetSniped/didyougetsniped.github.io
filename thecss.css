@@ -14,9 +14,10 @@ body{
 }
 
 .flex1{
+    display: flex;
     padding-right: 5%;
 }
 
 .flex2{
-
+display: flex;
 }
