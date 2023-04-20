@@ -17,3 +17,9 @@ body{
     flex-direction: column;
     padding: 5%;
 }
+
+@media only screen and (max-width: 900px){
+    .ont{
+        flex-direction: column;
+    }
+}
