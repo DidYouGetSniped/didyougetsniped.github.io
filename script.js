@@ -259,3 +259,22 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         playerInfoContainer.style.display = 'block';
     }
+    function updateDisplayedDates() {
+        if (!currentPlayerUID) return;
+
+        const joinDateEl = document.getElementById('join-date');
+        const lastPlayedEl = document.getElementById('last-played');
+        const rawJson = JSON.parse(document.getElementById('raw-json-content').textContent);
+        
+        if (joinDateEl) {
+            joinDateEl.textContent = formatDateTime(getJoinDateFromUID(currentPlayerUID));
+        }
+        if (lastPlayedEl) {
+            lastPlayedEl.textContent = formatDateTime(rawJson.time);
+        }
+    }
+
+    // --- Initial Setup ---
+    timezoneSelect.value = 'local';
+    updateRateLimitDisplay();
+});
