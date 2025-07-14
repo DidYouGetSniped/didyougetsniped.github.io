@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WB Player Information Fetcher</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo {
+            max-width: 130px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .rate-limit-info {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+        }
+
+        .input-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1em;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            max-width: 400px;
+            padding: 12px 16px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .time-options {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .time-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-option select {
+            max-width: 200px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            font-size: 0.9em;
+            padding: 8px 16px;
+            margin-top: 10px;
+        }
+
+        .btn-copy:hover {
+            background: linear-gradient(135deg, #20c997, #17a2b8);
+        }
+
+        .btn-copy.copied {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fee;
+            color: #d63384;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #d63384;
+        }
+
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            margin: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .player-info {
+            display: none;
+            padding: 30px;
+        }
+
+        .player-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .player-name {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .player-uid {
+            font-size: 1.1em;
+            opacity: 0.9;
+            font-family: monospace;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            color: #2d3436;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .danger {
+            background: linear-gradient(135deg, #ff7675, #e17055);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .raw-json {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            position: relative;
+        }
+
+        .raw-json h3 {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .json-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .countdown {
+            font-size: 0.8em;
+            color: #95a5a6;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-group input, .input-group select {
+                max-width: 100%;
+            }
+            
+            .time-options {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .rate-limit-info {
+                position: static;
+                margin-top: 15px;
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="rate-limit-info">
+                <span id="requests-remaining">Requests remaining: 10</span>
+                <span class="countdown" id="countdown"></span>
+            </div>
+            <img src="https://static.wikia.nocookie.net/war-brokers/images/e/e6/Site-logo.png/revision/latest?cb=20210817173439" alt="War Brokers Logo" class="logo">
+            <h1>WB Player Information Fetcher</h1>
+            <p>Created By: Did You Get Sniped?</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="uid-input">Player UID:</label>
+                <input type="text" id="uid-input" placeholder="Enter UID or paste any text containing a UID (e.g., 60d08b15d142afee4b1dfabe)" />
+                <button class="btn" id="fetch-btn" onclick="fetchPlayerInfo()">Fetch Player Info</button>
+            </div>
+            
+            <div class="time-options">
+                <div class="time-option">
+                    <label for="timezone-select">Timezone:</label>
+                    <select id="timezone-select">
+                        <option value="UTC">UTC</option>
+                        <option value="America/New_York">Eastern (US)</option>
+                        <option value="America/Chicago">Central (US)</option>
+                        <option value="America/Denver">Mountain (US)</option>
+                        <option value="America/Los_Angeles">Pacific (US)</option>
+                        <option value="Europe/London">London</option>
+                        <option value="Europe/Paris">Paris</option>
+                        <option value="Europe/Berlin">Berlin</option>
+                        <option value="Asia/Tokyo">Tokyo</option>
+                        <option value="Asia/Shanghai">Shanghai</option>
+                        <option value="Asia/Kolkata">India</option>
+                        <option value="Australia/Sydney">Sydney</option>
+                        <option value="local">Local Time</option>
+                    </select>
+                </div>
+                
+                <div class="time-option">
+                    <label for="time-format">Time Format:</label>
+                    <select id="time-format">
+                        <option value="12">12-hour (AM/PM)</option>
+                        <option value="24">24-hour</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Fetching player information...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="warning" class="warning" style="display: none;"></div>
+
+        <div id="player-info" class="player-info">
+            <div id="player-header" class="player-header">
+                <div id="player-name" class="player-name"></div>
+                <div id="player-uid" class="player-uid"></div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>📊 Basic Information</h3>
+                    <div id="basic-stats"></div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>🏆 ELO Ratings</h3>
+                    <div id="elo-stats"></div>
+                </div>
+            </div>
+
+            <div class="raw-json">
+                <div class="json-header">
+                    <h3>📋 Raw JSON Data</h3>
+                    <button class="btn btn-copy" id="copy-btn" onclick="copyRawJson()">Copy JSON</button>
+                </div>
+                <div id="raw-json-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Rate limiting system
+        const RATE_LIMIT = {
+            maxRequests: 10,
+            timeWindow: 60000, // 1 minute
+            requests: []
+        };
+
+        // Set default timezone to local time
+        document.getElementById('timezone-select').value = 'local';
+
+        // Add Enter key support
+        document.getElementById('uid-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                fetchPlayerInfo();
+            }
+        });
+
+        // Update rate limit display
+        function updateRateLimitDisplay() {
+            const now = Date.now();
+            const recentRequests = RATE_LIMIT.requests.filter(time => now - time < RATE_LIMIT.timeWindow);
+            const remaining = RATE_LIMIT.maxRequests - recentRequests.length;
+            
+            document.getElementById('requests-remaining').textContent = `Requests remaining: ${remaining}`;
+            
+            if (recentRequests.length > 0) {
+                const oldestRequest = Math.min(...recentRequests);
+                const timeUntilReset = RATE_LIMIT.timeWindow - (now - oldestRequest);
+                startCountdown(timeUntilReset);
+            }
+        }
+
+        function startCountdown(timeRemaining) {
+            const countdownEl = document.getElementById('countdown');
+            
+            function updateCountdown() {
+                const seconds = Math.ceil(timeRemaining / 1000);
+                if (seconds > 0) {
+                    countdownEl.textContent = `(Reset in ${seconds}s)`;
+                    timeRemaining -= 1000;
+                    setTimeout(updateCountdown, 1000);
+                } else {
+                    countdownEl.textContent = '';
+                    updateRateLimitDisplay();
+                }
+            }
+            
+            updateCountdown();
+        }
+
+        function checkRateLimit() {
+            const now = Date.now();
+            RATE_LIMIT.requests = RATE_LIMIT.requests.filter(time => now - time < RATE_LIMIT.timeWindow);
+            
+            if (RATE_LIMIT.requests.length >= RATE_LIMIT.maxRequests) {
+                const oldestRequest = Math.min(...RATE_LIMIT.requests);
+                const timeUntilReset = RATE_LIMIT.timeWindow - (now - oldestRequest);
+                return { allowed: false, timeUntilReset };
+            }
+            
+            return { allowed: true };
+        }
+
+        function recordRequest() {
+            RATE_LIMIT.requests.push(Date.now());
+            updateRateLimitDisplay();
+        }
+
+        function formatDateTime(timestamp) {
+            if (!timestamp) return "Unknown";
+            
+            const date = new Date(timestamp * 1000);
+            const timezone = document.getElementById('timezone-select').value;
+            const timeFormat = document.getElementById('time-format').value;
+            
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: timeFormat === '12'
+            };
+            
+            if (timezone === 'local') {
+                return date.toLocaleString(undefined, options);
+            } else {
+                options.timeZone = timezone;
+                return date.toLocaleString(undefined, options);
+            }
+        }
+
+        function extractUID(input) {
+            if (!input) return null;
+            
+            // UIDs are 24 characters long (MongoDB ObjectId format)
+            const uidPattern = /[a-f0-9]{24}/gi;
+            const matches = input.match(uidPattern);
+            
+            if (matches && matches.length > 0) {
+                return matches[0];
+            }
+            
+            return null;
+        }
+
+        async function fetchPlayerInfo() {
+            const input = document.getElementById('uid-input').value.trim();
+            
+            if (!input) {
+                showError('Please enter a valid UID or paste content containing a UID');
+                return;
+            }
+
+            // Check rate limit
+            const rateLimitCheck = checkRateLimit();
+            if (!rateLimitCheck.allowed) {
+                const seconds = Math.ceil(rateLimitCheck.timeUntilReset / 1000);
+                showError(`Rate limit exceeded. Please wait ${seconds} seconds before making another request.`);
+                return;
+            }
+
+            const uid = extractUID(input);
+            
+            if (!uid) {
+                showError('No valid UID found. UIDs are 24 characters long and contain only letters a-f and numbers 0-9.');
+                return;
+            }
+
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const warningEl = document.getElementById('warning');
+            const playerInfoEl = document.getElementById('player-info');
+            const fetchBtn = document.getElementById('fetch-btn');
+
+            // Show loading state
+            loadingEl.style.display = 'block';
+            errorEl.style.display = 'none';
+            warningEl.style.display = 'none';
+            playerInfoEl.style.display = 'none';
+            fetchBtn.disabled = true;
+
+            try {
+                // Record the request
+                recordRequest();
+
+                // Add delay to prevent overwhelming the API
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Fetch main player data
+                const playerResponse = await fetch(`https://wbapi.wbpjs.com/players/getPlayer?uid=${uid}`);
+                if (!playerResponse.ok) {
+                    throw new Error(`HTTP error! status: ${playerResponse.status}`);
+                }
+                const playerData = await playerResponse.json();
+
+                // Add another delay before fetching percentiles
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                // Fetch ELO percentiles in parallel using the correct endpoint and uid parameter
+                const [killsPercentileRes, gamesPercentileRes] = await Promise.all([
+                    fetch(`https://wbapi.wbpjs.com/players/percentile/killsElo?uid=${uid}`),
+                    fetch(`https://wbapi.wbpjs.com/players/percentile/gamesElo?uid=${uid}`)
+                ]);
+
+                let killsPercentileData = 0;
+                let gamesPercentileData = 0;
+
+                if (killsPercentileRes.ok) {
+                    killsPercentileData = await killsPercentileRes.json();
+                } else {
+                    showWarning('Could not fetch kills ELO percentile data.');
+                }
+
+                if (gamesPercentileRes.ok) {
+                    gamesPercentileData = await gamesPercentileRes.json();
+                } else {
+                    showWarning('Could not fetch games ELO percentile data.');
+                }
+
+                displayPlayerInfo(playerData, killsPercentileData, gamesPercentileData);
+                
+            } catch (error) {
+                showError(`Error fetching player data: ${error.message}`);
+            } finally {
+                loadingEl.style.display = 'none';
+                fetchBtn.disabled = false;
+            }
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('error');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        function showWarning(message) {
+            const warningEl = document.getElementById('warning');
+            warningEl.textContent = message;
+            warningEl.style.display = 'block';
+        }
+
+        function copyRawJson() {
+            const jsonContent = document.getElementById('raw-json-content').textContent;
+            const copyBtn = document.getElementById('copy-btn');
+            
+            navigator.clipboard.writeText(jsonContent).then(() => {
+                copyBtn.textContent = 'Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = 'Copy JSON';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = jsonContent;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                copyBtn.textContent = 'Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = 'Copy JSON';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Update date times when timezone or format changes
+        document.getElementById('timezone-select').addEventListener('change', updateDateTimes);
+        document.getElementById('time-format').addEventListener('change', updateDateTimes);
+
+        let currentPlayerData = null;
+
+        function updateDateTimes() {
+            if (currentPlayerData) {
+                // Update last played time
+                if (currentPlayerData.time) {
+                    const lastPlayedString = formatDateTime(currentPlayerData.time);
+                    const lastPlayedRow = document.querySelector('[data-field="lastPlayed"]');
+                    if (lastPlayedRow) {
+                        lastPlayedRow.textContent = lastPlayedString;
+                    }
+                }
+                
+                // Update join date
+                if (currentPlayerData.uid) {
+                    const joinDate = getJoinDateFromUID(currentPlayerData.uid);
+                    const joinDateString = formatDateTime(joinDate);
+                    const joinDateRow = document.querySelector('[data-field="joinDate"]');
+                    if (joinDateRow) {
+                        joinDateRow.textContent = joinDateString;
+                    }
+                }
+            }
+        }
+
+        function getJoinDateFromUID(uid) {
+            // MongoDB ObjectId contains timestamp in first 4 bytes (8 hex characters)
+            const timestamp = parseInt(uid.substring(0, 8), 16);
+            return timestamp;
+        }
+
+        // Store current player data for timezone updates
+        function displayPlayerInfo(data, killsPercentile, gamesPercentile) {
+            currentPlayerData = data;
+            
+            // Update player header
+            document.getElementById('player-name').textContent = data.nick || 'Unknown Player';
+            document.getElementById('player-uid').textContent = `UID: ${data.uid || 'Unknown'}`;
+
+            // Basic stats
+            const lastPlayedString = formatDateTime(data.time);
+            const joinDate = getJoinDateFromUID(data.uid);
+            const joinDateString = formatDateTime(joinDate);
+
+            const basicStats = document.getElementById('basic-stats');
+            basicStats.innerHTML = `
+                <div class="stat-row">
+                    <span class="stat-label">Level:</span>
+                    <span class="stat-value highlight">${(data.level || 0).toLocaleString()}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">XP:</span>
+                    <span class="stat-value">${(data.xp || 0).toLocaleString()}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Coins:</span>
+                    <span class="stat-value">${(data.coins || 0).toLocaleString()}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Squad:</span>
+                    <span class="stat-value">${data.squad || 'None'}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Steam:</span>
+                    <span class="stat-value ${data.steam ? 'success' : ''}">${data.steam ? 'Yes' : 'No'}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Banned:</span>
+                    <span class="stat-value ${data.banned ? 'danger' : 'success'}">${data.banned ? 'Yes' : 'No'}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Join Date:</span>
+                    <span class="stat-value" data-field="joinDate">${joinDateString}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Last Played:</span>
+                    <span class="stat-value" data-field="lastPlayed">${lastPlayedString}</span>
+                </div>
+            `;
+
+            // ELO stats
+            const eloStats = document.getElementById('elo-stats');
+            eloStats.innerHTML = `
+                <div class="stat-row">
+                    <span class="stat-label">Kills ELO:</span>
+                    <span class="stat-value highlight">${(data.killsELO || 0).toFixed(2)}</span>
+                </div>
+                 <div class="stat-row">
+                    <span class="stat-label">Kills ELO Percentile:</span>
+                    <span class="stat-value">${(killsPercentile || 0).toFixed(2)}%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Games ELO:</span>
+                    <span class="stat-value highlight">${(data.gamesELO || 0).toFixed(2)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Games ELO Percentile:</span>
+                    <span class="stat-value">${(gamesPercentile || 0).toFixed(2)}%</span>
+                </div>
+            `;
+
+            // Raw JSON
+            document.getElementById('raw-json-content').textContent = JSON.stringify(data, null, 2);
+
+            // Show player info
+            document.getElementById('player-info').style.display = 'block';
+        }
+
+        // Initialize rate limit display
+        updateRateLimitDisplay();
+    </script>
+</body>
+</html>
