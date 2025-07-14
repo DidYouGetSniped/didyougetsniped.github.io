@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function displayPlayerInfo(data, killsPercentile, gamesPercentile) {
+        function displayPlayerInfo(data, killsPercentile, gamesPercentile) {
         const joinTimestamp = getJoinDateFromUID(data.uid);
 
         playerInfoContainer.innerHTML = `
@@ -195,8 +195,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="stat-value highlight">${(data.level || 0).toLocaleString()}</span>
                     </div>
                     <div class="stat-row">
+                        <span class="stat-label">XP:</span>
+                        <span class="stat-value">${(data.xp || 0).toLocaleString()}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Coins:</span>
+                        <span class="stat-value">${(data.coins || 0).toLocaleString()}</span>
+                    </div>
+                    <div class="stat-row">
                         <span class="stat-label">Squad:</span>
                         <span class="stat-value">${data.squad || 'None'}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Steam:</span>
+                        <span class="stat-value ${data.steam ? 'success' : 'danger'}">${data.steam ? 'Yes' : 'No'}</span>
                     </div>
                     <div class="stat-row">
                         <span class="stat-label">Banned:</span>
@@ -247,23 +259,3 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         playerInfoContainer.style.display = 'block';
     }
-
-    function updateDisplayedDates() {
-        if (!currentPlayerUID) return;
-
-        const joinDateEl = document.getElementById('join-date');
-        const lastPlayedEl = document.getElementById('last-played');
-        const rawJson = JSON.parse(document.getElementById('raw-json-content').textContent);
-        
-        if (joinDateEl) {
-            joinDateEl.textContent = formatDateTime(getJoinDateFromUID(currentPlayerUID));
-        }
-        if (lastPlayedEl) {
-            lastPlayedEl.textContent = formatDateTime(rawJson.time);
-        }
-    }
-
-    // --- Initial Setup ---
-    timezoneSelect.value = 'local';
-    updateRateLimitDisplay();
-});
