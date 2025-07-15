@@ -67,12 +67,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const DEATH_CAUSE_NAMES = { ...WEAPON_NAMES, ...VEHICLE_DEATH_NAMES, ...GAMEMODE_NAMES };
 
     const SPECIAL_LINKS = {
-        '60d08b15d142afee4b1dfabe': { 
-            discord: 'https://discord.gg/Wb8eTc5HND',
-            youtube: 'https://youtube.com/@DidYouGetSniped'
-        },
-    };
-
+    '60d08b15d142afee4b1dfabe': {
+        discord: 'https://discord.gg/Wb8eTc5HND',
+        youtube: 'https://youtube.com/@DidYouGetSniped'
+    },
+    '6011bb49d142afed6b12d43e': {
+        discord: 'https://discord.com/users/643617634419474432',
+        youtube: 'https://youtube.com/@paperclipFPS'
+    }
+};
+    
     const setTheme = (isDark) => {
         document.body.classList.toggle('dark-mode', isDark);
         themeToggle.checked = isDark;
