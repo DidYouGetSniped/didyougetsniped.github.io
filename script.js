@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         m00: 'Team Death Match', m01: 'Demolition Derby', m02: 'Protect Leader',
         m03: 'Resource Capture', m04: 'Race', m05: 'Tank Battle', m06: 'Tank King',
         m07: 'Capture Point', m08: 'Vehicle Escort', m09: 'Package Drop',
-        m10: 'Scud Launch', m11: 'Battle Royale', m12: 'Competitive',
+        m10: 'Missile Launch', m11: 'Battle Royale', m12: 'Competitive',
         m13: 'Lobby (Competitive)', m14: 'Lobby (BR)', m15: 'Count'
     };
     const VEHICLE_KILL_NAMES = {
