@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         p85: 'Jet 2 Rockets', p86: 'Jet 2 Homing', p87: 'Jet 2 Machine Gun',
         p88: 'Fists', p89: 'VSS', p90: '50 Cal Sniper', p91: 'MG Turret',
         p92: 'Crossbow', p93: 'SCAR', p94: 'Tactical Shotgun', p95: 'VEK',
-        p96: 'Desert Eagle', p97: 'Auto Shotgun', p98: 'LMG', p99: 'KBAR',
+        p96: 'Desert Eagle', p97: 'Auto Pistol', p98: 'LMG', p99: 'KBAR',
         p100: 'Mace', p101: 'Rubber Chicken', p102: 'Butterfly Knife', p103: 'Chainsaw',
         p104: 'AKSMG', p105: 'Auto Sniper', p106: 'AR3', p107: 'Sawed-Off Shotgun',
         p108: 'Healing Pistol', p109: 'MP7', p110: 'Implosion Grenade', p111: 'Laser Trip Mine',
