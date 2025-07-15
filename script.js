@@ -15,11 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const API_BASE_URL = 'https://wbapi.wbpjs.com/players';
     const RATE_LIMIT = { maxRequests: 10, timeWindow: 60 * 1000, requests: [] };
     let currentPlayerUID = null;
-    let currentRawData = null; 
-    let sortByKills = true; 
+    let currentRawData = null;
+    let sortByKills = true;
     let sortByDeaths = true;
+    let sortByVehicleKills = true;
+    let sortByWins = true;
+    let sortByLosses = true;
     let countdownInterval = null;
     let timeAgoInterval = null;
+
+    // --- Specific Name Mappings ---
 
     const WEAPON_NAMES = {
         p09: 'Air Strike', p11: 'BGM', p52: 'Tank Lvl 1', p53: 'APC Lvl 1',
@@ -37,13 +42,38 @@ document.addEventListener('DOMContentLoaded', () => {
         p100: 'Mace', p101: 'Rubber Chicken', p102: 'Butterfly Knife', p103: 'Chainsaw',
         p104: 'AKSMG', p105: 'Auto Sniper', p106: 'AR3', p107: 'Sawed-Off Shotgun',
         p108: 'Healing Pistol', p109: 'MP7', p110: 'Implosion Grenade', p111: 'Laser Trip Mine',
-        p112: 'Concussion Grenade', p126: 'G3A3', p128: "Marksman's Rifle", p129: 'Mutant',
+        p112: 'Concussion Grenade', p126: 'G3A3', p128: "Marksman's Rifle", p129: 'Mutant'
+    };
+
+    const GAMEMODE_NAMES = {
+        m00: 'Team Death Match', m01: 'Demolition Derby', m02: 'Protect Leader',
+        m03: 'Resource Capture', m04: 'Race', m05: 'Tank Battle', m06: 'Tank King',
+        m07: 'Capture Point', m08: 'Vehicle Escort', m09: 'Package Drop',
+        m10: 'Scud Launch', m11: 'Battle Royale', m12: 'Competitive',
+        m13: 'Lobby (Competitive)', m14: 'Lobby (BR)', m15: 'Count'
+    };
+
+    const VEHICLE_KILL_NAMES = {
+        v00: 'Tank Lvl 1', v01: 'Tank Lvl 2', v02: 'Tank Lvl 3',
+        v10: 'APC Lvl 1', v11: 'APC Lvl 2', v12: 'APC Lvl 3',
+        v13: 'Car', v14: 'Unknown Vehicle (v14)', v15: 'Jet 1 Fin Machine Gun',
+        v16: 'Unknown Vehicle (v16)', v17: 'Unknown Vehicle (v17)', v18: 'Unknown Vehicle (v18)',
+        v19: 'Unknown Vehicle (v19)', v20: 'Heli Lvl 1', v21: 'Heli Lvl 2',
+        v22: 'Heli Lvl 3', v23: 'Heli (No Weapon)', v30: 'Player',
+        v40: 'Jet 1 Fin', v41: 'Jet 2 Fin', v50: 'Machine Gun Turret',
+        v60: 'Unknown Vehicle (v60)', v110: 'Unknown Vehicle (v110)', v111: 'Unknown Vehicle (v111)',
+        v112: 'Unknown Vehicle (v112)', v113: 'Unknown Vehicle (v113)'
+    };
+    
+    // For the 'deaths' object, which can contain weapons, vehicles (roadkill), and game modes.
+    const VEHICLE_DEATH_NAMES = {
         v00: 'Humvee', v01: 'APC', v02: 'Tank', v10: 'Heli', v11: 'Jet',
         v12: 'Speedboat', v13: 'Attack Boat', v20: 'Buggy', v21: 'Mustang', v22: 'Police Car',
         v23: 'Van', v30: 'Motorbike', v40: 'Plane', v41: 'A-10 Warthog', v50: 'Hovercraft',
-        v60: 'Drone', m00: 'Battle Royale', m07: 'Vehicle Escort', m08: 'Package Scramble',
-        m09: 'Team Deathmatch', m10: 'Street Royale', m11: 'Arms Race'
+        v60: 'Drone'
     };
+    // This constant combines all possible death causes for a comprehensive list.
+    const DEATH_CAUSE_NAMES = { ...WEAPON_NAMES, ...VEHICLE_DEATH_NAMES, ...GAMEMODE_NAMES };
 
     // --- Theme Switcher ---
     const setTheme = (isDark) => {
@@ -74,6 +104,15 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (target.id === 'death-sort-toggle') {
             sortByDeaths = target.checked;
             rerenderDeathStats();
+        } else if (target.id === 'vehicle-sort-toggle') {
+            sortByVehicleKills = target.checked;
+            rerenderVehicleKillsStats();
+        } else if (target.id === 'wins-sort-toggle') {
+            sortByWins = target.checked;
+            rerenderWinsStats();
+        } else if (target.id === 'losses-sort-toggle') {
+            sortByLosses = target.checked;
+            rerenderLossesStats();
         }
     });
 
@@ -173,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const killsPercentile = killsPercentileRes.ok ? await killsPercentileRes.json() : 0;
             const gamesPercentile = gamesPercentileRes.ok ? await gamesPercentileRes.json() : 0;
             if (!killsPercentileRes.ok || !gamesPercentileRes.ok) displayMessage('Could not fetch all percentile data.', 'warning');
-            
+
             currentPlayerUID = uid;
             currentRawData = playerData;
             displayPlayerInfo(playerData, killsPercentile, gamesPercentile);
@@ -187,58 +226,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- HTML Generation Functions ---
 
-    function generateWeaponRowsHTML(killsData) {
-        if (!killsData || Object.keys(killsData).length === 0) return '';
-        const killsArray = Object.entries(killsData);
-        if (sortByKills) killsArray.sort(([, a], [, b]) => b - a);
-        else killsArray.sort(([idA], [idB]) => (WEAPON_NAMES[idA] || `z${idA}`).localeCompare(WEAPON_NAMES[idB] || `z${idB}`));
-        return killsArray.map(([id, kills]) => `<div class="stat-row"><span class="stat-label">${WEAPON_NAMES[id] || `Unknown (${id})`}</span><span class="stat-value">${kills.toLocaleString()}</span></div>`).join('');
-    }
-
-    function generateDeathRowsHTML(deathsData) {
-        if (!deathsData || Object.keys(deathsData).length === 0) return '';
-        const deathsArray = Object.entries(deathsData);
-        if (sortByDeaths) deathsArray.sort(([, a], [, b]) => b - a);
-        else deathsArray.sort(([idA], [idB]) => (WEAPON_NAMES[idA] || `z${idA}`).localeCompare(WEAPON_NAMES[idB] || `z${idB}`));
-        return deathsArray.map(([id, deaths]) => `<div class="stat-row"><span class="stat-label">${WEAPON_NAMES[id] || `Unknown (${id})`}</span><span class="stat-value">${deaths.toLocaleString()}</span></div>`).join('');
+    function generateRowsHTML(data, sortByCount, nameMap) {
+        if (!data || Object.keys(data).length === 0) return '';
+        const dataArray = Object.entries(data);
+        if (sortByCount) dataArray.sort(([, a], [, b]) => b - a);
+        else dataArray.sort(([idA], [idB]) => (nameMap[idA] || `z${idA}`).localeCompare(nameMap[idB] || `z${idB}`));
+        return dataArray.map(([id, count]) => `<div class="stat-row"><span class="stat-label">${nameMap[id] || `Unknown (${id})`}</span><span class="stat-value">${count.toLocaleString()}</span></div>`).join('');
     }
     
-    function createWeaponStatsHTML(killsData) {
-        if (!killsData || Object.keys(killsData).length === 0) return '<div class="stat-card"><h3>🔫 Kills per Weapon</h3><p>No kill data available.</p></div>';
-        const weaponRows = generateWeaponRowsHTML(killsData);
+    // --- Specific Row Generators ---
+    const generateWeaponRowsHTML = (d) => generateRowsHTML(d, sortByKills, WEAPON_NAMES);
+    const generateDeathRowsHTML = (d) => generateRowsHTML(d, sortByDeaths, DEATH_CAUSE_NAMES);
+    const generateVehicleKillRowsHTML = (d) => generateRowsHTML(d, sortByVehicleKills, VEHICLE_KILL_NAMES);
+    const generateWinRowsHTML = (d) => generateRowsHTML(d, sortByWins, GAMEMODE_NAMES);
+    const generateLossRowsHTML = (d) => generateRowsHTML(d, sortByLosses, GAMEMODE_NAMES);
+
+    function createStatsCardHTML(title, data, rowGenerator, sortState, toggleId, gridId) {
+        if (!data || Object.keys(data).length === 0) return `<div class="stat-card"><h3>${title}</h3><p>No data available.</p></div>`;
+        const rows = rowGenerator(data);
         return `<div class="stat-card">
-            <div class="weapon-stats-header"><h3>🔫 Kills per Weapon</h3><div class="sort-toggle"><span>Alphabetical</span><label class="switch"><input type="checkbox" id="weapon-sort-toggle" ${sortByKills ? 'checked' : ''}><span class="slider"></span></label><span>By Count</span></div></div>
-            <div class="weapon-stats-grid" id="weapon-stats-grid">${weaponRows}</div>
+            <div class="weapon-stats-header"><h3>${title}</h3><div class="sort-toggle"><span>Alphabetical</span><label class="switch"><input type="checkbox" id="${toggleId}" ${sortState ? 'checked' : ''}><span class="slider"></span></label><span>By Count</span></div></div>
+            <div class="stats-data-grid" id="${gridId}">${rows}</div>
         </div>`;
     }
 
-    function createDeathStatsHTML(deathsData) {
-        if (!deathsData || Object.keys(deathsData).length === 0) return '<div class="stat-card"><h3>💀 Deaths by Cause</h3><p>No death data available.</p></div>';
-        const deathRows = generateDeathRowsHTML(deathsData);
-        return `<div class="stat-card">
-            <div class="weapon-stats-header"><h3>💀 Deaths by Cause</h3><div class="sort-toggle"><span>Alphabetical</span><label class="switch"><input type="checkbox" id="death-sort-toggle" ${sortByDeaths ? 'checked' : ''}><span class="slider"></span></label><span>By Count</span></div></div>
-            <div class="weapon-stats-grid" id="death-stats-grid">${deathRows}</div>
-        </div>`;
-    }
+    // --- Specific Card Creators ---
+    const createWeaponStatsHTML = (d) => createStatsCardHTML('🔫 Kills per Weapon', d, generateWeaponRowsHTML, sortByKills, 'weapon-sort-toggle', 'weapon-stats-grid');
+    const createDeathStatsHTML = (d) => createStatsCardHTML('💀 Deaths by Cause', d, generateDeathRowsHTML, sortByDeaths, 'death-sort-toggle', 'death-stats-grid');
+    const createVehicleKillsStatsHTML = (d) => createStatsCardHTML('🚗 Kills per Vehicle', d, generateVehicleKillRowsHTML, sortByVehicleKills, 'vehicle-sort-toggle', 'vehicle-kills-grid');
+    const createWinsStatsHTML = (d) => createStatsCardHTML('🏆 Wins per Game Mode', d, generateWinRowsHTML, sortByWins, 'wins-sort-toggle', 'wins-stats-grid');
+    const createLossesStatsHTML = (d) => createStatsCardHTML('👎 Losses per Game Mode', d, generateLossRowsHTML, sortByLosses, 'losses-sort-toggle', 'losses-stats-grid');
 
     // --- Re-rendering Functions ---
-    function rerenderWeaponStats() {
-        const grid = document.getElementById('weapon-stats-grid');
-        if (grid && currentRawData) grid.innerHTML = generateWeaponRowsHTML(currentRawData.kills_per_weapon);
-    }
+    const rerenderWeaponStats = () => { if (currentRawData) document.getElementById('weapon-stats-grid').innerHTML = generateWeaponRowsHTML(currentRawData.kills_per_weapon); };
+    const rerenderDeathStats = () => { if (currentRawData) document.getElementById('death-stats-grid').innerHTML = generateDeathRowsHTML(currentRawData.deaths); };
+    const rerenderVehicleKillsStats = () => { if (currentRawData) document.getElementById('vehicle-kills-grid').innerHTML = generateVehicleKillRowsHTML(currentRawData.kills_per_vehicle); };
+    const rerenderWinsStats = () => { if (currentRawData) document.getElementById('wins-stats-grid').innerHTML = generateWinRowsHTML(currentRawData.wins); };
+    const rerenderLossesStats = () => { if (currentRawData) document.getElementById('losses-stats-grid').innerHTML = generateLossRowsHTML(currentRawData.losses); };
     
-    function rerenderDeathStats() {
-        const grid = document.getElementById('death-stats-grid');
-        // CHANGED: Access data.deaths instead of data.deaths_per_weapon
-        if (grid && currentRawData) grid.innerHTML = generateDeathRowsHTML(currentRawData.deaths);
-    }
-
     // --- Main Display Function ---
     function displayPlayerInfo(data, killsPercentile, gamesPercentile) {
         const joinTimestamp = getJoinDateFromUID(data.uid);
         const weaponStatsHTML = createWeaponStatsHTML(data.kills_per_weapon);
-        // CHANGED: Access data.deaths instead of data.deaths_per_weapon
         const deathStatsHTML = createDeathStatsHTML(data.deaths);
+        const vehicleKillsStatsHTML = createVehicleKillsStatsHTML(data.kills_per_vehicle);
+        const winsStatsHTML = createWinsStatsHTML(data.wins);
+        const lossesStatsHTML = createLossesStatsHTML(data.losses);
 
         playerInfoContainer.innerHTML = `
             <div class="player-header">
@@ -270,6 +303,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${weaponStatsHTML}
                 ${deathStatsHTML}
             </div>
+            
+            ${vehicleKillsStatsHTML}
+
+            <div class="dual-stats-grid" style="margin-top: 1.5rem;">
+                ${winsStatsHTML}
+                ${lossesStatsHTML}
+            </div>
 
             <div class="raw-json">
                 <div class="json-header"><h3>📋 Raw JSON Data</h3><button class="btn btn-copy" data-copy="raw">Copy JSON</button></div>
@@ -277,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         playerInfoContainer.style.display = 'block';
-        
+
         const updateTimeAgoDisplays = () => {
             const joinDateAgoEl = document.getElementById('join-date-ago');
             const lastPlayedAgoEl = document.getElementById('last-played-ago');
