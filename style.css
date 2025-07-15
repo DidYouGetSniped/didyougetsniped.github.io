@@ -245,30 +245,6 @@ body.dark-mode .input-group input::placeholder { color: #9ca3af; }
 }
 .countdown { font-size: 0.8em; color: #95a5a6; margin-left: 10px; }
 
-/* --- NEW --- Weapon Stats List */
-.weapon-stats-list {
-    max-height: 250px; /* Limits the height of the list */
-    overflow-y: auto;   /* Adds a vertical scrollbar only if content overflows */
-    padding-right: 10px;/* Adds space between text and scrollbar */
-    margin-right: -10px;/* Compensates for padding to maintain alignment */
-}
-
-/* Optional: Custom scrollbar for a more polished look in WebKit browsers */
-.weapon-stats-list::-webkit-scrollbar {
-    width: 8px;
-}
-.weapon-stats-list::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-}
-.weapon-stats-list::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-}
-.weapon-stats-list::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
 @media (max-width: 768px) {
     .header { padding-top: 70px; }
     .input-group { flex-direction: column; }
