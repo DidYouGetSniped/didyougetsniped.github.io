@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+
 :root {
     /* Light Theme Variables */
     --bg-body: #f4f7fc;
@@ -70,7 +72,7 @@ body.dark-mode .time-ago {
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'JetBrains Mono', monospace;
     background: var(--bg-body);
     min-height: 100vh;
     padding: 20px;
@@ -144,6 +146,7 @@ body {
     flex: 1; max-width: 400px; padding: 12px 16px;
     border: 2px solid var(--border-color-medium); border-radius: 8px;
     font-size: 1em; background-color: var(--bg-input); color: var(--text-input);
+    font-family: 'JetBrains Mono', monospace; /* Ensure inputs also use the new font */
 }
 body.dark-mode .input-group input::placeholder { color: #9ca3af; }
 .input-group input:focus, .input-group select:focus, .time-option select:focus {
@@ -158,6 +161,7 @@ body.dark-mode .input-group input::placeholder { color: #9ca3af; }
     color: white; border: none; border-radius: 8px;
     font-size: 1em; font-weight: 600; cursor: pointer;
     transition: all 0.3s ease; position: relative;
+    font-family: 'JetBrains Mono', monospace; /* Ensure buttons also use the new font */
 }
 .btn:hover {
     transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
@@ -202,7 +206,7 @@ body.dark-mode .input-group input::placeholder { color: #9ca3af; }
     font-size: 2.2em; font-weight: bold; margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
-.player-uid { font-size: 1.1em; opacity: 0.9; font-family: monospace; }
+.player-uid { font-size: 1.1em; opacity: 0.9; }
 
 .stats-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -266,12 +270,12 @@ body.dark-mode .input-group input::placeholder { color: #9ca3af; }
 .raw-json {
     background: var(--bg-raw-json); color: var(--text-raw-json);
     padding: 20px; border-radius: 10px; margin-top: 30px;
-    font-family: 'Courier New', monospace; font-size: 0.9em;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
     line-height: 1.4; overflow-x: auto; white-space: pre-wrap;
 }
 .raw-json h3 {
     color: var(--border-color-focus); margin-bottom: 15px;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'JetBrains Mono', monospace;
 }
 .json-header {
     display: flex; justify-content: space-between;
