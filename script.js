@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="stat-row">
                         <span class="stat-label">Kills ELO Percentile:</span>
-                        <span class="stat-value">${(killsPercentile || 0).toFixed(8)}%</span>
+                        <span class="stat-value">${(killsPercentile || 0).toFixed(4)}%</span>
                     </div>
                     <div class="stat-row">
                         <span class="stat-label">Games ELO:</span>
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="stat-row">
                         <span class="stat-label">Games ELO Percentile:</span>
-                        <span class="stat-value">${(gamesPercentile || 0).toFixed(8)}%</span>
+                        <span class="stat-value">${(gamesPercentile || 0).toFixed(4)}%</span>
                     </div>
                 </div>
             </div>
