@@ -66,6 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const DEATH_CAUSE_NAMES = { ...WEAPON_NAMES, ...VEHICLE_DEATH_NAMES, ...GAMEMODE_NAMES };
 
+    const SPECIAL_LINKS = {
+        '60d08b15d142afee4b1dfabe': { 
+            discord: 'https://discord.gg/Wb8eTc5HND',
+            youtube: 'https://youtube.com/@DidYouGetSniped'
+        },
+    };
+
     const setTheme = (isDark) => {
         document.body.classList.toggle('dark-mode', isDark);
         themeToggle.checked = isDark;
@@ -216,19 +223,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const winsStatsHTML = createWinsStatsHTML(data.wins);
         const lossesStatsHTML = createLossesStatsHTML(data.losses);
 
-       let specialLogoHTML = '';
-
-        const specialUID_Case1 = '60d08b15d142afee4b1dfabe';
-        const discordInvite_Case1 = 'https://discord.gg/Wb8eTc5HND';
-
-        const specialUID_Case2 = '';
-        const discordInvite_Case2 = '';
-
-if (data.uid === specialUID_Case1) {
-    specialLogoHTML = `<a href="${discordInvite_Case1}" target="_blank" rel="noopener noreferrer" title="Join Discord Server"><img src="/discord.png" alt="Discord Logo" class="player-name-logo"></a>`;
-} else if (data.uid === specialUID_Case2) {
-    specialLogoHTML = `<a href="${discordInvite_Case2}" target="_blank" rel="noopener noreferrer" title="Join Discord Server"><img src="/discord.png" alt="Discord Logo" class="player-name-logo"></a>`;
-}
+        let specialLogoHTML = '';
+        const playerLinks = SPECIAL_LINKS[data.uid];
+        if (playerLinks) {
+            // Add YouTube logo first if it exists
+            if (playerLinks.youtube) {
+                specialLogoHTML += `<a href="${playerLinks.youtube}" target="_blank" rel="noopener noreferrer" title="Visit YouTube Channel"><img src="/youtube.png" alt="YouTube Logo" class="player-name-logo"></a>`;
+            }
+            // Add Discord logo second if it exists
+            if (playerLinks.discord) {
+                specialLogoHTML += `<a href="${playerLinks.discord}" target="_blank" rel="noopener noreferrer" title="Join Discord Server"><img src="/discord.png" alt="Discord Logo" class="player-name-logo"></a>`;
+            }
+        }
 
         playerInfoContainer.innerHTML = `
             <div class="player-header">
