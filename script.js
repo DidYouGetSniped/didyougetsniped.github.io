@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Element Caching ---
     const themeToggle = document.getElementById('theme-toggle');
     const uidInput = document.getElementById('uid-input');
     const fetchBtn = document.getElementById('fetch-btn');
@@ -11,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const requestsRemainingEl = document.getElementById('requests-remaining');
     const countdownEl = document.getElementById('countdown');
 
-    // --- State & Constants ---
     const API_BASE_URL = 'https://wbapi.wbpjs.com/players';
     const RATE_LIMIT = { maxRequests: 10, timeWindow: 60 * 1000, requests: [] };
     let currentPlayerUID = null;
@@ -24,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let countdownInterval = null;
     let timeAgoInterval = null;
 
-    // --- Specific Name Mappings ---
     const WEAPON_NAMES = {
         p09: 'Air Strike', p11: 'BGM', p52: 'Tank Lvl 1', p53: 'APC Lvl 1',
         p54: 'Heli Lvl 1', p55: 'Tank Lvl 2', p56: 'APC Lvl 2', p57: 'Heli Lvl 2',
@@ -69,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const DEATH_CAUSE_NAMES = { ...WEAPON_NAMES, ...VEHICLE_DEATH_NAMES, ...GAMEMODE_NAMES };
 
-    // --- Theme Switcher ---
     const setTheme = (isDark) => {
         document.body.classList.toggle('dark-mode', isDark);
         themeToggle.checked = isDark;
@@ -78,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme');
     setTheme(savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-    // --- Event Listeners ---
     themeToggle.addEventListener('change', (e) => setTheme(e.target.checked));
     fetchBtn.addEventListener('click', fetchPlayerInfo);
     uidInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') fetchPlayerInfo(); });
@@ -99,15 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
           else if (target.id === 'losses-sort-toggle') { sortByLosses = target.checked; rerenderLossesStats(); }
     });
 
-    // Listen for browser back/forward button clicks
     window.addEventListener('popstate', (event) => {
         const urlParams = new URLSearchParams(window.location.search);
         const uidFromHistory = urlParams.get('uid');
         if (uidFromHistory) {
             uidInput.value = uidFromHistory;
-            fetchPlayerInfo(false); // Fetch without pushing to history again
+            fetchPlayerInfo(false);
         } else {
-            // If we're back to the root page, clear everything
             playerInfoContainer.innerHTML = '';
             playerInfoContainer.style.display = 'none';
             uidInput.value = '';
@@ -115,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Utility Functions ---
     const displayMessage = (message, type = 'error') => { messageContainer.innerHTML = `<div class="message ${type}">${message}</div>`; };
     const clearMessages = () => { messageContainer.innerHTML = ''; };
     const copyToClipboard = (text, buttonElement) => { navigator.clipboard.writeText(text).then(() => { const originalText = buttonElement.textContent; buttonElement.textContent = 'Copied!'; buttonElement.classList.add('copied'); setTimeout(() => { buttonElement.textContent = originalText; buttonElement.classList.remove('copied'); }, 2000); }).catch(err => { console.error('Failed to copy:', err); displayMessage('Failed to copy text.', 'error'); }); };
@@ -124,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const getJoinDateFromUID = (uid) => parseInt(uid.substring(0, 8), 16);
     const extractUID = (input) => (input.match(/[a-f0-9]{24}/i) || [null])[0];
 
-    // --- Rate Limiting Logic ---
     const updateRateLimitDisplay = () => {
         const now = Date.now();
         RATE_LIMIT.requests = RATE_LIMIT.requests.filter(time => now - time < RATE_LIMIT.timeWindow);
@@ -149,14 +140,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Core Application Logic ---
     async function fetchPlayerInfo(pushState = true) {
         if (timeAgoInterval) clearInterval(timeAgoInterval);
         clearMessages();
         const uid = extractUID(uidInput.value);
         if (!uid) { displayMessage('No valid UID found. UIDs are 24 hex characters.'); return; }
 
-        // Update the URL in the browser's history
         if (pushState) {
             const currentUrl = new URL(window.location);
             currentUrl.searchParams.set('uid', uid);
@@ -200,7 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- HTML Generation Functions ---
     function generateRowsHTML(data, sortByCount, nameMap) { if (!data || Object.keys(data).length === 0) return ''; const dataArray = Object.entries(data); if (sortByCount) dataArray.sort(([, a], [, b]) => b - a); else dataArray.sort(([idA], [idB]) => (nameMap[idA] || `z${idA}`).localeCompare(nameMap[idB] || `z${idB}`)); return dataArray.map(([id, count]) => `<div class="stat-row"><span class="stat-label">${nameMap[id] || `Unknown (${id})`}</span><span class="stat-value">${count.toLocaleString()}</span></div>`).join(''); }
     const generateWeaponRowsHTML = (d) => generateRowsHTML(d, sortByKills, WEAPON_NAMES);
     const generateDeathRowsHTML = (d) => generateRowsHTML(d, sortByDeaths, DEATH_CAUSE_NAMES);
@@ -214,14 +202,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const createWinsStatsHTML = (d) => createStatsCardHTML('🏆 Wins per Game Mode', d, generateWinRowsHTML, sortByWins, 'wins-sort-toggle', 'wins-stats-grid');
     const createLossesStatsHTML = (d) => createStatsCardHTML('👎 Losses per Game Mode', d, generateLossRowsHTML, sortByLosses, 'losses-sort-toggle', 'losses-stats-grid');
 
-    // --- Re-rendering Functions ---
     const rerenderWeaponStats = () => { if (currentRawData) document.getElementById('weapon-stats-grid').innerHTML = generateWeaponRowsHTML(currentRawData.kills_per_weapon); };
     const rerenderDeathStats = () => { if (currentRawData) document.getElementById('death-stats-grid').innerHTML = generateDeathRowsHTML(currentRawData.deaths); };
     const rerenderVehicleKillsStats = () => { if (currentRawData) document.getElementById('vehicle-kills-grid').innerHTML = generateVehicleKillRowsHTML(currentRawData.kills_per_vehicle); };
     const rerenderWinsStats = () => { if (currentRawData) document.getElementById('wins-stats-grid').innerHTML = generateWinRowsHTML(currentRawData.wins); };
     const rerenderLossesStats = () => { if (currentRawData) document.getElementById('losses-stats-grid').innerHTML = generateLossRowsHTML(currentRawData.losses); };
 
-    // --- Main Display Function ---
     function displayPlayerInfo(data, killsPercentile, gamesPercentile) {
         const joinTimestamp = getJoinDateFromUID(data.uid);
         const weaponStatsHTML = createWeaponStatsHTML(data.kills_per_weapon);
@@ -230,17 +216,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const winsStatsHTML = createWinsStatsHTML(data.wins);
         const lossesStatsHTML = createLossesStatsHTML(data.losses);
 
-        // --- NEW: Conditional logic for the clickable logo next to the player name ---
-        let specialLogoHTML = '';
-        const specialUID = '60d08b15d142afee4b1dfabe';
-        if (data.uid === specialUID) {
-            specialLogoHTML = `
-                <a href="https://discord.gg/Wb8eTc5HND" target="_blank" rel="noopener noreferrer" title="Join Discord Server">
-                    <img src="/discord.png" alt="Discord Logo" class="player-name-logo">
-                </a>
-            `;
-        }
-        // --- END NEW ---
+       let specialLogoHTML = '';
+
+        const specialUID_Case1 = '60d08b15d142afee4b1dfabe';
+        const discordInvite_Case1 = 'https://discord.gg/Wb8eTc5HND';
+
+        const specialUID_Case2 = '';
+        const discordInvite_Case2 = '';
+
+if (data.uid === specialUID_Case1) {
+    specialLogoHTML = `<a href="${discordInvite_Case1}" target="_blank" rel="noopener noreferrer" title="Join Discord Server"><img src="/discord.png" alt="Discord Logo" class="player-name-logo"></a>`;
+} else if (data.uid === specialUID_Case2) {
+    specialLogoHTML = `<a href="${discordInvite_Case2}" target="_blank" rel="noopener noreferrer" title="Join Discord Server"><img src="/discord.png" alt="Discord Logo" class="player-name-logo"></a>`;
+}
 
         playerInfoContainer.innerHTML = `
             <div class="player-header">
@@ -301,12 +289,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (lastPlayedEl) lastPlayedEl.textContent = formatDateTime(currentRawData.time);
     }
 
-    // --- Initial Setup ---
     function initialize() {
         timezoneSelect.value = 'local';
         updateRateLimitDisplay();
 
-        // Check for a UID in the URL on page load
         const urlParams = new URLSearchParams(window.location.search);
         const initialUID = urlParams.get('uid');
         if (initialUID) {
