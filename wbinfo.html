@@ -36,16 +36,58 @@
                 <div class="time-options">
                     <div class="time-option">
                         <label for="timezone-select">Timezone:</label>
-                        <select id="timezone-select">
-                            <option value="local">Your Local Time</option>
-                            <option value="UTC">UTC</option>
+                         <select id="timezone-select">
+                            <option value="local">Local Time (Default)</option>
+                            <option value="UTC">UTC (Coordinated Universal Time)</option>
+                            <optgroup label="North America">
+                                <option value="America/New_York">Eastern (New York)</option>
+                                <option value="America/Chicago">Central (Chicago)</option>
+                                <option value="America/Denver">Mountain (Denver)</option>
+                                <option value="America/Los_Angeles">Pacific (Los Angeles)</option>
+                                <option value="America/Anchorage">Alaska (Anchorage)</option>
+                                <option value="Pacific/Honolulu">Hawaii (Honolulu)</option>
+                                <option value="America/Toronto">Canada - Eastern (Toronto)</option>
+                                <option value="America/Vancouver">Canada - Pacific (Vancouver)</option>
+                                <option value="America/Mexico_City">Mexico (Mexico City)</option>
+                            </optgroup>
+                            <optgroup label="South America">
+                                <option value="America/Sao_Paulo">Brazil (São Paulo)</option>
+                                <option value="America/Argentina/Buenos_Aires">Argentina (Buenos Aires)</option>
+                                <option value="America/Bogota">Colombia (Bogotá)</option>
+                            </optgroup>
+                            <optgroup label="Europe">
+                                <option value="Europe/London">UK (London)</option>
+                                <option value="Europe/Paris">Central Europe (Paris)</option>
+                                <option value="Europe/Berlin">Central Europe (Berlin)</option>
+                                <option value="Europe/Moscow">Moscow</option>
+                                <option value="Europe/Kyiv">Eastern Europe (Kyiv)</option>
+                            </optgroup>
+                             <optgroup label="Asia">
+                                <option value="Asia/Dubai">Gulf Standard Time (Dubai)</option>
+                                <option value="Asia/Kolkata">India (Kolkata)</option>
+                                <option value="Asia/Shanghai">China (Shanghai)</option>
+                                <option value="Asia/Hong_Kong">Hong Kong</option>
+                                <option value="Asia/Singapore">Singapore</option>
+                                <option value="Asia/Tokyo">Japan (Tokyo)</option>
+                                <option value="Asia/Seoul">South Korea (Seoul)</option>
+                            </optgroup>
+                            <optgroup label="Australia & Oceania">
+                                <option value="Australia/Sydney">Australia - Eastern (Sydney)</option>
+                                <option value="Australia/Perth">Australia - Western (Perth)</option>
+                                <option value="Pacific/Auckland">New Zealand (Auckland)</option>
+                            </optgroup>
+                             <optgroup label="Africa">
+                                <option value="Africa/Cairo">Egypt (Cairo)</option>
+                                <option value="Africa/Johannesburg">South Africa (Johannesburg)</option>
+                                <option value="Africa/Lagos">West Africa (Lagos)</option>
+                            </optgroup>
                         </select>
                     </div>
                     <div class="time-option">
                         <label for="time-format">Time Format:</label>
                         <select id="time-format">
-                            <option value="24">24-Hour</option>
-                            <option value="12">12-Hour</option>
+                            <option value="12">12-hour (AM/PM)</option>
+                            <option value="24">24-hour</option>
                         </select>
                     </div>
                 </div>
