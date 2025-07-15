@@ -359,6 +359,28 @@ body.dark-mode .input-group input::placeholder { color: #9ca3af; }
     transform: translateX(20px);
 }
 
+h1 {
+  /* This makes the text and image sit side-by-side */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centers the title and logo */
+  flex-wrap: wrap; /* Allows text to wrap on small screens if needed */
+  gap: 0.75rem; /* Creates space between the text and the logo */
+}
+
+#page-logo {
+  /* This controls the size of the logo */
+  height: 40px; /* Adjust this value to make the logo bigger or smaller */
+  width: auto;  /* Maintains the correct shape */
+}
+
+/* Add this to your stylesheet */
+.player-name-logo {
+  height: 1.2em; /* This makes the logo size relative to the name's font size. */
+  width: auto;
+  vertical-align: middle; /* Aligns the image nicely with the text. */
+  margin-left: 8px; /* Adds a little space between the name and the logo. */
+}
 
 @media (max-width: 992px) {
     .dual-stats-grid {
