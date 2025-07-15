@@ -272,7 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 specialLogoHTML += `<a href="${playerLinks.youtube}" target="_blank" rel="noopener noreferrer" title="Visit YouTube Channel"><img src="/youtube.png" alt="YouTube Logo" class="player-name-logo"></a>`;
             }
         }
-
         playerInfoContainer.innerHTML = `
             <div class="player-header">
                 <div class="player-name-details">
