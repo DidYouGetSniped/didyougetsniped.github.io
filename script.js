@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayMessage = (message, type = 'error') => { messageContainer.innerHTML = `<div class="message ${type}">${message}</div>`; };
     const clearMessages = () => { messageContainer.innerHTML = ''; };
     const copyToClipboard = (text, buttonElement) => {
-        navigator.clipboard.writeText(text).then(() => {
+        navigator.clipboard.writeText(text.trim()).then(() => { // Added .trim() for cleaner copy
             const originalText = buttonElement.textContent;
             buttonElement.textContent = 'Copied!';
             buttonElement.classList.add('copied');
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- HTML Generation Functions ---
 
     function generateRowsHTML(data, sortByCount, nameMap) {
-        if (!data || Object.keys(data).length === 0) return '';
+        if (!data || Object.keys(data).length === 0) return `<div class="stat-row"><span class="stat-label">No data available.</span></div>`;
         const dataArray = Object.entries(data);
         if (sortByCount) dataArray.sort(([, a], [, b]) => b - a);
         else dataArray.sort(([idA], [idB]) => (nameMap[idA] || `z${idA}`).localeCompare(nameMap[idB] || `z${idB}`));
@@ -287,8 +287,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="stat-row"><span class="stat-label">Squad:</span><span class="stat-value">${data.squad || 'None'}</span></div>
                     <div class="stat-row"><span class="stat-label">Steam:</span><span class="stat-value ${data.steam ? 'success' : 'danger'}">${data.steam ? 'Yes' : 'No'}</span></div>
                     <div class="stat-row"><span class="stat-label">Banned:</span><span class="stat-value ${data.banned ? 'danger' : 'success'}">${data.banned ? 'Yes' : 'No'}</span></div>
-                    <div class="stat-row"><span class="stat-label">Join Date:</span><div class="stat-value-container"><div class="date-with-ago"><span class="stat-value" id="join-date">${formatDateTime(joinTimestamp)}</span><span class="time-ago" id="join-date-ago">${timeAgo(joinTimestamp)}</span></div><button class="btn-copy-inline" data-copy="join-date">Copy</button></div></div>
-                    <div class="stat-row"><span class="stat-label">Last Played:</span><div class="stat-value-container"><div class="date-with-ago"><span class="stat-value" id="last-played">${formatDateTime(data.time)}</span><span class="time-ago" id="last-played-ago">${timeAgo(data.time)}</span></div><button class="btn-copy-inline" data-copy="last-played">Copy</button></div></div>
+                    
+                    <!-- MODIFICATION START -->
+                    <div class="stat-row">
+                        <span class="stat-label">Join Date:</span>
+                        <div class="stat-value-container">
+                            <div class="date-with-ago" id="join-date-full">
+                                <span class="stat-value" id="join-date">${formatDateTime(joinTimestamp)}</span>
+                                <span class="time-ago" id="join-date-ago">${timeAgo(joinTimestamp)}</span>
+                            </div>
+                            <button class="btn-copy-inline" data-copy="join-date-full">Copy</button>
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Last Played:</span>
+                        <div class="stat-value-container">
+                            <div class="date-with-ago" id="last-played-full">
+                                <span class="stat-value" id="last-played">${formatDateTime(data.time)}</span>
+                                <span class="time-ago" id="last-played-ago">${timeAgo(data.time)}</span>
+                            </div>
+                            <button class="btn-copy-inline" data-copy="last-played-full">Copy</button>
+                        </div>
+                    </div>
+                    <!-- MODIFICATION END -->
+
                 </div>
                 <div class="stat-card">
                     <h3>🏆 ELO Ratings</h3>
