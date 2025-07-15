@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const SPECIAL_LINKS = {
     '60d08b15d142afee4b1dfabe': {
-        discord: 'https://discord.gg/Wb8eTc5HND',
+        discord: 'https://discord.com/users/1014162018992914433',
         youtube: 'https://youtube.com/@DidYouGetSniped'
     },
     '6011bb49d142afed6b12d43e': {
@@ -123,7 +123,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearMessages = () => { messageContainer.innerHTML = ''; };
     const copyToClipboard = (text, buttonElement) => { navigator.clipboard.writeText(text).then(() => { const originalText = buttonElement.textContent; buttonElement.textContent = 'Copied!'; buttonElement.classList.add('copied'); setTimeout(() => { buttonElement.textContent = originalText; buttonElement.classList.remove('copied'); }, 2000); }).catch(err => { console.error('Failed to copy:', err); displayMessage('Failed to copy text.', 'error'); }); };
     const formatDateTime = (timestamp) => { if (!timestamp) return "Unknown"; const date = new Date(timestamp * 1000); const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: timeFormatSelect.value === '12' }; const timezone = timezoneSelect.value; if (timezone !== 'local') options.timeZone = timezone; return date.toLocaleString(undefined, options); };
-    const timeAgo = (timestamp) => { if (!timestamp) return ""; const seconds = Math.floor((new Date() - new Date(timestamp * 1000)) / 1000); if (seconds < 10) return "(just now)"; const intervals = { year: 31536000, month: 2592000, week: 604800, day: 86400, hour: 3600, minute: 60 }; for (const unit in intervals) { const counter = Math.floor(seconds / intervals[unit]); if (counter > 0) return `(${counter} ${unit}${counter !== 1 ? 's' : ''} ago)`; } return `(${Math.floor(seconds)} second${Math.floor(seconds) !== 1 ? 's' : ''} ago)`; };
+    const timeAgo = (timestamp) => {
+        if (!timestamp) return "";
+        const seconds = Math.floor((new Date() - new Date(timestamp * 1000)) / 1000);
+        if (seconds < 10) return "(just now)";
+
+        const yearSeconds = 31536000;
+        const daySeconds = 86400;
+
+        const years = Math.floor(seconds / yearSeconds);
+        if (years > 0) {
+            const remainingSeconds = seconds % yearSeconds;
+            const days = Math.floor(remainingSeconds / daySeconds);
+            let result = `(${years} year${years !== 1 ? 's' : ''}`;
+            if (days > 0) {
+                result += `, ${days} day${days !== 1 ? 's' : ''}`;
+            }
+            result += ' ago)';
+            return result;
+        }
+
+        const intervals = { month: 2592000, week: 604800, day: 86400, hour: 3600, minute: 60 };
+        for (const unit in intervals) {
+            const counter = Math.floor(seconds / intervals[unit]);
+            if (counter > 0) return `(${counter} ${unit}${counter !== 1 ? 's' : ''} ago)`;
+        }
+        return `(${Math.floor(seconds)} second${Math.floor(seconds) !== 1 ? 's' : ''} ago)`;
+    };
     const getJoinDateFromUID = (uid) => parseInt(uid.substring(0, 8), 16);
     const extractUID = (input) => (input.match(/[a-f0-9]{24}/i) || [null])[0];
 
@@ -206,12 +232,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateVehicleKillRowsHTML = (d) => generateRowsHTML(d, sortByVehicleKills, VEHICLE_KILL_NAMES);
     const generateWinRowsHTML = (d) => generateRowsHTML(d, sortByWins, GAMEMODE_NAMES);
     const generateLossRowsHTML = (d) => generateRowsHTML(d, sortByLosses, GAMEMODE_NAMES);
-    function createStatsCardHTML(title, data, rowGenerator, sortState, toggleId, gridId) { if (!data || Object.keys(data).length === 0) return `<div class="stat-card"><h3>${title}</h3><p>No data available.</p></div>`; const rows = rowGenerator(data); return `<div class="stat-card"><div class="weapon-stats-header"><h3>${title}</h3><div class="sort-toggle"><span>Alphabetical</span><label class="switch"><input type="checkbox" id="${toggleId}" ${sortState ? 'checked' : ''}><span class="slider"></span></label><span>By Count</span></div></div><div class="stats-data-grid" id="${gridId}">${rows}</div></div>`; }
+    function createStatsCardHTML(title, data, rowGenerator, sortState, toggleId, gridId, stackedHeader = false) {
+        if (!data || Object.keys(data).length === 0) return `<div class="stat-card"><h3>${title}</h3><p>No data available.</p></div>`;
+        const rows = rowGenerator(data);
+        const toggleHTML = `<div class="sort-toggle"><span>Alphabetical</span><label class="switch"><input type="checkbox" id="${toggleId}" ${sortState ? 'checked' : ''}><span class="slider"></span></label><span>By Count</span></div>`;
+        const headerContent = stackedHeader
+            ? `<h3>${title}</h3>${toggleHTML}`
+            : `<div class="weapon-stats-header"><h3>${title}</h3>${toggleHTML}</div>`;
+        return `<div class="stat-card">${headerContent}<div class="stats-data-grid" id="${gridId}">${rows}</div></div>`;
+    }
     const createWeaponStatsHTML = (d) => createStatsCardHTML('🔫 Kills per Weapon', d, generateWeaponRowsHTML, sortByKills, 'weapon-sort-toggle', 'weapon-stats-grid');
     const createVehicleKillsStatsHTML = (d) => createStatsCardHTML('🚗 Kills per Vehicle', d, generateVehicleKillRowsHTML, sortByVehicleKills, 'vehicle-sort-toggle', 'vehicle-kills-grid');
     const createDeathStatsHTML = (d) => createStatsCardHTML('💀 Deaths by Cause', d, generateDeathRowsHTML, sortByDeaths, 'death-sort-toggle', 'death-stats-grid');
-    const createWinsStatsHTML = (d) => createStatsCardHTML('🏆 Wins per Game Mode', d, generateWinRowsHTML, sortByWins, 'wins-sort-toggle', 'wins-stats-grid');
-    const createLossesStatsHTML = (d) => createStatsCardHTML('👎 Losses per Game Mode', d, generateLossRowsHTML, sortByLosses, 'losses-sort-toggle', 'losses-stats-grid');
+    const createWinsStatsHTML = (d) => createStatsCardHTML('🏆 Wins per Game Mode', d, generateWinRowsHTML, sortByWins, 'wins-sort-toggle', 'wins-stats-grid', true);
+    const createLossesStatsHTML = (d) => createStatsCardHTML('👎 Losses per Game Mode', d, generateLossRowsHTML, sortByLosses, 'losses-sort-toggle', 'losses-stats-grid', true);
 
     const rerenderWeaponStats = () => { if (currentRawData) document.getElementById('weapon-stats-grid').innerHTML = generateWeaponRowsHTML(currentRawData.kills_per_weapon); };
     const rerenderDeathStats = () => { if (currentRawData) document.getElementById('death-stats-grid').innerHTML = generateDeathRowsHTML(currentRawData.deaths); };
@@ -230,13 +264,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let specialLogoHTML = '';
         const playerLinks = SPECIAL_LINKS[data.uid];
         if (playerLinks) {
-            // Add YouTube logo first if it exists
-            if (playerLinks.youtube) {
-                specialLogoHTML += `<a href="${playerLinks.youtube}" target="_blank" rel="noopener noreferrer" title="Visit YouTube Channel"><img src="/youtube.png" alt="YouTube Logo" class="player-name-logo"></a>`;
-            }
-            // Add Discord logo second if it exists
             if (playerLinks.discord) {
                 specialLogoHTML += `<a href="${playerLinks.discord}" target="_blank" rel="noopener noreferrer" title="Join Discord Server"><img src="/discord.png" alt="Discord Logo" class="player-name-logo"></a>`;
+            }
+        
+        if (playerLinks.youtube) {
+                specialLogoHTML += `<a href="${playerLinks.youtube}" target="_blank" rel="noopener noreferrer" title="Visit YouTube Channel"><img src="/youtube.png" alt="YouTube Logo" class="player-name-logo"></a>`;
             }
         }
 
