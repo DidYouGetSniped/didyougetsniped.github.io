@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
         playerInfoContainer.innerHTML = `
             <div class="player-header">
                 <div class="player-name-details">
-                    <div class="player-name">${data.nick || 'Unknown Player'} ${specialLogoHTML}</div>
+                    <div class="player-name">${data.nick || 'Unknown Player'}${specialLogoHTML}</div>
                     <div class="player-uid">UID: ${data.uid}</div>
                 </div>
             </div>
