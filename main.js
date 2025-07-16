@@ -8,7 +8,11 @@ function setRandomBackground() {
         'backgrounds/image5.png',
         'backgrounds/image6.png',
         'backgrounds/image7.png',
-        'backgrounds/image8.png'
+        'backgrounds/image8.png',
+        'backgrounds/image9.png',
+        'backgrounds/image10.png',
+        'backgrounds/image11.png',
+        'backgrounds/image12.png'
     ];
 
     // 1. Get the last image used from session storage
