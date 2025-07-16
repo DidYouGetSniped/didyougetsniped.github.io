@@ -1,10 +1,3 @@
-// utils.js
-
-/**
- * Copies a string to the user's clipboard and provides feedback on a button.
- * @param {string} text - The text to copy.
- * @param {HTMLElement} buttonElement - The button that was clicked.
- */
 export const copyToClipboard = (text, buttonElement) => {
     navigator.clipboard.writeText(text).then(() => {
         const originalText = buttonElement.textContent;
@@ -16,17 +9,9 @@ export const copyToClipboard = (text, buttonElement) => {
         }, 2000);
     }).catch(err => {
         console.error('Failed to copy:', err);
-        // This function can't display a message directly, so the caller should handle it.
     });
 };
 
-/**
- * Formats a UNIX timestamp into a human-readable date/time string.
- * @param {number} timestamp - The UNIX timestamp (in seconds).
- * @param {string} timeZone - The IANA time zone name (e.g., 'America/New_York') or 'local'.
- * @param {string} hourFormat - '12' for 12-hour clock, '24' for 24-hour clock.
- * @returns {string} The formatted date string, or "Unknown".
- */
 export const formatDateTime = (timestamp, timeZone = 'local', hourFormat = '12') => {
     if (!timestamp) return "Unknown";
     const date = new Date(timestamp * 1000);
@@ -45,40 +30,42 @@ export const formatDateTime = (timestamp, timeZone = 'local', hourFormat = '12')
     return date.toLocaleString(undefined, options);
 };
 
-/**
- * Calculates a "time ago" string from a UNIX timestamp.
- * @param {number} timestamp - The UNIX timestamp (in seconds).
- * @returns {string} A relative time string (e.g., "(5 minutes ago)").
- */
 export const timeAgo = (timestamp) => {
     if (!timestamp) return "";
     const seconds = Math.floor((new Date() - new Date(timestamp * 1000)) / 1000);
     if (seconds < 10) return "(just now)";
 
-    const intervals = { year: 31536000, month: 2592000, week: 604800, day: 86400, hour: 3600, minute: 60 };
-    let counter;
+    const YEAR_IN_SECONDS = 31557600;
+    const DAY_IN_SECONDS = 86400;
 
-    if (seconds >= intervals.year) {
-        counter = Math.floor(seconds / intervals.year);
-        return `(${counter} year${counter > 1 ? 's' : ''} ago)`;
+    const years = Math.floor(seconds / YEAR_IN_SECONDS);
+
+    if (years > 0) {
+        const remainingSeconds = seconds - (years * YEAR_IN_SECONDS);
+        const days = Math.floor(remainingSeconds / DAY_IN_SECONDS);
+        const yearText = `${years} year${years > 1 ? 's' : ''}`;
+
+        if (days > 0) {
+            const dayText = `${days} day${days > 1 ? 's' : ''}`;
+            return `(${yearText} and ${dayText} ago)`;
+        } else {
+            return `(${yearText} ago)`;
+        }
     }
+
+    const intervals = { month: 2592000, week: 604800, day: 86400, hour: 3600, minute: 60 };
+    let counter;
     for (const unit in intervals) {
         counter = Math.floor(seconds / intervals[unit]);
-        if (counter > 0) return `(${counter} ${unit}${counter !== 1 ? 's' : ''} ago)`;
+        if (counter > 0) {
+            return `(${counter} ${unit}${counter !== 1 ? 's' : ''} ago)`;
+        }
     }
+
     return `(${Math.floor(seconds)} second${Math.floor(seconds) !== 1 ? 's' : ''} ago)`;
 };
 
-/**
- * Extracts the join date (as a UNIX timestamp) from a player UID.
- * @param {string} uid - The 24-character player UID.
- * @returns {number} The join date timestamp.
- */
+
 export const getJoinDateFromUID = (uid) => parseInt(uid.substring(0, 8), 16);
 
-/**
- * Extracts a 24-character UID from a string using a regex.
- * @param {string} input - The string to search within.
- * @returns {string|null} The found UID or null.
- */
 export const extractUID = (input) => (input.match(/[a-f0-9]{24}/i) || [null])[0];

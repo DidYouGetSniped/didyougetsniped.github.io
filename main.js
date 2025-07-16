@@ -1,11 +1,9 @@
-// main.js
 import { fetchFullPlayerData, searchPlayerByName } from '/api.js';
 import { RATE_LIMIT_CONFIG, WEAPON_NAMES, GAMEMODE_NAMES, VEHICLE_KILL_NAMES, DEATH_CAUSE_NAMES } from '/constants.js';
 import { copyToClipboard, extractUID, formatDateTime, getJoinDateFromUID, timeAgo } from '/utils.js';
 import { renderPlayerInfo, renderSearchResults, generateRowsHTML, displayMessage } from '/ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // DOM Elements
     const themeToggle = document.getElementById('theme-toggle');
     const uidInput = document.getElementById('uid-input');
     const fetchBtn = document.getElementById('fetch-btn');
@@ -17,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const requestsRemainingEl = document.getElementById('requests-remaining');
     const countdownEl = document.getElementById('countdown');
 
-    // State
     const RATE_LIMIT = { ...RATE_LIMIT_CONFIG, requests: [] };
     let currentPlayerUID = null;
     let currentRawData = null;
@@ -29,7 +26,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let countdownInterval = null;
     let timeAgoInterval = null;
 
-    // --- Core Functions ---
+    if (themeToggle) {
+        const isCurrentlyDark = document.documentElement.classList.contains('dark');
+        themeToggle.checked = isCurrentlyDark;
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    }
 
     async function fetchPlayerInfo(pushState = true) {
         if (timeAgoInterval) clearInterval(timeAgoInterval);
@@ -88,8 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchBtn.disabled = false;
         }
     }
-
-    // --- Rerendering & Display ---
     
     function displayFullPlayerInfo(data, percentiles) {
         const sortStates = { kills: sortByKills, deaths: sortByDeaths, vehicleKills: sortByVehicleKills, wins: sortByWins, losses: sortByLosses };
@@ -102,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const rerenderWeaponStats = () => document.getElementById('weapon-stats-grid').innerHTML = generateRowsHTML(currentRawData.kills_per_weapon, sortByKills, WEAPON_NAMES);
-    const rerenderDeathStats = () => document.getElementById('death-stats-grid').innerHTML = generateRowsHTML(currentRawData.deaths, sortByDeaths, DEATH_CAUSE_NAMES);
+    const rerenderDeathStats = () => document.getElementById('death-stats-grid').innerHTML = generateRowsHTML(currentRawAta.deaths, sortByDeaths, DEATH_CAUSE_NAMES);
     const rerenderVehicleKillsStats = () => document.getElementById('vehicle-kills-grid').innerHTML = generateRowsHTML(currentRawData.kills_per_vehicle, sortByVehicleKills, VEHICLE_KILL_NAMES);
     const rerenderWinsStats = () => document.getElementById('wins-stats-grid').innerHTML = generateRowsHTML(currentRawData.wins, sortByWins, GAMEMODE_NAMES);
     const rerenderLossesStats = () => document.getElementById('losses-stats-grid').innerHTML = generateRowsHTML(currentRawData.losses, sortByLosses, GAMEMODE_NAMES);
@@ -122,15 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (joinDateAgoEl) joinDateAgoEl.textContent = timeAgo(getJoinDateFromUID(currentRawData.uid));
         if (lastPlayedAgoEl) lastPlayedAgoEl.textContent = timeAgo(currentRawData.time);
     };
-
-    // --- Utilities Specific to Main ---
     
-    const setTheme = (isDark) => {
-        document.body.classList.toggle('dark-mode', isDark);
-        themeToggle.checked = isDark;
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    };
-
     const updateRateLimitDisplay = () => {
         const now = Date.now();
         RATE_LIMIT.requests = RATE_LIMIT.requests.filter(time => now - time < RATE_LIMIT.timeWindow);
@@ -154,11 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
             countdownEl.textContent = '';
         }
     };
-    
-    // --- Event Listeners and Initialization ---
 
     function setupEventListeners() {
-        themeToggle.addEventListener('change', (e) => setTheme(e.target.checked));
         fetchBtn.addEventListener('click', () => fetchPlayerInfo());
         uidInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') fetchPlayerInfo(); });
         timezoneSelect.addEventListener('change', updateDisplayedDates);
@@ -192,8 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initialize() {
-        const savedTheme = localStorage.getItem('theme');
-        setTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
         setupEventListeners();
         timezoneSelect.value = 'local';
         updateRateLimitDisplay();
