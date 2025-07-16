@@ -8,11 +8,7 @@ function setRandomBackground() {
         'backgrounds/image5.png',
         'backgrounds/image6.png',
         'backgrounds/image7.png',
-        'backgrounds/image8.png',
-        'backgrounds/image9.png',
-        'backgrounds/image10.png',
-        'backgrounds/image11.png',
-        'backgrounds/image12.png'
+        'backgrounds/image8.png'
     ];
 
     // 1. Get the last image used from session storage
@@ -21,24 +17,27 @@ function setRandomBackground() {
     // 2. Create a list of available images (all images except the last one)
     let availableImages = backgroundImages.filter(img => img !== lastImage);
 
-    // 3. If the filter resulted in an empty list (happens if there's only 1 image),
-    //    fall back to using the full list to prevent errors.
+    // 3. If the filter resulted in an empty list, fall back to the full list.
     if (availableImages.length === 0) {
         availableImages = backgroundImages;
     }
 
-    // 4. Pick a random image from the *available* list
+    // 4. Pick a random image from the available list
     const randomIndex = Math.floor(Math.random() * availableImages.length);
-    const selectedImage = availableImages[randomIndex];
+    let selectedImage = availableImages[randomIndex];
 
-    // 5. Apply the chosen image as the background of the page
+    // 5. [ROBUSTNESS CHECK] If for any reason our selection is invalid,
+    //    default to the first image in the main list to guarantee a background.
+    if (!selectedImage) {
+        selectedImage = backgroundImages[0];
+    }
+
+    // 6. Apply the chosen image as the background of the page
     document.body.style.backgroundImage = `url('${selectedImage}')`;
 
-    // 6. Save the newly selected image to session storage for the next refresh
+    // 7. Save the newly selected image to session storage for the next refresh
     sessionStorage.setItem('lastBackgroundImage', selectedImage);
 }
-
-
 
 import { fetchFullPlayerData, searchPlayerByName } from '/api.js';
 import { RATE_LIMIT_CONFIG, WEAPON_NAMES, GAMEMODE_NAMES, VEHICLE_KILL_NAMES, DEATH_CAUSE_NAMES } from '/constants.js';
