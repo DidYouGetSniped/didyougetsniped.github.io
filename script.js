@@ -67,15 +67,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const DEATH_CAUSE_NAMES = { ...WEAPON_NAMES, ...VEHICLE_DEATH_NAMES, ...GAMEMODE_NAMES };
 
     const SPECIAL_LINKS = {
-    '60d08b15d142afee4b1dfabe': {
-        discord: 'https://discord.com/users/1014162018992914433',
-        youtube: 'https://youtube.com/@DidYouGetSniped'
-    },
-    '6011bb49d142afed6b12d43e': {
-        discord: 'https://discord.com/users/643617634419474432',
-        youtube: 'https://youtube.com/@paperclipFPS'
-    }
-};
+        '60d08b15d142afee4b1dfabe': {
+            discord: 'https://discord.com/users/1014162018992914433',
+            youtube: 'https://youtube.com/@DidYouGetSniped'
+        },
+        '6011bb49d142afed6b12d43e': {
+            discord: 'https://discord.com/users/643617634419474432',
+            youtube: 'https://youtube.com/@paperclipFPS'
+        }
+    };
     
     const setTheme = (isDark) => {
         document.body.classList.toggle('dark-mode', isDark);
@@ -86,14 +86,22 @@ document.addEventListener('DOMContentLoaded', () => {
     setTheme(savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
 
     themeToggle.addEventListener('change', (e) => setTheme(e.target.checked));
-    fetchBtn.addEventListener('click', fetchPlayerInfo);
+    fetchBtn.addEventListener('click', () => fetchPlayerInfo());
     uidInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') fetchPlayerInfo(); });
     timezoneSelect.addEventListener('change', updateDisplayedDates);
     timeFormatSelect.addEventListener('change', updateDisplayedDates);
 
     playerInfoContainer.addEventListener('click', (e) => {
         const target = e.target;
-        if (target.matches('[data-copy]')) {
+        const searchResultItem = target.closest('.search-result-item');
+
+        if (searchResultItem) {
+            const uid = searchResultItem.dataset.uid;
+            if (uid) {
+                uidInput.value = uid;
+                fetchPlayerInfo();
+            }
+        } else if (target.matches('[data-copy]')) {
             const textToCopy = target.dataset.copy === 'raw'
                 ? document.getElementById('raw-json-content').textContent
                 : document.getElementById(target.dataset.copy).textContent;
@@ -108,8 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', (event) => {
         const urlParams = new URLSearchParams(window.location.search);
         const uidFromHistory = urlParams.get('uid');
+        const nameFromHistory = urlParams.get('name');
+        
         if (uidFromHistory) {
             uidInput.value = uidFromHistory;
+            fetchPlayerInfo(false);
+        } else if (nameFromHistory) {
+            uidInput.value = nameFromHistory;
             fetchPlayerInfo(false);
         } else {
             playerInfoContainer.innerHTML = '';
@@ -179,16 +192,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchPlayerInfo(pushState = true) {
         if (timeAgoInterval) clearInterval(timeAgoInterval);
+        playerInfoContainer.innerHTML = '';
         clearMessages();
-        const uid = extractUID(uidInput.value);
-        if (!uid) { displayMessage('No valid UID found. UIDs are 24 hex characters.'); return; }
-
-        if (pushState) {
-            const currentUrl = new URL(window.location);
-            currentUrl.searchParams.set('uid', uid);
-            window.history.pushState({uid: uid}, '', currentUrl);
+        
+        const searchInput = uidInput.value.trim();
+        if (!searchInput) {
+            displayMessage('Please enter a player name or UID.', 'info');
+            return;
         }
 
+        const uid = extractUID(searchInput);
+        
         const now = Date.now();
         RATE_LIMIT.requests = RATE_LIMIT.requests.filter(time => now - time < RATE_LIMIT.timeWindow);
         if (RATE_LIMIT.requests.length >= RATE_LIMIT.maxRequests) {
@@ -197,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             displayMessage(`Rate limit exceeded. Please wait ${seconds} seconds.`);
             return;
         }
+
         loader.style.display = 'block';
         playerInfoContainer.style.display = 'none';
         fetchBtn.disabled = true;
@@ -204,26 +219,80 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             RATE_LIMIT.requests.push(Date.now());
             updateRateLimitDisplay();
-            const playerRes = await fetch(`${API_BASE_URL}/getPlayer?uid=${uid}`);
-            if (!playerRes.ok) throw new Error(`Player data not found or API error (Status: ${playerRes.status})`);
-            const playerData = await playerRes.json();
-            const [killsPercentileRes, gamesPercentileRes] = await Promise.all([
-                fetch(`${API_BASE_URL}/percentile/killsElo?uid=${uid}`),
-                fetch(`${API_BASE_URL}/percentile/gamesElo?uid=${uid}`)
-            ]);
-            const killsPercentile = killsPercentileRes.ok ? await killsPercentileRes.json() : 0;
-            const gamesPercentile = gamesPercentileRes.ok ? await gamesPercentileRes.json() : 0;
-            if (!killsPercentileRes.ok || !gamesPercentileRes.ok) displayMessage('Could not fetch all percentile data.', 'warning');
 
-            currentPlayerUID = uid;
-            currentRawData = playerData;
-            displayPlayerInfo(playerData, killsPercentile, gamesPercentile);
+            if (uid) {
+                // --- UID SEARCH PATH ---
+                if (pushState) {
+                    const currentUrl = new URL(window.location);
+                    currentUrl.searchParams.set('uid', uid);
+                    currentUrl.searchParams.delete('name');
+                    window.history.pushState({uid: uid}, '', currentUrl);
+                }
+                const playerRes = await fetch(`${API_BASE_URL}/getPlayer?uid=${uid}`);
+                if (!playerRes.ok) throw new Error(`Player data not found or API error (Status: ${playerRes.status})`);
+                const playerData = await playerRes.json();
+                const [killsPercentileRes, gamesPercentileRes] = await Promise.all([
+                    fetch(`${API_BASE_URL}/percentile/killsElo?uid=${uid}`),
+                    fetch(`${API_BASE_URL}/percentile/gamesElo?uid=${uid}`)
+                ]);
+                const killsPercentile = killsPercentileRes.ok ? await killsPercentileRes.json() : 0;
+                const gamesPercentile = gamesPercentileRes.ok ? await gamesPercentileRes.json() : 0;
+                if (!killsPercentileRes.ok || !gamesPercentileRes.ok) displayMessage('Could not fetch all percentile data.', 'warning');
+
+                currentPlayerUID = uid;
+                currentRawData = playerData;
+                displayPlayerInfo(playerData, killsPercentile, gamesPercentile);
+            } else {
+                // --- NAME SEARCH PATH ---
+                if (pushState) {
+                    const currentUrl = new URL(window.location);
+                    currentUrl.searchParams.set('name', searchInput);
+                    currentUrl.searchParams.delete('uid');
+                    window.history.pushState({name: searchInput}, '', currentUrl);
+                }
+
+                const searchRes = await fetch(`${API_BASE_URL}/searchByName?query=${encodeURIComponent(searchInput)}`);
+                if (!searchRes.ok) throw new Error(`Name search failed (Status: ${searchRes.status})`);
+                const searchResults = await searchRes.json();
+
+                if (searchResults.length === 0) {
+                    displayMessage(`No players found with the name "${searchInput}".`, 'info');
+                    playerInfoContainer.style.display = 'none';
+                } else if (searchResults.length === 1) {
+                    uidInput.value = searchResults[0].uid;
+                    await fetchPlayerInfo(pushState); // Re-run with the found UID
+                    return; // Exit to prevent finally block from running on this instance
+                } else {
+                    displaySearchResults(searchResults);
+                }
+            }
         } catch (error) {
             displayMessage(`Error: ${error.message}`);
+            playerInfoContainer.style.display = 'none';
         } finally {
             loader.style.display = 'none';
             fetchBtn.disabled = false;
         }
+    }
+
+    function displaySearchResults(results) {
+        const resultsHTML = results.map(player => `
+            <button class="search-result-item" data-uid="${player.uid}">
+                <span class="result-name">${player.nick}</span>
+                <span class="result-uid">UID: ${player.uid}</span>
+            </button>
+        `).join('');
+
+        playerInfoContainer.innerHTML = `
+            <div class="stat-card">
+                <h3>Search Results (${results.length})</h3>
+                <p>Multiple players found. Please select one to view their stats.</p>
+                <div class="search-results-list">
+                    ${resultsHTML}
+                </div>
+            </div>
+        `;
+        playerInfoContainer.style.display = 'block';
     }
 
     function generateRowsHTML(data, sortByCount, nameMap) { if (!data || Object.keys(data).length === 0) return ''; const dataArray = Object.entries(data); if (sortByCount) dataArray.sort(([, a], [, b]) => b - a); else dataArray.sort(([idA], [idB]) => (nameMap[idA] || `z${idA}`).localeCompare(nameMap[idB] || `z${idB}`)); return dataArray.map(([id, count]) => `<div class="stat-row"><span class="stat-label">${nameMap[id] || `Unknown (${id})`}</span><span class="stat-value">${count.toLocaleString()}</span></div>`).join(''); }
@@ -337,8 +406,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const urlParams = new URLSearchParams(window.location.search);
         const initialUID = urlParams.get('uid');
+        const initialName = urlParams.get('name');
+
         if (initialUID) {
             uidInput.value = initialUID;
+            fetchPlayerInfo();
+        } else if (initialName) {
+            uidInput.value = initialName;
             fetchPlayerInfo();
         }
     }
