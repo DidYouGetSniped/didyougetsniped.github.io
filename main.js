@@ -1,4 +1,11 @@
+// main.js
+import { fetchFullPlayerData, searchPlayerByName } from './api.js';
+import { RATE_LIMIT_CONFIG, WEAPON_NAMES, GAMEMODE_NAMES, VEHICLE_KILL_NAMES, DEATH_CAUSE_NAMES } from './constants.js';
+import { copyToClipboard, extractUID, formatDateTime, getJoinDateFromUID, timeAgo } from './utils.js';
+import { renderPlayerInfo, renderSearchResults, generateRowsHTML, displayMessage } from './ui.js';
+
 document.addEventListener('DOMContentLoaded', () => {
+    // DOM Elements
     const themeToggle = document.getElementById('theme-toggle');
     const uidInput = document.getElementById('uid-input');
     const fetchBtn = document.getElementById('fetch-btn');
@@ -10,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const requestsRemainingEl = document.getElementById('requests-remaining');
     const countdownEl = document.getElementById('countdown');
 
-    const API_BASE_URL = 'https://wbapi.wbpjs.com/players';
-    const RATE_LIMIT = { maxRequests: 10, timeWindow: 60 * 1000, requests: [] };
+    // State
+    const RATE_LIMIT = { ...RATE_LIMIT_CONFIG, requests: [] };
     let currentPlayerUID = null;
     let currentRawData = null;
     let sortByKills = true;
@@ -22,149 +29,107 @@ document.addEventListener('DOMContentLoaded', () => {
     let countdownInterval = null;
     let timeAgoInterval = null;
 
-    const WEAPON_NAMES = {
-        p09: 'Air Strike', p11: 'BGM', p52: 'Tank Lvl 1', p53: 'APC Lvl 1',
-        p54: 'Heli Lvl 1', p55: 'Tank Lvl 2', p56: 'APC Lvl 2', p57: 'Heli Lvl 2',
-        p58: 'Tank Lvl 3', p59: 'APC Lvl 3', p60: 'Heli Lvl 3', p61: 'AR Rifle',
-        p62: 'AK Rifle', p63: 'Pistol', p64: 'Hunting Rifle', p65: 'RPG',
-        p66: 'Shotgun', p67: 'Sniper Rifle', p68: 'SMG', p69: 'Homing',
-        p71: 'Grenade', p74: 'Heli Minigun', p75: 'Tank Minigun', p76: 'Knife',
-        p78: 'Revolver', p79: 'Minigun', p80: 'Grenade Launcher', p81: 'Smoke Grenade',
-        p82: 'Jet 1 Rockets', p83: 'Jet 1 Homing', p84: 'Jet 1 Machine Gun',
-        p85: 'Jet 2 Rockets', p86: 'Jet 2 Homing', p87: 'Jet 2 Machine Gun',
-        p88: 'Fists', p89: 'VSS', p90: '50 Cal Sniper', p91: 'MG Turret',
-        p92: 'Crossbow', p93: 'SCAR', p94: 'Tactical Shotgun', p95: 'VEK',
-        p96: 'Desert Eagle', p97: 'Auto Pistol', p98: 'LMG', p99: 'KBAR',
-        p100: 'Mace', p101: 'Rubber Chicken', p102: 'Butterfly Knife', p103: 'Chainsaw',
-        p104: 'AKSMG', p105: 'Auto Sniper', p106: 'AR3', p107: 'Sawed-Off Shotgun',
-        p108: 'Healing Pistol', p109: 'MP7', p110: 'Implosion Grenade', p111: 'Laser Trip Mine',
-        p112: 'Concussion Grenade', p126: 'G3A3', p128: "Marksman's Rifle", p129: 'Mutant'
-    };
-    const GAMEMODE_NAMES = {
-        m00: 'Team Death Match', m01: 'Demolition Derby', m02: 'Protect Leader',
-        m03: 'Resource Capture', m04: 'Race', m05: 'Tank Battle', m06: 'Tank King',
-        m07: 'Capture Point', m08: 'Vehicle Escort', m09: 'Package Drop',
-        m10: 'Missile Launch', m11: 'Battle Royale', m12: 'Competitive',
-        m13: 'Lobby (Competitive)', m14: 'Lobby (BR)', m15: 'Count'
-    };
-    const VEHICLE_KILL_NAMES = {
-        v00: 'Tank Lvl 1', v01: 'Tank Lvl 2', v02: 'Tank Lvl 3',
-        v10: 'APC Lvl 1', v11: 'APC Lvl 2', v12: 'APC Lvl 3',
-        v13: 'Car', v14: 'Unknown Vehicle (v14)', v15: 'Jet 1 Fin Machine Gun',
-        v16: 'Unknown Vehicle (v16)', v17: 'Unknown Vehicle (v17)', v18: 'Unknown Vehicle (v18)',
-        v19: 'Unknown Vehicle (v19)', v20: 'Heli Lvl 1', v21: 'Heli Lvl 2',
-        v22: 'Heli Lvl 3', v23: 'Heli (No Weapon)', v30: 'Player',
-        v40: 'Jet 1 Fin', v41: 'Jet 2 Fin', v50: 'Machine Gun Turret',
-        v60: 'Unknown Vehicle (v60)', v110: 'Unknown Vehicle (v110)', v111: 'Unknown Vehicle (v111)',
-        v112: 'Unknown Vehicle (v112)', v113: 'Unknown Vehicle (v113)'
-    };
-    const VEHICLE_DEATH_NAMES = {
-        v00: 'Humvee', v01: 'APC', v02: 'Tank', v10: 'Heli', v11: 'Jet',
-        v12: 'Speedboat', v13: 'Attack Boat', v20: 'Buggy', v21: 'Mustang', v22: 'Police Car',
-        v23: 'Van', v30: 'Motorbike', v40: 'Plane', v41: 'A-10 Warthog', v50: 'Hovercraft',
-        v60: 'Drone'
-    };
-    const DEATH_CAUSE_NAMES = { ...WEAPON_NAMES, ...VEHICLE_DEATH_NAMES, ...GAMEMODE_NAMES };
+    // --- Core Functions ---
 
-    const SPECIAL_LINKS = {
-        '60d08b15d142afee4b1dfabe': {
-            discord: 'https://discord.com/users/1014162018992914433',
-            youtube: 'https://youtube.com/@DidYouGetSniped'
-        },
-        '6011bb49d142afed6b12d43e': {
-            discord: 'https://discord.com/users/643617634419474432',
-            youtube: 'https://youtube.com/@paperclipFPS'
+    async function fetchPlayerInfo(pushState = true) {
+        if (timeAgoInterval) clearInterval(timeAgoInterval);
+        playerInfoContainer.innerHTML = '';
+        messageContainer.innerHTML = '';
+        
+        const searchInput = uidInput.value.trim();
+        if (!searchInput) {
+            displayMessage(messageContainer, 'Please enter a player name or UID.', 'info');
+            return;
         }
+
+        const uid = extractUID(searchInput);
+        
+        const now = Date.now();
+        RATE_LIMIT.requests = RATE_LIMIT.requests.filter(time => now - time < RATE_LIMIT.timeWindow);
+        if (RATE_LIMIT.requests.length >= RATE_LIMIT.maxRequests) {
+            const oldestRequest = Math.min(...RATE_LIMIT.requests);
+            const seconds = Math.ceil((RATE_LIMIT.timeWindow - (now - oldestRequest)) / 1000);
+            displayMessage(messageContainer, `Rate limit exceeded. Please wait ${seconds} seconds.`, 'error');
+            return;
+        }
+
+        loader.style.display = 'block';
+        playerInfoContainer.style.display = 'none';
+        fetchBtn.disabled = true;
+
+        try {
+            RATE_LIMIT.requests.push(Date.now());
+            updateRateLimitDisplay();
+
+            if (uid) {
+                if (pushState) history.pushState({ uid }, '', `?uid=${uid}`);
+                const { playerData, killsPercentile, gamesPercentile } = await fetchFullPlayerData(uid);
+                currentPlayerUID = uid;
+                currentRawData = playerData;
+                displayFullPlayerInfo(playerData, { killsPercentile, gamesPercentile });
+            } else {
+                if (pushState) history.pushState({ name: searchInput }, '', `?name=${encodeURIComponent(searchInput)}`);
+                const searchResults = await searchPlayerByName(searchInput);
+                if (searchResults.length === 0) {
+                    displayMessage(messageContainer, `No players found with the name "${searchInput}".`, 'info');
+                } else if (searchResults.length === 1) {
+                    uidInput.value = searchResults[0].uid;
+                    await fetchPlayerInfo(pushState);
+                    return;
+                } else {
+                    playerInfoContainer.innerHTML = renderSearchResults(searchResults);
+                    playerInfoContainer.style.display = 'block';
+                }
+            }
+        } catch (error) {
+            displayMessage(messageContainer, `Error: ${error.message}`, 'error');
+        } finally {
+            loader.style.display = 'none';
+            fetchBtn.disabled = false;
+        }
+    }
+
+    // --- Rerendering & Display ---
+    
+    function displayFullPlayerInfo(data, percentiles) {
+        const sortStates = { kills: sortByKills, deaths: sortByDeaths, vehicleKills: sortByVehicleKills, wins: sortByWins, losses: sortByLosses };
+        const timePrefs = { timeZone: timezoneSelect.value, timeFormat: timeFormatSelect.value };
+        playerInfoContainer.innerHTML = renderPlayerInfo(data, percentiles, sortStates, timePrefs);
+        playerInfoContainer.style.display = 'block';
+
+        if (timeAgoInterval) clearInterval(timeAgoInterval);
+        timeAgoInterval = setInterval(updateTimeAgoDisplays, 30000);
+    }
+
+    const rerenderWeaponStats = () => document.getElementById('weapon-stats-grid').innerHTML = generateRowsHTML(currentRawData.kills_per_weapon, sortByKills, WEAPON_NAMES);
+    const rerenderDeathStats = () => document.getElementById('death-stats-grid').innerHTML = generateRowsHTML(currentRawData.deaths, sortByDeaths, DEATH_CAUSE_NAMES);
+    const rerenderVehicleKillsStats = () => document.getElementById('vehicle-kills-grid').innerHTML = generateRowsHTML(currentRawData.kills_per_vehicle, sortByVehicleKills, VEHICLE_KILL_NAMES);
+    const rerenderWinsStats = () => document.getElementById('wins-stats-grid').innerHTML = generateRowsHTML(currentRawData.wins, sortByWins, GAMEMODE_NAMES);
+    const rerenderLossesStats = () => document.getElementById('losses-stats-grid').innerHTML = generateRowsHTML(currentRawData.losses, sortByLosses, GAMEMODE_NAMES);
+    
+    function updateDisplayedDates() {
+        if (!currentPlayerUID || !currentRawData) return;
+        const timeZone = timezoneSelect.value;
+        const timeFormat = timeFormatSelect.value;
+        document.getElementById('join-date').textContent = formatDateTime(getJoinDateFromUID(currentPlayerUID), timeZone, timeFormat);
+        document.getElementById('last-played').textContent = formatDateTime(currentRawData.time, timeZone, timeFormat);
+    }
+
+    function updateTimeAgoDisplays() {
+        if (!currentRawData) return;
+        const joinDateAgoEl = document.getElementById('join-date-ago');
+        const lastPlayedAgoEl = document.getElementById('last-played-ago');
+        if (joinDateAgoEl) joinDateAgoEl.textContent = timeAgo(getJoinDateFromUID(currentRawData.uid));
+        if (lastPlayedAgoEl) lastPlayedAgoEl.textContent = timeAgo(currentRawData.time);
     };
+
+    // --- Utilities Specific to Main ---
     
     const setTheme = (isDark) => {
         document.body.classList.toggle('dark-mode', isDark);
         themeToggle.checked = isDark;
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
     };
-    const savedTheme = localStorage.getItem('theme');
-    setTheme(savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-    themeToggle.addEventListener('change', (e) => setTheme(e.target.checked));
-    fetchBtn.addEventListener('click', () => fetchPlayerInfo());
-    uidInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') fetchPlayerInfo(); });
-    timezoneSelect.addEventListener('change', updateDisplayedDates);
-    timeFormatSelect.addEventListener('change', updateDisplayedDates);
-
-    playerInfoContainer.addEventListener('click', (e) => {
-        const target = e.target;
-        const searchResultItem = target.closest('.search-result-item');
-
-        if (searchResultItem) {
-            const uid = searchResultItem.dataset.uid;
-            if (uid) {
-                uidInput.value = uid;
-                fetchPlayerInfo();
-            }
-        } else if (target.matches('[data-copy]')) {
-            const textToCopy = target.dataset.copy === 'raw'
-                ? document.getElementById('raw-json-content').textContent
-                : document.getElementById(target.dataset.copy).textContent;
-            copyToClipboard(textToCopy, target);
-        } else if (target.id === 'weapon-sort-toggle') { sortByKills = target.checked; rerenderWeaponStats(); }
-          else if (target.id === 'death-sort-toggle') { sortByDeaths = target.checked; rerenderDeathStats(); }
-          else if (target.id === 'vehicle-sort-toggle') { sortByVehicleKills = target.checked; rerenderVehicleKillsStats(); }
-          else if (target.id === 'wins-sort-toggle') { sortByWins = target.checked; rerenderWinsStats(); }
-          else if (target.id === 'losses-sort-toggle') { sortByLosses = target.checked; rerenderLossesStats(); }
-    });
-
-    window.addEventListener('popstate', (event) => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const uidFromHistory = urlParams.get('uid');
-        const nameFromHistory = urlParams.get('name');
-        
-        if (uidFromHistory) {
-            uidInput.value = uidFromHistory;
-            fetchPlayerInfo(false);
-        } else if (nameFromHistory) {
-            uidInput.value = nameFromHistory;
-            fetchPlayerInfo(false);
-        } else {
-            playerInfoContainer.innerHTML = '';
-            playerInfoContainer.style.display = 'none';
-            uidInput.value = '';
-            clearMessages();
-        }
-    });
-
-    const displayMessage = (message, type = 'error') => { messageContainer.innerHTML = `<div class="message ${type}">${message}</div>`; };
-    const clearMessages = () => { messageContainer.innerHTML = ''; };
-    const copyToClipboard = (text, buttonElement) => { navigator.clipboard.writeText(text).then(() => { const originalText = buttonElement.textContent; buttonElement.textContent = 'Copied!'; buttonElement.classList.add('copied'); setTimeout(() => { buttonElement.textContent = originalText; buttonElement.classList.remove('copied'); }, 2000); }).catch(err => { console.error('Failed to copy:', err); displayMessage('Failed to copy text.', 'error'); }); };
-    const formatDateTime = (timestamp) => { if (!timestamp) return "Unknown"; const date = new Date(timestamp * 1000); const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: timeFormatSelect.value === '12' }; const timezone = timezoneSelect.value; if (timezone !== 'local') options.timeZone = timezone; return date.toLocaleString(undefined, options); };
-    const timeAgo = (timestamp) => {
-        if (!timestamp) return "";
-        const seconds = Math.floor((new Date() - new Date(timestamp * 1000)) / 1000);
-        if (seconds < 10) return "(just now)";
-
-        const yearSeconds = 31536000;
-        const daySeconds = 86400;
-
-        const years = Math.floor(seconds / yearSeconds);
-        if (years > 0) {
-            const remainingSeconds = seconds % yearSeconds;
-            const days = Math.floor(remainingSeconds / daySeconds);
-            let result = `(${years} year${years !== 1 ? 's' : ''}`;
-            if (days > 0) {
-                result += `, ${days} day${days !== 1 ? 's' : ''}`;
-            }
-            result += ' ago)';
-            return result;
-        }
-
-        const intervals = { month: 2592000, week: 604800, day: 86400, hour: 3600, minute: 60 };
-        for (const unit in intervals) {
-            const counter = Math.floor(seconds / intervals[unit]);
-            if (counter > 0) return `(${counter} ${unit}${counter !== 1 ? 's' : ''} ago)`;
-        }
-        return `(${Math.floor(seconds)} second${Math.floor(seconds) !== 1 ? 's' : ''} ago)`;
-    };
-    const getJoinDateFromUID = (uid) => parseInt(uid.substring(0, 8), 16);
-    const extractUID = (input) => (input.match(/[a-f0-9]{24}/i) || [null])[0];
 
     const updateRateLimitDisplay = () => {
         const now = Date.now();
@@ -189,230 +154,55 @@ document.addEventListener('DOMContentLoaded', () => {
             countdownEl.textContent = '';
         }
     };
+    
+    // --- Event Listeners and Initialization ---
 
-    async function fetchPlayerInfo(pushState = true) {
-        if (timeAgoInterval) clearInterval(timeAgoInterval);
-        playerInfoContainer.innerHTML = '';
-        clearMessages();
-        
-        const searchInput = uidInput.value.trim();
-        if (!searchInput) {
-            displayMessage('Please enter a player name or UID.', 'info');
-            return;
-        }
+    function setupEventListeners() {
+        themeToggle.addEventListener('change', (e) => setTheme(e.target.checked));
+        fetchBtn.addEventListener('click', () => fetchPlayerInfo());
+        uidInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') fetchPlayerInfo(); });
+        timezoneSelect.addEventListener('change', updateDisplayedDates);
+        timeFormatSelect.addEventListener('change', updateDisplayedDates);
 
-        const uid = extractUID(searchInput);
-        
-        const now = Date.now();
-        RATE_LIMIT.requests = RATE_LIMIT.requests.filter(time => now - time < RATE_LIMIT.timeWindow);
-        if (RATE_LIMIT.requests.length >= RATE_LIMIT.maxRequests) {
-            const oldestRequest = Math.min(...RATE_LIMIT.requests);
-            const seconds = Math.ceil((RATE_LIMIT.timeWindow - (now - oldestRequest)) / 1000);
-            displayMessage(`Rate limit exceeded. Please wait ${seconds} seconds.`);
-            return;
-        }
+        playerInfoContainer.addEventListener('click', (e) => {
+            const target = e.target;
+            if (target.closest('.search-result-item')) {
+                uidInput.value = target.closest('.search-result-item').dataset.uid;
+                fetchPlayerInfo();
+            } else if (target.matches('[data-copy]')) {
+                const text = target.dataset.copy === 'raw' ? document.getElementById('raw-json-content').textContent : document.getElementById(target.dataset.copy).textContent;
+                copyToClipboard(text, target);
+            } else if (target.id === 'weapon-sort-toggle') { sortByKills = target.checked; rerenderWeaponStats(); }
+              else if (target.id === 'death-sort-toggle') { sortByDeaths = target.checked; rerenderDeathStats(); }
+              else if (target.id === 'vehicle-sort-toggle') { sortByVehicleKills = target.checked; rerenderVehicleKillsStats(); }
+              else if (target.id === 'wins-sort-toggle') { sortByWins = target.checked; rerenderWinsStats(); }
+              else if (target.id === 'losses-sort-toggle') { sortByLosses = target.checked; rerenderLossesStats(); }
+        });
 
-        loader.style.display = 'block';
-        playerInfoContainer.style.display = 'none';
-        fetchBtn.disabled = true;
-
-        try {
-            RATE_LIMIT.requests.push(Date.now());
-            updateRateLimitDisplay();
-
-            if (uid) {
-                // --- UID SEARCH PATH ---
-                if (pushState) {
-                    const currentUrl = new URL(window.location);
-                    currentUrl.searchParams.set('uid', uid);
-                    currentUrl.searchParams.delete('name');
-                    window.history.pushState({uid: uid}, '', currentUrl);
-                }
-                const playerRes = await fetch(`${API_BASE_URL}/getPlayer?uid=${uid}`);
-                if (!playerRes.ok) throw new Error(`Player data not found or API error (Status: ${playerRes.status})`);
-                const playerData = await playerRes.json();
-                const [killsPercentileRes, gamesPercentileRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/percentile/killsElo?uid=${uid}`),
-                    fetch(`${API_BASE_URL}/percentile/gamesElo?uid=${uid}`)
-                ]);
-                const killsPercentile = killsPercentileRes.ok ? await killsPercentileRes.json() : 0;
-                const gamesPercentile = gamesPercentileRes.ok ? await gamesPercentileRes.json() : 0;
-                if (!killsPercentileRes.ok || !gamesPercentileRes.ok) displayMessage('Could not fetch all percentile data.', 'warning');
-
-                currentPlayerUID = uid;
-                currentRawData = playerData;
-                displayPlayerInfo(playerData, killsPercentile, gamesPercentile);
-            } else {
-                // --- NAME SEARCH PATH ---
-                if (pushState) {
-                    const currentUrl = new URL(window.location);
-                    currentUrl.searchParams.set('name', searchInput);
-                    currentUrl.searchParams.delete('uid');
-                    window.history.pushState({name: searchInput}, '', currentUrl);
-                }
-
-                const searchRes = await fetch(`${API_BASE_URL}/searchByName?query=${encodeURIComponent(searchInput)}`);
-                if (!searchRes.ok) throw new Error(`Name search failed (Status: ${searchRes.status})`);
-                const searchResults = await searchRes.json();
-
-                if (searchResults.length === 0) {
-                    displayMessage(`No players found with the name "${searchInput}".`, 'info');
-                    playerInfoContainer.style.display = 'none';
-                } else if (searchResults.length === 1) {
-                    uidInput.value = searchResults[0].uid;
-                    await fetchPlayerInfo(pushState); // Re-run with the found UID
-                    return; // Exit to prevent finally block from running on this instance
-                } else {
-                    displaySearchResults(searchResults);
-                }
+        window.addEventListener('popstate', (event) => {
+            const { uid, name } = event.state || {};
+            if (uid) { uidInput.value = uid; fetchPlayerInfo(false); }
+            else if (name) { uidInput.value = name; fetchPlayerInfo(false); }
+            else {
+                playerInfoContainer.innerHTML = '';
+                messageContainer.innerHTML = '';
+                uidInput.value = '';
             }
-        } catch (error) {
-            displayMessage(`Error: ${error.message}`);
-            playerInfoContainer.style.display = 'none';
-        } finally {
-            loader.style.display = 'none';
-            fetchBtn.disabled = false;
-        }
-    }
-
-    function displaySearchResults(results) {
-        const resultsHTML = results.map(player => `
-            <button class="search-result-item" data-uid="${player.uid}">
-                <span class="result-name">${player.nick}</span>
-                <span class="result-uid">UID: ${player.uid}</span>
-            </button>
-        `).join('');
-
-        playerInfoContainer.innerHTML = `
-            <div class="stat-card">
-                <h3>Search Results (${results.length})</h3>
-                <p>Multiple players found. Please select one to view their stats.</p>
-                <div class="search-results-list">
-                    ${resultsHTML}
-                </div>
-            </div>
-        `;
-        playerInfoContainer.style.display = 'block';
-    }
-
-    function generateRowsHTML(data, sortByCount, nameMap) { if (!data || Object.keys(data).length === 0) return ''; const dataArray = Object.entries(data); if (sortByCount) dataArray.sort(([, a], [, b]) => b - a); else dataArray.sort(([idA], [idB]) => (nameMap[idA] || `z${idA}`).localeCompare(nameMap[idB] || `z${idB}`)); return dataArray.map(([id, count]) => `<div class="stat-row"><span class="stat-label">${nameMap[id] || `Unknown (${id})`}</span><span class="stat-value">${count.toLocaleString()}</span></div>`).join(''); }
-    const generateWeaponRowsHTML = (d) => generateRowsHTML(d, sortByKills, WEAPON_NAMES);
-    const generateDeathRowsHTML = (d) => generateRowsHTML(d, sortByDeaths, DEATH_CAUSE_NAMES);
-    const generateVehicleKillRowsHTML = (d) => generateRowsHTML(d, sortByVehicleKills, VEHICLE_KILL_NAMES);
-    const generateWinRowsHTML = (d) => generateRowsHTML(d, sortByWins, GAMEMODE_NAMES);
-    const generateLossRowsHTML = (d) => generateRowsHTML(d, sortByLosses, GAMEMODE_NAMES);
-    function createStatsCardHTML(title, data, rowGenerator, sortState, toggleId, gridId, stackedHeader = false) {
-        if (!data || Object.keys(data).length === 0) return `<div class="stat-card"><h3>${title}</h3><p>No data available.</p></div>`;
-        const rows = rowGenerator(data);
-        const toggleHTML = `<div class="sort-toggle"><span>Alphabetical</span><label class="switch"><input type="checkbox" id="${toggleId}" ${sortState ? 'checked' : ''}><span class="slider"></span></label><span>By Count</span></div>`;
-        const headerContent = stackedHeader
-            ? `<h3>${title}</h3>${toggleHTML}`
-            : `<div class="weapon-stats-header"><h3>${title}</h3>${toggleHTML}</div>`;
-        return `<div class="stat-card">${headerContent}<div class="stats-data-grid" id="${gridId}">${rows}</div></div>`;
-    }
-    const createWeaponStatsHTML = (d) => createStatsCardHTML('🔫 Kills per Weapon', d, generateWeaponRowsHTML, sortByKills, 'weapon-sort-toggle', 'weapon-stats-grid');
-    const createVehicleKillsStatsHTML = (d) => createStatsCardHTML('🚗 Kills per Vehicle', d, generateVehicleKillRowsHTML, sortByVehicleKills, 'vehicle-sort-toggle', 'vehicle-kills-grid');
-    const createDeathStatsHTML = (d) => createStatsCardHTML('💀 Deaths by Cause', d, generateDeathRowsHTML, sortByDeaths, 'death-sort-toggle', 'death-stats-grid');
-    const createWinsStatsHTML = (d) => createStatsCardHTML('🏆 Wins per Game Mode', d, generateWinRowsHTML, sortByWins, 'wins-sort-toggle', 'wins-stats-grid', true);
-    const createLossesStatsHTML = (d) => createStatsCardHTML('👎 Losses per Game Mode', d, generateLossRowsHTML, sortByLosses, 'losses-sort-toggle', 'losses-stats-grid', true);
-
-    const rerenderWeaponStats = () => { if (currentRawData) document.getElementById('weapon-stats-grid').innerHTML = generateWeaponRowsHTML(currentRawData.kills_per_weapon); };
-    const rerenderDeathStats = () => { if (currentRawData) document.getElementById('death-stats-grid').innerHTML = generateDeathRowsHTML(currentRawData.deaths); };
-    const rerenderVehicleKillsStats = () => { if (currentRawData) document.getElementById('vehicle-kills-grid').innerHTML = generateVehicleKillRowsHTML(currentRawData.kills_per_vehicle); };
-    const rerenderWinsStats = () => { if (currentRawData) document.getElementById('wins-stats-grid').innerHTML = generateWinRowsHTML(currentRawData.wins); };
-    const rerenderLossesStats = () => { if (currentRawData) document.getElementById('losses-stats-grid').innerHTML = generateLossRowsHTML(currentRawData.losses); };
-
-    function displayPlayerInfo(data, killsPercentile, gamesPercentile) {
-        const joinTimestamp = getJoinDateFromUID(data.uid);
-        const weaponStatsHTML = createWeaponStatsHTML(data.kills_per_weapon);
-        const deathStatsHTML = createDeathStatsHTML(data.deaths);
-        const vehicleKillsStatsHTML = createVehicleKillsStatsHTML(data.kills_per_vehicle);
-        const winsStatsHTML = createWinsStatsHTML(data.wins);
-        const lossesStatsHTML = createLossesStatsHTML(data.losses);
-
-        let specialLogoHTML = '';
-        const playerLinks = SPECIAL_LINKS[data.uid];
-        if (playerLinks) {
-            if (playerLinks.discord) {
-                specialLogoHTML += `<a href="${playerLinks.discord}" target="_blank" rel="noopener noreferrer" title="Join Discord Server"><img src="/discord.png" alt="Discord Logo" class="player-name-logo"></a>`;
-            }
-        
-        if (playerLinks.youtube) {
-                specialLogoHTML += `<a href="${playerLinks.youtube}" target="_blank" rel="noopener noreferrer" title="Visit YouTube Channel"><img src="/youtube.png" alt="YouTube Logo" class="player-name-logo"></a>`;
-            }
-        }
-        playerInfoContainer.innerHTML = `
-            <div class="player-header">
-                <div class="player-name-details">
-                    <div class="player-name">${data.nick || 'Unknown Player'}${specialLogoHTML}</div>
-                    <div class="player-uid">UID: ${data.uid}</div>
-                </div>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>📊 Basic Information</h3>
-                    <div class="stat-row"><span class="stat-label">Level:</span><span class="stat-value highlight">${(data.level || 0).toLocaleString()}</span></div>
-                    <div class="stat-row"><span class="stat-label">XP:</span><span class="stat-value">${(data.xp || 0).toLocaleString()}</span></div>
-                    <div class="stat-row"><span class="stat-label">Coins:</span><span class="stat-value">${(data.coins || 0).toLocaleString()}</span></div>
-                    <div class="stat-row"><span class="stat-label">Squad:</span><span class="stat-value">${data.squad || 'None'}</span></div>
-                    <div class="stat-row"><span class="stat-label">Steam:</span><span class="stat-value ${data.steam ? 'success' : 'danger'}">${data.steam ? 'Yes' : 'No'}</span></div>
-                    <div class="stat-row"><span class="stat-label">Banned:</span><span class="stat-value ${data.banned ? 'danger' : 'success'}">${data.banned ? 'Yes' : 'No'}</span></div>
-                    <div class="stat-row"><span class="stat-label">Join Date:</span><div class="stat-value-container"><div class="date-with-ago" id="full-join-date-text"><span class="stat-value" id="join-date">${formatDateTime(joinTimestamp)}</span> <span class="time-ago" id="join-date-ago">${timeAgo(joinTimestamp)}</span></div><button class="btn-copy-inline" data-copy="full-join-date-text">Copy</button></div></div>
-                    <div class="stat-row"><span class="stat-label">Last Played:</span><div class="stat-value-container"><div class="date-with-ago" id="full-last-played-text"><span class="stat-value" id="last-played">${formatDateTime(data.time)}</span> <span class="time-ago" id="last-played-ago">${timeAgo(data.time)}</span></div><button class="btn-copy-inline" data-copy="full-last-played-text">Copy</button></div></div>
-                </div>
-                <div class="stat-card">
-                    <h3>🏆 ELO Ratings</h3>
-                    <div class="stat-row"><span class="stat-label">Kills ELO:</span><span class="stat-value highlight">${(data.killsELO || 0).toFixed(2)}</span></div>
-                    <div class="stat-row"><span class="stat-label">Kills ELO Percentile:</span><span class="stat-value">${(killsPercentile || 0).toFixed(4)}%</span></div>
-                    <div class="stat-row"><span class="stat-label">Games ELO:</span><span class="stat-value highlight">${(data.gamesELO || 0).toFixed(2)}</span></div>
-                    <div class="stat-row"><span class="stat-label">Games ELO Percentile:</span><span class="stat-value">${(gamesPercentile || 0).toFixed(4)}%</span></div>
-                </div>
-            </div>
-            <div class="dual-stats-grid">
-                ${weaponStatsHTML}
-                ${vehicleKillsStatsHTML}
-            </div>
-            ${deathStatsHTML}
-            <div class="dual-stats-grid" style="margin-top: 1.5rem;">
-                ${winsStatsHTML}
-                ${lossesStatsHTML}
-            </div>
-            <div class="raw-json">
-                <div class="json-header"><h3>📋 Raw JSON Data</h3><button class="btn btn-copy" data-copy="raw">Copy JSON</button></div>
-                <pre id="raw-json-content">${JSON.stringify(data, null, 2)}</pre>
-            </div>
-        `;
-        playerInfoContainer.style.display = 'block';
-        const updateTimeAgoDisplays = () => {
-            const joinDateAgoEl = document.getElementById('join-date-ago');
-            const lastPlayedAgoEl = document.getElementById('last-played-ago');
-            if (joinDateAgoEl) joinDateAgoEl.textContent = timeAgo(joinTimestamp);
-            if (lastPlayedAgoEl) lastPlayedAgoEl.textContent = timeAgo(data.time);
-        };
-        if (timeAgoInterval) clearInterval(timeAgoInterval);
-        timeAgoInterval = setInterval(updateTimeAgoDisplays, 30000);
-    }
-    function updateDisplayedDates() {
-        if (!currentPlayerUID || !currentRawData) return;
-        const joinDateEl = document.getElementById('join-date');
-        const lastPlayedEl = document.getElementById('last-played');
-        if (joinDateEl) joinDateEl.textContent = formatDateTime(getJoinDateFromUID(currentPlayerUID));
-        if (lastPlayedEl) lastPlayedEl.textContent = formatDateTime(currentRawData.time);
+        });
     }
 
     function initialize() {
+        const savedTheme = localStorage.getItem('theme');
+        setTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
+        setupEventListeners();
         timezoneSelect.value = 'local';
         updateRateLimitDisplay();
 
         const urlParams = new URLSearchParams(window.location.search);
         const initialUID = urlParams.get('uid');
         const initialName = urlParams.get('name');
-
-        if (initialUID) {
-            uidInput.value = initialUID;
-            fetchPlayerInfo();
-        } else if (initialName) {
-            uidInput.value = initialName;
+        if (initialUID || initialName) {
+            uidInput.value = initialUID || initialName;
             fetchPlayerInfo();
         }
     }
