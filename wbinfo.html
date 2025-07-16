@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:title" content="War Brokers Player Stats">
-    <meta property="og:description" content="Check out your player statistics!">
+    <meta property="og:description" content="Check out your player statistics by name or UID!">
     <title>War Brokers Player Stats</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <script src="script.js"></script>
     <div class="container">
         <header class="header">
              <div class="theme-switcher">
@@ -34,8 +33,8 @@
         <main class="content">
             <section class="input-section">
                 <div class="input-group">
-                    <label for="uid-input">Player UID:</label>
-                    <input type="text" id="uid-input" placeholder="Enter text that contains UID">
+                    <label for="uid-input">Player Name or UID:</label>
+                    <input type="text" id="uid-input" placeholder="Enter player name or UID">
                     <button id="fetch-btn" class="btn">Fetch Stats</button>
                 </div>
                 <div class="time-options">
@@ -114,5 +113,7 @@
         <p><strong>Disclaimer:</strong> This is a third-party project and is not affiliated with, endorsed, or sponsored by War Brokers or its developers.</p>
         <p><strong>Special Thanks:</strong> EpicEfeathers & Pomp for their contributions to the community and API.</p>
     </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
