@@ -54,13 +54,17 @@ export const DEATH_CAUSE_NAMES = {
 };
 
 export const SPECIAL_LINKS = {
-    '60d08b15d142afee4b1dfabe': {
+    '60d08b15d142afee4b1dfabe': { // DYGS
         discord: 'https://discord.com/users/1014162018992914433',
         youtube: 'https://youtube.com/@DidYouGetSniped'
     },
-    '6011bb49d142afed6b12d43e': {
+    '6011bb49d142afed6b12d43e': { // ProJelly
         discord: 'https://discord.com/users/643617634419474432',
         youtube: 'https://youtube.com/@paperclipFPS'
+    },
+    '65b99682d142af8101fc7025': { // Imagine Dying
+        discord: 'https://discord.com/users/1133760136897380356',
+        youtube: 'https://www.youtube.com/channel/UC3WathZqJpuFuGOuDBZ-jCQ'
     }
 };
 
