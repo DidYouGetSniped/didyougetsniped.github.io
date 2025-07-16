@@ -146,7 +146,7 @@ body {
     flex: 1; max-width: 400px; padding: 12px 16px;
     border: 2px solid var(--border-color-medium); border-radius: 8px;
     font-size: 1em; background-color: var(--bg-input); color: var(--text-input);
-    font-family: 'JetBrains Mono', monospace; /* Ensure inputs also use the new font */
+    font-family: 'JetBrains Mono', monospace;
 }
 body.dark-mode .input-group input::placeholder { color: #9ca3af; }
 .input-group input:focus, .input-group select:focus, .time-option select:focus {
@@ -161,7 +161,7 @@ body.dark-mode .input-group input::placeholder { color: #9ca3af; }
     color: white; border: none; border-radius: 8px;
     font-size: 1em; font-weight: 600; cursor: pointer;
     transition: all 0.3s ease; position: relative;
-    font-family: 'JetBrains Mono', monospace; /* Ensure buttons also use the new font */
+    font-family: 'JetBrains Mono', monospace;
 }
 .btn:hover {
     transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
@@ -195,6 +195,62 @@ body.dark-mode .input-group input::placeholder { color: #9ca3af; }
     background-color: var(--bg-message-warning); color: var(--text-message-warning);
     border-left-color: #ffc107;
 }
+.message.info {
+    background-color: #cff4fc;
+    color: #055160;
+    border-left-color: #0dcaf0;
+}
+body.dark-mode .message.info {
+    background-color: #1a3a4a;
+    color: #9eeaf9;
+    border-left-color: #0dcaf0;
+}
+
+
+/* --- NEW: SEARCH RESULT STYLES --- */
+.search-results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.search-result-item {
+    /* Reset button styles to act like a list item */
+    background: none;
+    border: 1px solid var(--border-color-light);
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+    outline: inherit;
+    
+    /* Layout and custom styling */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.search-result-item:hover {
+    background-color: var(--bg-input-section);
+    border-color: var(--border-color-focus);
+}
+
+.result-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.result-uid {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+/* --- END OF NEW STYLES --- */
+
 
 .player-info { padding: 30px; }
 .player-header {
@@ -283,13 +339,13 @@ body.dark-mode .input-group input::placeholder { color: #9ca3af; }
 }
 .countdown { font-size: 0.8em; color: #95a5a6; margin-left: 10px; }
 
-.weapon-stats-grid {
+.stats-data-grid { /* Renamed for clarity */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 0px 25px;
 }
 
-.weapon-stats-grid .stat-row {
+.stats-data-grid .stat-row {
     padding: 6px 0;
 }
 
@@ -364,26 +420,23 @@ body.dark-mode .input-group input::placeholder { color: #9ca3af; }
 }
 
 h1 {
-  /* This makes the text and image sit side-by-side */
   display: flex;
   align-items: center;
-  justify-content: center; /* Centers the title and logo */
-  flex-wrap: wrap; /* Allows text to wrap on small screens if needed */
-  gap: 0.75rem; /* Creates space between the text and the logo */
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 #page-logo {
-  /* This controls the size of the logo */
-  height: 40px; /* Adjust this value to make the logo bigger or smaller */
-  width: auto;  /* Maintains the correct shape */
+  height: 40px;
+  width: auto;
 }
 
-/* Add this to your stylesheet */
 .player-name-logo {
-  height: 1.2em; /* This makes the logo size relative to the name's font size. */
+  height: 1.2em;
   width: auto;
-  vertical-align: middle; /* Aligns the image nicely with the text. */
-  margin-left: 8px; /* Adds a little space between the name and the logo. */
+  vertical-align: middle;
+  margin-left: 8px;
 }
 
 @media (max-width: 992px) {
@@ -400,7 +453,6 @@ h1 {
     .rate-limit-info { position: static; margin-top: 15px; display: inline-block; }
 }
 
-/* NEW: Footer Styles */
 .footer {
     text-align: center;
     padding: 20px;
