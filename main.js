@@ -1,8 +1,8 @@
 // main.js
-import { fetchFullPlayerData, searchPlayerByName } from './api.js';
-import { RATE_LIMIT_CONFIG, WEAPON_NAMES, GAMEMODE_NAMES, VEHICLE_KILL_NAMES, DEATH_CAUSE_NAMES } from './constants.js';
-import { copyToClipboard, extractUID, formatDateTime, getJoinDateFromUID, timeAgo } from './utils.js';
-import { renderPlayerInfo, renderSearchResults, generateRowsHTML, displayMessage } from './ui.js';
+import { fetchFullPlayerData, searchPlayerByName } from '/api.js';
+import { RATE_LIMIT_CONFIG, WEAPON_NAMES, GAMEMODE_NAMES, VEHICLE_KILL_NAMES, DEATH_CAUSE_NAMES } from '/constants.js';
+import { copyToClipboard, extractUID, formatDateTime, getJoinDateFromUID, timeAgo } from '/utils.js';
+import { renderPlayerInfo, renderSearchResults, generateRowsHTML, displayMessage } from '/ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
