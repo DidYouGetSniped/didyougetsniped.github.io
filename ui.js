@@ -1,6 +1,6 @@
 // ui.js
-import { WEAPON_NAMES, GAMEMODE_NAMES, VEHICLE_KILL_NAMES, DEATH_CAUSE_NAMES, SPECIAL_LINKS } from './constants.js';
-import { formatDateTime, timeAgo, getJoinDateFromUID } from './utils.js';
+import { WEAPON_NAMES, GAMEMODE_NAMES, VEHICLE_KILL_NAMES, DEATH_CAUSE_NAMES, SPECIAL_LINKS } from '/constants.js';
+import { formatDateTime, timeAgo, getJoinDateFromUID } from '/utils.js';
 
 // --- HTML Generation ---
 
