@@ -73,10 +73,23 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     padding: 20px;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-image: var(--background-image-url);
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    filter: blur(6px);
+    transform: scale(1.05);
 }
 
 .container {
