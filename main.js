@@ -1,6 +1,5 @@
 import { setRandomBackground } from '/background.js';
-import { fetchFullPlayerData, searchPlayerByName } from '/api.js';
-import { RATE_LIMIT_CONFIG, WEAPON_NAMES, GAMEMODE_NAMES, VEHICLE_KILL_NAMES, DEATH_CAUSE_NAMES } from '/constants.js';
+import { fetchFullPlayerData, searchPlayerByName, RATE_LIMIT_CONFIG } from '/api.js';
 import { copyToClipboard, extractUID, formatDateTime, getJoinDateFromUID, timeAgo } from '/utils.js';
 import { renderPlayerInfo, renderSearchResults, generateRowsHTML, displayMessage } from '/ui.js';
 
@@ -20,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const RATE_LIMIT = { ...RATE_LIMIT_CONFIG, requests: [] };
     let currentPlayerUID = null;
-    let currentRawData = null;
+    let currentPlayerdata = null; 
     let sortByKills = true;
     let sortByDeaths = true;
     let sortByVehicleKills = true;
@@ -32,17 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (themeToggle) {
         const isCurrentlyDark = document.documentElement.classList.contains('dark');
         themeToggle.checked = isCurrentlyDark;
-    }
-
-    if (themeToggle) {
         themeToggle.addEventListener('change', () => {
-            if (themeToggle.checked) {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            }
+            document.documentElement.classList.toggle('dark', themeToggle.checked);
+            localStorage.setItem('theme', themeToggle.checked ? 'dark' : 'light');
         });
     }
 
@@ -76,20 +67,24 @@ document.addEventListener('DOMContentLoaded', () => {
             RATE_LIMIT.requests.push(Date.now());
             updateRateLimitDisplay();
 
+            const stateData = uid ? { uid } : { name: searchInput };
+            const stateUrl = uid ? `?uid=${uid}` : `?name=${encodeURIComponent(searchInput)}`;
+            if (pushState) history.pushState(stateData, '', stateUrl);
+
             if (uid) {
-                if (pushState) history.pushState({ uid }, '', `?uid=${uid}`);
-                const { playerData, killsPercentile, gamesPercentile } = await fetchFullPlayerData(uid);
+                // --- CHANGE: Destructure both raw and processed data ---
+                const { rawPlayerData, playerData, killsPercentile, gamesPercentile } = await fetchFullPlayerData(uid);
                 currentPlayerUID = uid;
-                currentRawData = playerData;
-                displayFullPlayerInfo(playerData, { killsPercentile, gamesPercentile });
+                currentPlayerdata = playerData;
+                // --- CHANGE: Pass both data objects to the display function ---
+                displayFullPlayerInfo(playerData, rawPlayerData, { killsPercentile, gamesPercentile });
             } else {
-                if (pushState) history.pushState({ name: searchInput }, '', `?name=${encodeURIComponent(searchInput)}`);
                 const searchResults = await searchPlayerByName(searchInput);
                 if (searchResults.length === 0) {
                     displayMessage(messageContainer, `No players found with the name "${searchInput}".`, 'info');
                 } else if (searchResults.length === 1) {
                     uidInput.value = searchResults[0].uid;
-                    await fetchPlayerInfo(pushState);
+                    await fetchPlayerInfo(true);
                     return;
                 } else {
                     playerInfoContainer.innerHTML = renderSearchResults(searchResults);
@@ -104,36 +99,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    function displayFullPlayerInfo(data, percentiles) {
+    // --- CHANGE: Update function to accept both data objects ---
+    function displayFullPlayerInfo(processedData, rawData, percentiles) {
         const sortStates = { kills: sortByKills, deaths: sortByDeaths, vehicleKills: sortByVehicleKills, wins: sortByWins, losses: sortByLosses };
         const timePrefs = { timeZone: timezoneSelect.value, timeFormat: timeFormatSelect.value };
-        playerInfoContainer.innerHTML = renderPlayerInfo(data, percentiles, sortStates, timePrefs);
+        
+        // --- CHANGE: Pass both data objects to the render function ---
+        playerInfoContainer.innerHTML = renderPlayerInfo(processedData, rawData, percentiles, sortStates, timePrefs);
         playerInfoContainer.style.display = 'block';
 
         if (timeAgoInterval) clearInterval(timeAgoInterval);
         timeAgoInterval = setInterval(updateTimeAgoDisplays, 30000);
     }
 
-    const rerenderWeaponStats = () => document.getElementById('weapon-stats-grid').innerHTML = generateRowsHTML(currentRawData.kills_per_weapon, sortByKills, WEAPON_NAMES);
-    const rerenderDeathStats = () => document.getElementById('death-stats-grid').innerHTML = generateRowsHTML(currentRawData.deaths, sortByDeaths, DEATH_CAUSE_NAMES);
-    const rerenderVehicleKillsStats = () => document.getElementById('vehicle-kills-grid').innerHTML = generateRowsHTML(currentRawData.kills_per_vehicle, sortByVehicleKills, VEHICLE_KILL_NAMES);
-    const rerenderWinsStats = () => document.getElementById('wins-stats-grid').innerHTML = generateRowsHTML(currentRawData.wins, sortByWins, GAMEMODE_NAMES);
-    const rerenderLossesStats = () => document.getElementById('losses-stats-grid').innerHTML = generateRowsHTML(currentRawData.losses, sortByLosses, GAMEMODE_NAMES);
+    const rerenderWeaponStats = () => {
+        if (!currentPlayerdata || !currentPlayerdata.weaponStats) return;
+        const weaponKills = {};
+        for (const weaponName in currentPlayerdata.weaponStats) {
+            weaponKills[weaponName] = currentPlayerdata.weaponStats[weaponName].kills;
+        }
+        document.getElementById('weapon-stats-grid').innerHTML = generateRowsHTML(weaponKills, sortByKills);
+    };
+
+    const rerenderDeathStats = () => document.getElementById('death-stats-grid').innerHTML = generateRowsHTML(currentPlayerdata.deaths, sortByDeaths);
+    const rerenderVehicleKillsStats = () => document.getElementById('vehicle-kills-grid').innerHTML = generateRowsHTML(currentPlayerdata.kills_per_vehicle, sortByVehicleKills);
+    const rerenderWinsStats = () => document.getElementById('wins-stats-grid').innerHTML = generateRowsHTML(currentPlayerdata.wins, sortByWins);
+    const rerenderLossesStats = () => document.getElementById('losses-stats-grid').innerHTML = generateRowsHTML(currentPlayerdata.losses, sortByLosses);
     
     function updateDisplayedDates() {
-        if (!currentPlayerUID || !currentRawData) return;
+        if (!currentPlayerUID || !currentPlayerdata) return;
         const timeZone = timezoneSelect.value;
         const timeFormat = timeFormatSelect.value;
         document.getElementById('join-date').textContent = formatDateTime(getJoinDateFromUID(currentPlayerUID), timeZone, timeFormat);
-        document.getElementById('last-played').textContent = formatDateTime(currentRawData.time, timeZone, timeFormat);
+        document.getElementById('last-played').textContent = formatDateTime(currentPlayerdata.time, timeZone, timeFormat);
     }
 
     function updateTimeAgoDisplays() {
-        if (!currentRawData) return;
+        if (!currentPlayerdata) return;
         const joinDateAgoEl = document.getElementById('join-date-ago');
         const lastPlayedAgoEl = document.getElementById('last-played-ago');
-        if (joinDateAgoEl) joinDateAgoEl.textContent = timeAgo(getJoinDateFromUID(currentRawData.uid));
-        if (lastPlayedAgoEl) lastPlayedAgoEl.textContent = timeAgo(currentRawData.time);
+        if (joinDateAgoEl) joinDateAgoEl.textContent = timeAgo(getJoinDateFromUID(currentPlayerdata.uid));
+        if (lastPlayedAgoEl) lastPlayedAgoEl.textContent = timeAgo(currentPlayerdata.time);
     };
     
     const updateRateLimitDisplay = () => {
@@ -168,17 +174,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         playerInfoContainer.addEventListener('click', (e) => {
             const target = e.target;
+            const targetId = target.id;
+
             if (target.closest('.search-result-item')) {
                 uidInput.value = target.closest('.search-result-item').dataset.uid;
                 fetchPlayerInfo();
             } else if (target.matches('[data-copy]')) {
                 const text = target.dataset.copy === 'raw' ? document.getElementById('raw-json-content').textContent : document.getElementById(target.dataset.copy).textContent;
                 copyToClipboard(text, target);
-            } else if (target.id === 'weapon-sort-toggle') { sortByKills = target.checked; rerenderWeaponStats(); }
-              else if (target.id === 'death-sort-toggle') { sortByDeaths = target.checked; rerenderDeathStats(); }
-              else if (target.id === 'vehicle-sort-toggle') { sortByVehicleKills = target.checked; rerenderVehicleKillsStats(); }
-              else if (target.id === 'wins-sort-toggle') { sortByWins = target.checked; rerenderWinsStats(); }
-              else if (target.id === 'losses-sort-toggle') { sortByLosses = target.checked; rerenderLossesStats(); }
+            } else if (targetId === 'weapon-sort-toggle') { sortByKills = target.checked; rerenderWeaponStats(); }
+              else if (targetId === 'death-sort-toggle') { sortByDeaths = target.checked; rerenderDeathStats(); }
+              else if (targetId === 'vehicle-sort-toggle') { sortByVehicleKills = target.checked; rerenderVehicleKillsStats(); }
+              else if (targetId === 'wins-sort-toggle') { sortByWins = target.checked; rerenderWinsStats(); }
+              else if (targetId === 'losses-sort-toggle') { sortByLosses = target.checked; rerenderLossesStats(); }
         });
 
         window.addEventListener('popstate', (event) => {
@@ -203,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const initialName = urlParams.get('name');
         if (initialUID || initialName) {
             uidInput.value = initialUID || initialName;
-            fetchPlayerInfo();
+            fetchPlayerInfo(false);
         }
     }
 

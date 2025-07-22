@@ -192,6 +192,11 @@ body::before {
 .danger { background: linear-gradient(135deg, #ff7675, #e17055); }
 .success { background: linear-gradient(135deg, #00b894, #00cec9); }
 
+/*
+    REMOVED .status-online and .status-error classes as they are no longer used.
+    The .success and .danger classes handle the styling for the Steam status pill.
+*/
+
 .raw-json {
     background: var(--bg-raw-json); color: var(--text-raw-json);
     padding: 20px; border-radius: 10px;
@@ -208,7 +213,14 @@ body::before {
 .weapon-stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
 .weapon-stats-header h3 { margin: 0; }
 
-.sort-toggle { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9em; color: var(--text-secondary); }
+.sort-toggle { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    font-size: 0.9em; 
+    color: var(--text-secondary); 
+    margin-bottom: 1rem;
+}
 .sort-toggle .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
 .sort-toggle .switch input { opacity: 0; width: 0; height: 0; }
 .sort-toggle .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--toggle-bg); transition: .4s; border-radius: 20px; }
