@@ -1,6 +1,5 @@
 import { formatDateTime, timeAgo, getJoinDateFromUID } from '/utils.js';
 
-// --- HTML Generation ---
 export function generateRowsHTML(data, sortByCount) {
     if (!data || Object.keys(data).length === 0) {
         return '<p class="text-gray-400">No data available.</p>';
@@ -61,18 +60,20 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const winsStatsHTML = createStatsCardHTML('🏆 Wins per Game Mode', data.wins, wins, 'wins-sort-toggle', 'wins-stats-grid', true);
     const lossesStatsHTML = createStatsCardHTML('👎 Losses per Game Mode', data.losses, losses, 'losses-sort-toggle', 'losses-stats-grid', true);
 
-    // --- Consolidated calculations for the Miscellaneous Stats card ---
     const totalSelfDestructs = Object.values(rawData.self_destructs || {}).reduce((sum, val) => sum + val, 0);
     const totalDamageDealt = Object.values(rawData.damage_dealt || {}).reduce((sum, val) => sum + val, 0);
     const totalDamageReceived = Object.values(rawData.damage_received || {}).reduce((sum, val) => sum + val, 0);
-    // --- NEW: Calculate total headshots ---
     const totalHeadshots = Object.values(rawData.headshots || {}).reduce((sum, val) => sum + val, 0);
+    const totalShotsFiredUnzoomed = Object.values(rawData.shots_fired_unzoomed || {}).reduce((sum, val) => sum + val, 0);
+    const totalShotsFiredZoomed = Object.values(rawData.shots_fired_zoomed || {}).reduce((sum, val) => sum + val, 0);
+    const totalShotsHitUnzoomed = Object.values(rawData.shots_hit_unzoomed || {}).reduce((sum, val) => sum + val, 0);
+    const totalShotsHitZoomed = Object.values(rawData.shots_hit_zoomed || {}).reduce((sum, val) => sum + val, 0);
     const numberOfJumps = rawData.number_of_jumps || 0;
     const scudsLaunched = rawData.scuds_launched || 0;
     const totalDistanceDrivenMeters = Object.values(rawData.distance_driven || {}).reduce((sum, val) => sum + val, 0);
     const totalDistanceDrivenKm = (totalDistanceDrivenMeters / 1000).toFixed(2);
+    const totalDistanceDrivenMiles = (totalDistanceDrivenKm * 0.621371).toFixed(2);
 
-    // --- Generate HTML for the updated Miscellaneous Stats card ---
     const miscStatsHTML = `
         <div class="stat-card">
             <h3>🔧 Miscellaneous Stats</h3>
@@ -88,14 +89,29 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 <span class="stat-label">Damage Received:</span>
                 <span class="stat-value">${Math.round(totalDamageReceived).toLocaleString()}</span>
             </div>
-            <!-- NEW: Added total headshots -->
             <div class="stat-row">
                 <span class="stat-label">Total Headshots:</span>
                 <span class="stat-value">${totalHeadshots.toLocaleString()}</span>
             </div>
-             <div class="stat-row">
+            <div class="stat-row">
+                <span class="stat-label">Shots Fired (Unzoomed):</span>
+                <span class="stat-value">${totalShotsFiredUnzoomed.toLocaleString()}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Shots Fired (Zoomed):</span>
+                <span class="stat-value">${totalShotsFiredZoomed.toLocaleString()}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Shots Hit (Unzoomed):</span>
+                <span class="stat-value">${totalShotsHitUnzoomed.toLocaleString()}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Shots Hit (Zoomed):</span>
+                <span class="stat-value">${totalShotsHitZoomed.toLocaleString()}</span>
+            </div>
+              <div class="stat-row">
                 <span class="stat-label">Distance Driven:</span>
-                <span class="stat-value">${parseFloat(totalDistanceDrivenKm).toLocaleString()} km</span>
+                <span class="stat-value">${parseFloat(totalDistanceDrivenKm).toLocaleString()} km (${parseFloat(totalDistanceDrivenMiles).toLocaleString()} mi)</span>
             </div>
             <div class="stat-row">
                 <span class="stat-label">Number of Jumps:</span>
@@ -108,12 +124,16 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
         </div>
     `;
 
-
     let specialLogoHTML = '';
     const playerLinks = data.socialLinks;
     if (playerLinks) {
         if (playerLinks.discord) specialLogoHTML += `<a href="${playerLinks.discord}" target="_blank" rel="noopener noreferrer" title="Join Discord Server"><img src="/discord.png" alt="Discord Logo" class="player-name-logo"></a>`;
         if (playerLinks.youtube) specialLogoHTML += `<a href="${playerLinks.youtube}" target="_blank" rel="noopener noreferrer" title="Visit YouTube Channel"><img src="/youtube.png" alt="YouTube Logo" class="player-name-logo"></a>`;
+    }
+
+    let biographyHTML = '';
+    if (data.biography) {
+        biographyHTML = `<div class="player-bio">${data.biography}</div>`;
     }
 
     const isSteamUser = data.steam === true;
@@ -128,6 +148,8 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
             <div class="player-name-details">
                 <div class="player-name">${data.nick || 'Unknown Player'}${specialLogoHTML}</div>
                 <div class="player-uid">UID: ${data.uid}</div>
+                <!-- NEW: Biography will be injected here -->
+                ${biographyHTML}
             </div>
         </div>
         <div class="stats-grid">

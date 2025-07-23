@@ -160,9 +160,19 @@ body::before {
     margin-top: 30px;
 }
 
-.player-header { background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 25px; border-radius: 10px; text-align: center; }
+.player-header { background: linear-gradient(135deg, #0d3d18, #0d3d18); color: white; padding: 25px; border-radius: 10px; text-align: center; }
 .player-name { font-size: 2.2em; font-weight: bold; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
 .player-uid { font-size: 1.1em; opacity: 0.9; }
+.player-bio {
+    font-size: 1rem;
+    color: #e5e7eb;
+    margin: 12px auto 0; 
+    max-width: 850px;
+    line-height: 1.6;
+    font-style: italic;
+    text-align: center; 
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
 
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
 .dual-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
@@ -192,10 +202,9 @@ body::before {
 .danger { background: linear-gradient(135deg, #ff7675, #e17055); }
 .success { background: linear-gradient(135deg, #00b894, #00cec9); }
 
-/*
-    REMOVED .status-online and .status-error classes as they are no longer used.
-    The .success and .danger classes handle the styling for the Steam status pill.
-*/
+.no-link-style {
+  color: inherit;
+}
 
 .raw-json {
     background: var(--bg-raw-json); color: var(--text-raw-json);
