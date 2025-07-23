@@ -59,7 +59,7 @@ const SPECIAL_LINKS = {
 };
 
 const PLAYER_BIOGRAPHIES = {
-    '60d08b15d142afee4b1dfabe': "Howdy! Welcome to my stats profile. <br> I am the creator of this website." +
+    '60d08b15d142afee4b1dfabe': "Howdy! Welcome to my stats profile. <br> I am the creator of this website. " +
     "I first started playing War Brokers back in 2017. In 2021 I created a YouTube channel. Sometimes I make edits" + 
     " on the <a href='https://war-brokers.fandom.com/wiki/War_Brokers_Wiki' target='_blank' class='no-link-style'>War Brokers Wiki</a>.",
 };
