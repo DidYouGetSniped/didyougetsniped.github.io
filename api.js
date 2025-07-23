@@ -47,6 +47,11 @@ const DEATH_CAUSE_NAMES = {
     ...GAMEMODE_NAMES
 };
 
+const IGNORED_WEAPON_CODES = [
+    'p52', 'p53', 'p54', 'p55', 'p56', 'p57', 'p58', 'p59', 'p60',
+    'p74', 'p75', 'p82', 'p83', 'p84', 'p85', 'p86', 'p87'
+];
+
 const SPECIAL_LINKS = {
     '60d08b15d142afee4b1dfabe': { discord: 'https://discord.com/users/1014162018992914433', youtube: 'https://youtube.com/@DidYouGetSniped' }, // DYGS
     '6011bb49d142afed6b12d43e': { discord: 'https://discord.com/users/643617634419474432', youtube: 'https://youtube.com/@paperclipFPS' }, // Paperclip
@@ -56,13 +61,8 @@ const SPECIAL_LINKS = {
 const PLAYER_BIOGRAPHIES = {
     '60d08b15d142afee4b1dfabe': "Howdy! Welcome to my stats profile. <br> I am the creator of this website." +
     "I first started playing War Brokers back in 2017. In 2021 I created a YouTube channel. Sometimes I make edits" + 
-    "on the <a href='https://war-brokers.fandom.com/wiki/War_Brokers_Wiki' target='_blank' class='no-link-style'>War Brokers Wiki</a>.",
+    " on the <a href='https://war-brokers.fandom.com/wiki/War_Brokers_Wiki' target='_blank' class='no-link-style'>War Brokers Wiki</a>.",
 };
-
-const IGNORED_WEAPON_CODES = [
-    'p52', 'p53', 'p54', 'p55', 'p56', 'p57', 'p58', 'p59', 'p60',
-    'p74', 'p75', 'p82', 'p83', 'p84', 'p85', 'p86', 'p87'
-];
 
 async function fetchData(url, options = {}, errorValue = null) {
     try {
