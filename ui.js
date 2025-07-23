@@ -1,6 +1,6 @@
 import { formatDateTime, timeAgo, getJoinDateFromUID } from '/utils.js';
 
-// --- HTML Generation --- (These functions are correct and unchanged)
+// --- HTML Generation ---
 export function generateRowsHTML(data, sortByCount) {
     if (!data || Object.keys(data).length === 0) {
         return '<p class="text-gray-400">No data available.</p>';
@@ -18,6 +18,7 @@ export function generateRowsHTML(data, sortByCount) {
         </div>`
     ).join('');
 }
+
 function createStatsCardHTML(title, data, sortState, toggleId, gridId, stackedHeader = false) {
     if (!data || Object.keys(data).length === 0) {
         return `<div class="stat-card"><h3>${title}</h3><p class="text-gray-400">No data available.</p></div>`;
@@ -60,6 +61,54 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const winsStatsHTML = createStatsCardHTML('🏆 Wins per Game Mode', data.wins, wins, 'wins-sort-toggle', 'wins-stats-grid', true);
     const lossesStatsHTML = createStatsCardHTML('👎 Losses per Game Mode', data.losses, losses, 'losses-sort-toggle', 'losses-stats-grid', true);
 
+    // --- Consolidated calculations for the Miscellaneous Stats card ---
+    const totalSelfDestructs = Object.values(rawData.self_destructs || {}).reduce((sum, val) => sum + val, 0);
+    const totalDamageDealt = Object.values(rawData.damage_dealt || {}).reduce((sum, val) => sum + val, 0);
+    const totalDamageReceived = Object.values(rawData.damage_received || {}).reduce((sum, val) => sum + val, 0);
+    // --- NEW: Calculate total headshots ---
+    const totalHeadshots = Object.values(rawData.headshots || {}).reduce((sum, val) => sum + val, 0);
+    const numberOfJumps = rawData.number_of_jumps || 0;
+    const scudsLaunched = rawData.scuds_launched || 0;
+    const totalDistanceDrivenMeters = Object.values(rawData.distance_driven || {}).reduce((sum, val) => sum + val, 0);
+    const totalDistanceDrivenKm = (totalDistanceDrivenMeters / 1000).toFixed(2);
+
+    // --- Generate HTML for the updated Miscellaneous Stats card ---
+    const miscStatsHTML = `
+        <div class="stat-card">
+            <h3>🔧 Miscellaneous Stats</h3>
+            <div class="stat-row">
+                <span class="stat-label">Self Destructs:</span>
+                <span class="stat-value">${totalSelfDestructs.toLocaleString()}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Damage Dealt:</span>
+                <span class="stat-value">${Math.round(totalDamageDealt).toLocaleString()}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Damage Received:</span>
+                <span class="stat-value">${Math.round(totalDamageReceived).toLocaleString()}</span>
+            </div>
+            <!-- NEW: Added total headshots -->
+            <div class="stat-row">
+                <span class="stat-label">Total Headshots:</span>
+                <span class="stat-value">${totalHeadshots.toLocaleString()}</span>
+            </div>
+             <div class="stat-row">
+                <span class="stat-label">Distance Driven:</span>
+                <span class="stat-value">${parseFloat(totalDistanceDrivenKm).toLocaleString()} km</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Number of Jumps:</span>
+                <span class="stat-value">${numberOfJumps.toLocaleString()}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Missiles Launched:</span>
+                <span class="stat-value">${scudsLaunched.toLocaleString()}</span>
+            </div>
+        </div>
+    `;
+
+
     let specialLogoHTML = '';
     const playerLinks = data.socialLinks;
     if (playerLinks) {
@@ -71,7 +120,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const steamText = isSteamUser ? 'Yes' : 'No';
     const steamHighlightClass = isSteamUser ? 'success' : 'danger';
 
-    // --- NEW: Calculate the "Top %" values ---
     const topKillsPercent = 100 - (percentiles.killsPercentile || 0);
     const topGamesPercent = 100 - (percentiles.gamesPercentile || 0);
 
@@ -99,11 +147,9 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
             <div class="stat-card">
                 <h3>🏆 ELO Ratings</h3>
                 <div class="stat-row"><span class="stat-label">Kills ELO:</span><span class="stat-value highlight">${(data.killsELO || 0).toFixed(2)}</span></div>
-                <!-- CHANGED: Displaying "Top %" for Kills ELO -->
                 <div class="stat-row"><span class="stat-label">Kills ELO Rank:</span><span class="stat-value">Top ${topKillsPercent.toFixed(4)}%</span></div>
                 
                 <div class="stat-row"><span class="stat-label">Games ELO:</span><span class="stat-value highlight">${(data.gamesELO || 0).toFixed(2)}</span></div>
-                <!-- CHANGED: Displaying "Top %" for Games ELO -->
                 <div class="stat-row"><span class="stat-label">Games ELO Rank:</span><span class="stat-value">Top ${topGamesPercent.toFixed(4)}%</span></div>
 
                 <h3 style="margin-top: 10px;">💀 Kills and Deaths</h3>
@@ -122,6 +168,9 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
             ${winsStatsHTML}
             ${lossesStatsHTML}
         </div>
+
+        ${miscStatsHTML}
+
         <div class="raw-json">
             <div class="json-header"><h3>📋 Raw JSON Data</h3><button class="btn btn-copy" data-copy="raw">Copy JSON</button></div>
             <pre id="raw-json-content">${JSON.stringify(rawData, null, 2)}</pre>
@@ -129,7 +178,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     `;
 }
 
-// ... (renderSearchResults and displayMessage are unchanged) ...
 export function renderSearchResults(results) {
     const resultsHTML = results.map(player => `
         <button class="search-result-item" data-uid="${player.uid}">
@@ -147,6 +195,7 @@ export function renderSearchResults(results) {
         </div>
     `;
 }
+
 export function displayMessage(container, message, type = 'error') {
     container.innerHTML = `<div class="message ${type}">${message}</div>`;
 };
