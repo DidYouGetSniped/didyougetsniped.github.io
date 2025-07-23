@@ -127,7 +127,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     let specialLogoHTML = '';
     const playerLinks = data.socialLinks;
     if (playerLinks) {
-        if (playerLinks.discord) specialLogoHTML += `<a href="${playerLinks.discord}" target="_blank" rel="noopener noreferrer" title="Join Discord Server"><img src="/discord.png" alt="Discord Logo" class="player-name-logo"></a>`;
+        if (playerLinks.discord) specialLogoHTML += `<a href="${playerLinks.discord}" target="_blank" rel="noopener noreferrer" title="Discord"><img src="/discord.png" alt="Discord Logo" class="player-name-logo"></a>`;
         if (playerLinks.youtube) specialLogoHTML += `<a href="${playerLinks.youtube}" target="_blank" rel="noopener noreferrer" title="Visit YouTube Channel"><img src="/youtube.png" alt="YouTube Logo" class="player-name-logo"></a>`;
     }
 
