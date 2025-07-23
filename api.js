@@ -115,7 +115,9 @@ function processPlayerData(rawPlayerData) {
         : processed.totalKills;
     processed.wins = remapObjectKeys(rawPlayerData.wins, GAMEMODE_NAMES);
     processed.losses = remapObjectKeys(rawPlayerData.losses, GAMEMODE_NAMES);
-    processed.kills_per_vehicle = remapObjectKeys(raw_kills_per_vehicle, VEHICLE_KILL_NAMES);
+    const filtered_raw_kills_per_vehicle = { ...raw_kills_per_vehicle };
+    delete filtered_raw_kills_per_vehicle.v30;
+    processed.kills_per_vehicle = remapObjectKeys(filtered_raw_kills_per_vehicle, VEHICLE_KILL_NAMES);
     processed.deaths = remapObjectKeys(raw_deaths, DEATH_CAUSE_NAMES);
     const filterIgnoredWeapons = (dataObject) => {
         if (!dataObject) return {};
