@@ -221,3 +221,34 @@ export function renderSearchResults(results) {
 export function displayMessage(container, message, type = 'error') {
     container.innerHTML = `<div class="message ${type}">${message}</div>`;
 };
+
+export function updateMetaTags(playerData) {
+    if (!playerData) return;
+
+    document.title = `${playerData.nick}'s War Brokers Stats`;
+    
+    const ogTitleTag = document.querySelector('meta[property="og:title"]');
+    if (ogTitleTag) {
+        ogTitleTag.setAttribute('content', `${playerData.nick}'s War Brokers Stats`);
+    }
+
+    const ogDescriptionTag = document.querySelector('meta[property="og:description"]');
+    if (ogDescriptionTag) {
+        const description = `Level: ${playerData.level} | Squad: ${playerData.squad || 'None'} | K/D: ${playerData.kdr} | Kills ELO: ${(playerData.killsELO || 0).toFixed(2)} | Games ELO: ${(playerData.gamesELO || 0).toFixed(2)}`;
+        ogDescriptionTag.setAttribute('content', description);
+    }
+}
+
+export function resetMetaTags() {
+    document.title = 'War Brokers Player Stats';
+
+    const ogTitleTag = document.querySelector('meta[property="og:title"]');
+    if (ogTitleTag) {
+        ogTitleTag.setAttribute('content', 'War Brokers Player Stats');
+    }
+
+    const ogDescriptionTag = document.querySelector('meta[property="og:description"]');
+    if (ogDescriptionTag) {
+        ogDescriptionTag.setAttribute('content', 'Check out your player statistics by name or UID!');
+    }
+}
