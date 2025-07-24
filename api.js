@@ -160,7 +160,7 @@ function processPlayerData(rawPlayerData) {
         processed.weaponStats[weaponName] = {
             kills, deaths: deathsByWeapon, headshots: totalHeadshots,
             damage: parseFloat(totalDamage.toFixed(0)),
-            kdr: parseFloat(kdr.toFixed(3)),
+            kdr: kdr.toFixed(3),
             accuracy: parseFloat(accuracy.toFixed(2)),
             headshotRate: parseFloat(headshotRate.toFixed(2)),
             damagePerKill: parseFloat(damagePerKill.toFixed(0)),
