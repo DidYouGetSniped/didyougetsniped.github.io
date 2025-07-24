@@ -175,7 +175,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 <div class="stat-row"><span class="stat-label">Games ELO Rank:</span><span class="stat-value">Top ${topGamesPercent.toFixed(4)}%</span></div>
 
                 <h3 style="margin-top: 10px;">💀 Kills and Deaths</h3>
-                <div class="stat-row"><span class="stat-label">K/D Ratio:</span><span class="stat-value highlight">${data.kdr || '0.00'}</span></div>
+                <div class="stat-row"><span class="stat-label">K/D Ratio:</span><span class="stat-value highlight">${data.kdr || '0.000'}</span></div>
                 <div class="stat-row"><span class="stat-label">Total Kills:</span><span class="stat-value">${(data.totalKills || 0).toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Total Deaths:</span><span class="stat-value">${(data.totalDeaths || 0).toLocaleString()}</span></div>
             </div>
