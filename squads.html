@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:title" content="War Brokers Squad Stats">
+<meta property="og:description" content="Check squad-wide activity and statistics!">
+<title>War Brokers Squad Stats</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="stylesheet" href="squad.css">
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XGNQRLJMGK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+    
+  gtag('config', 'G-XGNQRLJMGK');
+</script>
+<body>
+<div class="container">
+  <header class="header">
+    <div id="rate-limiter" class="rate-limiter">
+      Requests: <span id="request-count">5</span>/5
+      <span id="reset-info" style="display: none;"> (Reset in <span id="reset-timer">60</span>s)</span>
+    </div>
+    <img src="/WB LOGO.png" alt="War Brokers Logo" class="logo">
+    <h1>War Brokers Squad Stats</h1>
+    <h3>Created By: Did You Get Sniped?</h3>
+    <h4>Join the <a href="https://discord.gg/Wb8eTc5HND" target="_blank">Support Server</a></h4>
+    <a href="https://didyougetsniped.github.io/wbinfo" target="_blank" class="btn-nav">Go To Player Stats</a>
+  </header>
+  
+  <section class="input-section">
+      <div class="input-wrapper">
+        <div class="input-row">
+          <label for="squad-input">Squad Name:</label>
+          <input type="text" id="squad-input" placeholder="Enter squad name">
+          <button id="fetch-btn" class="btn">Fetch Data</button>
+        </div>
+        <div class="time-options-row">
+            <div class="time-option-group">
+                <label for="timezone-select">Timezone:</label>
+                <select id="timezone-select">
+                    <option value="local">Local Time</option>
+                    <option value="UTC">UTC (Coordinated Universal Time)</option>
+                    <optgroup label="North America"><option value="America/New_York">Eastern (New York)</option><option value="America/Chicago">Central (Chicago)</option><option value="America/Denver">Mountain (Denver)</option><option value="America/Los_Angeles">Pacific (Los Angeles)</option><option value="America/Anchorage">Alaska (Anchorage)</option><option value="Pacific/Honolulu">Hawaii (Honolulu)</option><option value="America/Toronto">Canada - Eastern (Toronto)</option><option value="America/Vancouver">Canada - Pacific (Vancouver)</option><option value="America/Mexico_City">Mexico (Mexico City)</option></optgroup>
+                    <optgroup label="South America"><option value="America/Sao_Paulo">Brazil (São Paulo)</option><option value="America/Argentina/Buenos_Aires">Argentina (Buenos Aires)</option><option value="America/Bogota">Colombia (Bogotá)</option></optgroup>
+                    <optgroup label="Europe"><option value="Europe/London">UK (London)</option><option value="Europe/Paris">Central Europe (Paris)</option><option value="Europe/Berlin">Central Europe (Berlin)</option><option value="Europe/Moscow">Moscow</option><option value="Europe/Kyiv">Eastern Europe (Kyiv)</option></optgroup>
+                    <optgroup label="Asia"><option value="Asia/Dubai">Gulf Standard Time (Dubai)</option><option value="Asia/Kolkata">India (Kolkata)</option><option value="Asia/Shanghai">China (Shanghai)</option><option value="Asia/Hong_Kong">Hong Kong</option><option value="Asia/Singapore">Singapore</option><option value="Asia/Tokyo">Japan (Tokyo)</option><option value="Asia/Seoul">South Korea (Seoul)</option></optgroup>
+                    <optgroup label="Australia & Oceania"><option value="Australia/Sydney">Australia - Eastern (Sydney)</option><option value="Australia/Perth">Australia - Western (Perth)</option><option value="Pacific/Auckland">New Zealand (Auckland)</option></optgroup>
+                    <optgroup label="Africa"><option value="Africa/Cairo">Egypt (Cairo)</option><option value="Africa/Johannesburg">South Africa (Johannesburg)</option><option value="Africa/Lagos">West Africa (Lagos)</option></optgroup>
+                </select>
+            </div>
+            <div class="time-option-group">
+                <label for="time-format">Time Format:</label>
+                <select id="time-format"><option value="12">12-hour (AM/PM)</option><option value="24">24-hour</option></select>
+            </div>
+        </div>
+      </div>
+    </section>
+
+  <main class="content">
+    <div id="squad-display-section" class="player-header" style="display:none;">
+      <div class="squad-name-wrapper">
+        <div id="squad-name-display" class="player-name"></div>
+        <a id="squad-discord-link" href="#" target="_blank" style="display: none;">
+          <img src="/discord.png" alt="Discord Logo" class="squad-discord-logo">
+        </a>
+      </div>
+      <p id="squad-bio" class="squad-bio" style="display: none;"></p>
+    </div>
+
+    <div id="status-badge" class="status-badge" style="display:none;"></div>
+    <div id="stats-grid" class="stats-grid" style="display:none;"></div>
+    <div id="table-section" style="display:none;">
+      <div class="table-wrapper">
+        <table class="squad-table" id="squad-table">
+          <thead>
+            <tr>
+              <th data-k="nick">Nickname</th><th data-k="uid">UID</th><th data-k="time">Last Seen</th><th data-k="time">Time Ago</th><th data-k="level">Level</th><th data-k="xp">XP</th><th data-k="killsELO">Kills ELO</th><th data-k="gamesELO">Games ELO</th><th data-k="coins">Coins</th><th data-k="steam">Steam</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer class="footer">
+  <p>Thanks to EpicFeathers for his contributions, Pomp for his API, and What U Died and TheChillTankMain for their photos.</p>
+  <p><strong>Disclaimer:</strong> This is a third-party project and is not affiliated with, endorsed, or sponsored by War Brokers or its developers.</p>
+</footer>
+
+<script type="module">
+import { setRandomBackground } from './background.js';
+import { squadDB } from './squaddb.js';
+
+setRandomBackground();
+
+const squadInput = document.getElementById('squad-input');
+const fetchBtn = document.getElementById('fetch-btn');
+const tzSelect = document.getElementById('timezone-select');
+const fmtSelect = document.getElementById('time-format');
+const squadDisplaySection = document.getElementById('squad-display-section');
+const squadNameDisplay = document.getElementById('squad-name-display');
+const squadDiscordLink = document.getElementById('squad-discord-link');
+const squadBio = document.getElementById('squad-bio');
+const badge = document.getElementById('status-badge');
+const statsGrid = document.getElementById('stats-grid');
+const tableSec = document.getElementById('table-section');
+const tbody = document.querySelector('#squad-table tbody');
+const headers = document.querySelectorAll('#squad-table th');
+
+let data = [], sortKey = null, sortDir = 'asc';
+
+const RATE_LIMIT_COUNT = 5;
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+let requestTimestamps = [];
+
+const requestCountEl = document.getElementById('request-count');
+const resetInfoEl = document.getElementById('reset-info');
+const resetTimerEl = document.getElementById('reset-timer');
+
+function updateRateLimiterUI() {
+    const now = Date.now();
+    requestTimestamps = requestTimestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
+    const usedCount = requestTimestamps.length;
+    // MODIFIED: Logic for countdown
+    const remainingCount = RATE_LIMIT_COUNT - usedCount;
+    requestCountEl.textContent = remainingCount;
+
+    if (usedCount > 0) {
+        const oldestRequestTime = requestTimestamps[0];
+        const timePassed = now - oldestRequestTime;
+        const timeLeft = Math.ceil((RATE_LIMIT_WINDOW_MS - timePassed) / 1000);
+        resetTimerEl.textContent = timeLeft > 0 ? timeLeft : 0;
+        resetInfoEl.style.display = 'inline';
+    } else {
+        resetInfoEl.style.display = 'none';
+    }
+}
+setInterval(updateRateLimiterUI, 1000);
+updateRateLimiterUI();
+
+const diff = (s) => { if (s < 60) return s + 's'; const m = s / 60 | 0; if (m < 60) return m + 'm'; const h = m / 60 | 0; if (h < 24) return h + 'h'; return (h / 24 | 0) + 'd'; };
+const fmtDate = (t) => new Intl.DateTimeFormat('en-US', { timeZone: tzSelect.value === 'local' ? Intl.DateTimeFormat().resolvedOptions().timeZone : tzSelect.value, year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: fmtSelect.value === '12' }).format(new Date(t * 1000));
+
+function fillTable() {
+    tbody.innerHTML = '';
+    const now = Date.now() / 1000 | 0;
+    data.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><a href="https://didyougetsniped.github.io/wbinfo?uid=${p.uid}" target="_blank">${p.nick}</a></td>
+                        <td>${p.uid}</td>
+                        <td>${fmtDate(p.time)}</td>
+                        <td>${diff(now - p.time)} ago</td>
+                        <td>${p.level || 0}</td>
+                        <td>${(p.xp || 0).toLocaleString()}</td>
+                        <td>${(p.killsELO || 0).toFixed(2)}</td>
+                        <td>${(p.gamesELO || 0).toFixed(2)}</td>
+                        <td>${(p.coins || 0).toLocaleString()}</td>
+                        <td>${p.steam ? 'Yes' : 'No'}</td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+function updateStats() {
+    const now = Date.now() / 1000 | 0, th = 60 * 60 * 24 * 60;
+    let inactive = 0, steam = 0, xp = 0, lvl = 0, kE = 0, gE = 0, coins = 0;
+    data.forEach(p => {
+        if (now - p.time > th) inactive++;
+        if (p.steam) steam++;
+        xp += p.xp || 0; lvl += p.level || 0; kE += p.killsELO || 0; gE += p.gamesELO || 0; coins += p.coins || 0;
+    });
+    const total = data.length, inPct = total > 0 ? inactive / total : 0;
+    badge.textContent = `Status: ${inPct >= .85 ? 'Inactive' : 'Active'} (${Math.round(inPct * 100)}% inactive)`;
+    badge.className = 'status-badge ' + (inPct >= .85 ? 'inactive' : 'active');
+    badge.style.display = 'block';
+    
+    const avgLevel = total > 0 ? (lvl / total).toFixed(1) : 0;
+    const avgKillsELO = total > 0 ? (kE / total).toFixed(2) : 0;
+    const avgGamesELO = total > 0 ? (gE / total).toFixed(2) : 0;
+    const steamPct = total > 0 ? (steam / total * 100).toFixed(1) : 0;
+    const avgCoins = total > 0 ? (coins / total).toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0';
+
+    statsGrid.innerHTML = `
+        <div class="stat-card"><div class="stat-row"><span class="stat-label">Average Level</span><span class="stat-value">${avgLevel}</span></div></div>
+        <div class="stat-card"><div class="stat-row"><span class="stat-label">Average Kills ELO</span><span class="stat-value">${avgKillsELO}</span></div></div>
+        <div class="stat-card"><div class="stat-row"><span class="stat-label">Average Games ELO</span><span class="stat-value">${avgGamesELO}</span></div></div>
+        <div class="stat-card"><div class="stat-row"><span class="stat-label">Players with Steam</span><span class="stat-value">${steamPct}%</span></div></div>
+        <div class="stat-card"><div class="stat-row"><span class="stat-label">Total Level</span><span class="stat-value">${lvl.toLocaleString()}</span></div></div>
+        <div class="stat-card"><div class="stat-row"><span class="stat-label">Total XP</span><span class="stat-value">${xp.toLocaleString()}</span></div></div>
+        <div class="stat-card"><div class="stat-row"><span class="stat-label">Total Coins</span><span class="stat-value">${coins.toLocaleString()}</span></div></div>
+        <div class="stat-card"><div class="stat-row"><span class="stat-label">Average Coins</span><span class="stat-value">${avgCoins}</span></div></div>
+    `;
+    statsGrid.style.display = 'grid';
+}
+
+function sortData(k, d) {
+    data.sort((a, b) => {
+        let A = a[k], B = b[k];
+        if (k === 'steam') { A = A ? 'Yes' : 'No'; B = B ? 'Yes' : 'No'; }
+        if (typeof A === 'string') { return d === 'asc' ? A.localeCompare(B) : B.localeCompare(A); }
+        A = A || 0; B = B || 0;
+        return d === 'asc' ? A - B : B - A;
+    });
+}
+
+headers.forEach(h => {
+    h.addEventListener('click', () => {
+        const k = h.dataset.k;
+        if (!k) return;
+        sortDir = (sortKey === k && sortDir === 'asc') ? 'desc' : 'asc';
+        sortKey = k;
+        headers.forEach(x => x.classList.remove('sort-asc', 'sort-desc'));
+        h.classList.add('sort-' + sortDir);
+        sortData(k, sortDir);
+        fillTable();
+    });
+});
+
+tzSelect.onchange = fmtSelect.onchange = () => { if (data.length) fillTable(); };
+
+async function fetchSquadData(squadName) {
+    updateRateLimiterUI();
+    if (requestTimestamps.length >= RATE_LIMIT_COUNT) {
+        alert(`Rate limit exceeded. Please wait ${resetTimerEl.textContent} seconds.`);
+        return;
+    }
+    const squad = squadName.trim();
+    if (!squad) {
+        alert('Please enter a squad name.');
+        return;
+    }
+    requestTimestamps.push(Date.now());
+    updateRateLimiterUI();
+    const url = new URL(window.location);
+    url.searchParams.set('squad', squad);
+    history.pushState({}, '', url);
+
+    fetchBtn.disabled = true;
+    fetchBtn.textContent = 'Fetching...';
+    squadDisplaySection.style.display = 'none';
+    squadDiscordLink.style.display = 'none';
+    squadBio.style.display = 'none';
+    badge.style.display = statsGrid.style.display = tableSec.style.display = 'none';
+    tbody.innerHTML = '';
+    data = [];
+
+    try {
+        const res = await fetch(`https://wbapi.wbpjs.com/squad/getSquadMembers?squadName=${encodeURIComponent(squad)}`);
+        if (!res.ok) throw new Error(`Squad not found or API error (${res.status})`);
+        const members = await res.json();
+        if (!members.length) {
+            alert('No members found for this squad.');
+            return;
+        }
+        const details = await Promise.all(members.map(m => fetch(`https://wbapi.wbpjs.com/players/getPlayer?uid=${m.uid}`).then(r => r.ok ? r.json() : null)));
+        data = details.filter(Boolean);
+        if (!data.length) {
+            alert('Could not fetch details for any squad members.');
+            return;
+        }
+        squadNameDisplay.textContent = squad;
+        
+        const squadInfo = squadDB[squad];
+        if (squadInfo) {
+            if (squadInfo.discordLink) {
+                squadDiscordLink.href = squadInfo.discordLink;
+                squadDiscordLink.style.display = 'inline-block';
+            }
+            if (squadInfo.bio) {
+                squadBio.textContent = squadInfo.bio;
+                squadBio.style.display = 'block';
+            }
+        }
+
+        squadDisplaySection.style.display = 'flex';
+        sortKey = null;
+        headers.forEach(x => x.classList.remove('sort-asc', 'sort-desc'));
+        fillTable();
+        updateStats();
+        tableSec.style.display = 'block';
+    } catch (err) {
+        console.error(err);
+        alert('Error fetching data. Check the squad name or try again later.');
+    } finally {
+        fetchBtn.disabled = false;
+        fetchBtn.textContent = 'Fetch Data';
+    }
+}
+
+fetchBtn.addEventListener('click', () => { fetchSquadData(squadInput.value); });
+squadInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { fetchBtn.click(); } });
+
+const params = new URLSearchParams(window.location.search);
+const squadFromUrl = params.get('squad');
+if (squadFromUrl) {
+    squadInput.value = squadFromUrl;
+    fetchSquadData(squadFromUrl);
+}
+</script>
+</body>
+</html>
