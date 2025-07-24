@@ -1,7 +1,7 @@
 import { setRandomBackground } from '/background.js';
 import { fetchFullPlayerData, searchPlayerByName, RATE_LIMIT_CONFIG } from '/api.js';
 import { copyToClipboard, extractUID, formatDateTime, getJoinDateFromUID, timeAgo } from '/utils.js';
-import { renderPlayerInfo, renderSearchResults, generateRowsHTML, displayMessage } from '/ui.js';
+import { renderPlayerInfo, renderSearchResults, generateRowsHTML, displayMessage, updateMetaTags, resetMetaTags } from '/ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     setRandomBackground();
@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (timeAgoInterval) clearInterval(timeAgoInterval);
         playerInfoContainer.innerHTML = '';
         messageContainer.innerHTML = '';
+
+        resetMetaTags();
         
         const searchInput = uidInput.value.trim();
         if (!searchInput) {
@@ -72,11 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pushState) history.pushState(stateData, '', stateUrl);
 
             if (uid) {
-                // --- CHANGE: Destructure both raw and processed data ---
                 const { rawPlayerData, playerData, killsPercentile, gamesPercentile } = await fetchFullPlayerData(uid);
                 currentPlayerUID = uid;
                 currentPlayerdata = playerData;
-                // --- CHANGE: Pass both data objects to the display function ---
+                updateMetaTags(playerData);
                 displayFullPlayerInfo(playerData, rawPlayerData, { killsPercentile, gamesPercentile });
             } else {
                 const searchResults = await searchPlayerByName(searchInput);
@@ -99,12 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- CHANGE: Update function to accept both data objects ---
     function displayFullPlayerInfo(processedData, rawData, percentiles) {
         const sortStates = { kills: sortByKills, deaths: sortByDeaths, vehicleKills: sortByVehicleKills, wins: sortByWins, losses: sortByLosses };
         const timePrefs = { timeZone: timezoneSelect.value, timeFormat: timeFormatSelect.value };
         
-        // --- CHANGE: Pass both data objects to the render function ---
         playerInfoContainer.innerHTML = renderPlayerInfo(processedData, rawData, percentiles, sortStates, timePrefs);
         playerInfoContainer.style.display = 'block';
 
