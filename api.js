@@ -111,7 +111,7 @@ function processPlayerData(rawPlayerData) {
     const selfDestructDeathsTotal = Object.values(raw_self_destructs).reduce((sum, val) => sum + val, 0);
     processed.totalDeaths = weaponDeathsTotal + selfDestructDeathsTotal;
     processed.kdr = processed.totalDeaths > 0
-        ? parseFloat((processed.totalKills / processed.totalDeaths).toFixed(2))
+        ? parseFloat((processed.totalKills / processed.totalDeaths).toFixed(3))
         : processed.totalKills;
     processed.wins = remapObjectKeys(rawPlayerData.wins, GAMEMODE_NAMES);
     processed.losses = remapObjectKeys(rawPlayerData.losses, GAMEMODE_NAMES);
