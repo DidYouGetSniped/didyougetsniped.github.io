@@ -112,7 +112,7 @@ function processPlayerData(rawPlayerData) {
     processed.totalDeaths = weaponDeathsTotal + selfDestructDeathsTotal;
     processed.kdr = processed.totalDeaths > 0
         ? parseFloat((processed.totalKills / processed.totalDeaths).toFixed(3))
-        : processed.totalKills;
+        : processed.totalKills.toFixed(3);
     processed.wins = remapObjectKeys(rawPlayerData.wins, GAMEMODE_NAMES);
     processed.losses = remapObjectKeys(rawPlayerData.losses, GAMEMODE_NAMES);
     const filtered_raw_kills_per_vehicle = { ...raw_kills_per_vehicle };
@@ -160,7 +160,7 @@ function processPlayerData(rawPlayerData) {
         processed.weaponStats[weaponName] = {
             kills, deaths: deathsByWeapon, headshots: totalHeadshots,
             damage: parseFloat(totalDamage.toFixed(0)),
-            kdr: parseFloat(kdr.toFixed(3)),
+            kdr: parseFloat(kdr.toFixed(2)),
             accuracy: parseFloat(accuracy.toFixed(2)),
             headshotRate: parseFloat(headshotRate.toFixed(2)),
             damagePerKill: parseFloat(damagePerKill.toFixed(0)),
