@@ -1,5 +1,88 @@
 import { formatDateTime, timeAgo, getJoinDateFromUID } from '/utils.js';
 
+/**
+ * Calculates a player's performance score based on a complex formula.
+ * This is a JavaScript port of the provided Python function.
+ *
+ * @param {number} total_kills Total number of kills.
+ * @param {number} damage_dealt Total damage dealt to enemies.
+ * @param {number} total_deaths Total number of deaths.
+ * @param {number} damage_received Total damage received from enemies.
+ * @param {number} kills_elo_rank The player's placement as a decimal (e.g., Top 0.5% is passed as 0.005).
+ * @param {number} total_games Total number of games played.
+ * @param {number} num_self_destructs The total number of deaths by self-destruct.
+ * @param {number} xp Total experience points.
+ * @returns {number|null} The calculated overall performance score, or null if an error occurs.
+ */
+function calculatePerformanceScore(
+    total_kills,
+    damage_dealt,
+    total_deaths,
+    damage_received,
+    kills_elo_rank,
+    total_games,
+    num_self_destructs,
+    xp
+) {
+    try {
+        // --- Safety checks for division by zero ---
+        if (total_deaths === 0 || damage_received === 0 || kills_elo_rank === 0 || total_games === 0) {
+            console.error("Performance Score Calculation Error: One or more required stats are zero.", {
+                total_deaths,
+                damage_received,
+                kills_elo_rank,
+                total_games
+            });
+            return null;
+        }
+
+        // --- Calculate self_destruct_percentage ---
+        const self_destruct_percentage = num_self_destructs / total_deaths;
+
+        // --- Part 1: Core Performance Score ---
+
+        // --- Factor A: Combat Effectiveness ---
+        const combat_ratio = (total_kills * damage_dealt) / (total_deaths * damage_received);
+        const elo_bonus = Math.pow(1 / kills_elo_rank, 1 / 4) / 6.2;
+        const factor_a = Math.sqrt(combat_ratio) + elo_bonus;
+
+        // --- Factor B: Game Impact & Resilience ---
+        const avg_damage_impact = damage_dealt / (5000 * total_games);
+        const resilience = (damage_received * (1 - self_destruct_percentage)) / (400 * total_deaths);
+        const factor_b = avg_damage_impact + resilience;
+
+        // Combine factors
+        const core_performance_score = Math.sqrt(factor_a * factor_b);
+
+        // --- Part 2: Experience Bonus ---
+        const experience_bonus = Math.pow(xp, 1 / 4) / 62;
+
+        // --- Final Calculation ---
+        const overall_score = core_performance_score + experience_bonus;
+
+        if (isNaN(overall_score) || !isFinite(overall_score)) {
+            console.error("Performance Score result is NaN or Infinite. Check inputs.", {
+                total_kills,
+                damage_dealt,
+                total_deaths,
+                damage_received,
+                kills_elo_rank,
+                total_games,
+                num_self_destructs,
+                xp
+            });
+            return null;
+        }
+
+        return overall_score;
+
+    } catch (e) {
+        console.error("An unexpected error occurred during performance score calculation:", e);
+        return null;
+    }
+}
+
+
 export function generateRowsHTML(data, sortByCount) {
     if (!data || Object.keys(data).length === 0) {
         return '<p class="text-gray-400">No data available.</p>';
@@ -76,6 +159,23 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const damagePerKill = data.totalKills > 0 ? (totalDamageDealt / data.totalKills).toFixed(2) : 'N/A';
     const damagePerDeath = data.totalDeaths > 0 ? (totalDamageReceived / data.totalDeaths).toFixed(2) : 'N/A';
 
+    // --- Performance Score Calculation ---
+    const topKillsPercent = 100 - (percentiles.killsPercentile || 0);
+    const killsEloRankDecimal = topKillsPercent / 100.0;
+
+    const performanceScore = calculatePerformanceScore(
+        data.totalKills || 0,
+        totalDamageDealt,
+        data.totalDeaths || 0,
+        totalDamageReceived,
+        killsEloRankDecimal,
+        totalGames,
+        totalSelfDestructs,
+        data.xp || 0
+    );
+    const performanceScoreDisplay = performanceScore !== null ? performanceScore.toFixed(4) : 'N/A';
+    // --- End Performance Score Calculation ---
+
     const miscStatsHTML = `
         <div class="stat-card">
             <h3>🔧 Miscellaneous Stats</h3>
@@ -150,7 +250,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const steamText = isSteamUser ? 'Yes' : 'No';
     const steamHighlightClass = isSteamUser ? 'success' : 'danger';
 
-    const topKillsPercent = 100 - (percentiles.killsPercentile || 0);
     const topGamesPercent = 100 - (percentiles.gamesPercentile || 0);
 
     return `
@@ -177,13 +276,19 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 <div class="stat-row"><span class="stat-label">Last Played:</span><div class="stat-value-container"><div class="date-with-ago" id="full-last-played-text"><span class="stat-value" id="last-played">${formatDateTime(data.time, timeZone, timeFormat)}</span> <span class="time-ago" id="last-played-ago">${timeAgo(data.time)}</span></div><button class="btn-copy-inline" data-copy="full-last-played-text">Copy</button></div></div>
             </div>
             <div class="stat-card">
+                <h3>⭐ Broker Performance Rating (BPR) <a href="https://didyougetsniped.github.io/bps" target="_blank" rel="noopener noreferrer" style="font-size: 0.8em; margin-left: 5px; color: #0d6efd;">(explanation)</a></h3>
+                <div class="stat-row" style="margin-bottom: 20px;">
+                    <div>
+                        <span class="stat-label">Score:</span>
+                    </div>
+                    <span class="stat-value highlight">${performanceScoreDisplay}</span>
+                </div>
                 <h3>🏆 ELO Ratings</h3>
                 <div class="stat-row"><span class="stat-label">Kills ELO:</span><span class="stat-value highlight">${(data.killsELO || 0).toFixed(2)}</span></div>
                 <div class="stat-row"><span class="stat-label">Kills ELO Rank:</span><span class="stat-value">Top ${topKillsPercent.toFixed(4)}%</span></div>
                 
                 <div class="stat-row"><span class="stat-label">Games ELO:</span><span class="stat-value highlight">${(data.gamesELO || 0).toFixed(2)}</span></div>
                 <div class="stat-row"><span class="stat-label">Games ELO Rank:</span><span class="stat-value">Top ${topGamesPercent.toFixed(4)}%</span></div>
-
                 <h3 style="margin-top: 10px;">💀 Kills and Deaths</h3>
                 <div class="stat-row"><span class="stat-label">K/D Ratio:</span><span class="stat-value highlight">${data.kdr || '0.000'}</span></div>
                 <div class="stat-row"><span class="stat-label">Total Kills:</span><span class="stat-value">${(data.totalKills || 0).toLocaleString()}</span></div>
