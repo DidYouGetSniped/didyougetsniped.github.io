@@ -39,7 +39,6 @@ function createStatsCardHTML(title, data, sortState, toggleId, gridId, stackedHe
         </div>`;
 }
 
-// --- Full Component Rendering ---
 
 export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePrefs) {
     const { kills, deaths, vehicleKills, wins, losses } = sortStates;
@@ -73,6 +72,9 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const totalDistanceDrivenMeters = Object.values(rawData.distance_driven || {}).reduce((sum, val) => sum + val, 0);
     const totalDistanceDrivenKm = (totalDistanceDrivenMeters / 1000).toFixed(2);
     const totalDistanceDrivenMiles = (totalDistanceDrivenKm * 0.621371).toFixed(2);
+    const damageRatio = totalDamageReceived > 0 ? (totalDamageDealt / totalDamageReceived).toFixed(2) : 'N/A';
+    const damagePerKill = data.totalKills > 0 ? (totalDamageDealt / data.totalKills).toFixed(2) : 'N/A';
+    const damagePerDeath = data.totalDeaths > 0 ? (totalDamageReceived / data.totalDeaths).toFixed(2) : 'N/A';
 
     const miscStatsHTML = `
         <div class="stat-card">
@@ -88,6 +90,18 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
             <div class="stat-row">
                 <span class="stat-label">Damage Received:</span>
                 <span class="stat-value">${Math.round(totalDamageReceived).toLocaleString()}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Damage Dealt per Damage Received:</span>
+                <span class="stat-value">${damageRatio}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Damage Dealt per Kill:</span>
+                <span class="stat-value">${damagePerKill}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Damage Received per Death:</span>
+                <span class="stat-value">${damagePerDeath}</span>
             </div>
             <div class="stat-row">
                 <span class="stat-label">Total Headshots:</span>
@@ -110,7 +124,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 <span class="stat-value">${totalShotsHitZoomed.toLocaleString()}</span>
             </div>
               <div class="stat-row">
-                <span class="stat-label">Distance Driven:</span>
+                <span class="stat-label">Total Vehicle Distance:</span>
                 <span class="stat-value">${parseFloat(totalDistanceDrivenKm).toLocaleString()} km (${parseFloat(totalDistanceDrivenMiles).toLocaleString()} mi)</span>
             </div>
             <div class="stat-row">
