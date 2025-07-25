@@ -69,9 +69,9 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const totalShotsHitZoomed = Object.values(rawData.shots_hit_zoomed || {}).reduce((sum, val) => sum + val, 0);
     const numberOfJumps = rawData.number_of_jumps || 0;
     const scudsLaunched = rawData.scuds_launched || 0;
-    const totalDistanceDrivenMeters = Object.values(rawData.distance_driven || {}).reduce((sum, val) => sum + val, 0);
-    const totalDistanceDrivenKm = (totalDistanceDrivenMeters / 1000).toFixed(2);
-    const totalDistanceDrivenMiles = (totalDistanceDrivenKm * 0.621371).toFixed(2);
+    const totalWins = Object.values(data.wins || {}).reduce((sum, val) => sum + val, 0);
+    const totalLosses = Object.values(data.losses || {}).reduce((sum, val) => sum + val, 0);
+    const totalGames = totalWins + totalLosses;
     const damageRatio = totalDamageReceived > 0 ? (totalDamageDealt / totalDamageReceived).toFixed(2) : 'N/A';
     const damagePerKill = data.totalKills > 0 ? (totalDamageDealt / data.totalKills).toFixed(2) : 'N/A';
     const damagePerDeath = data.totalDeaths > 0 ? (totalDamageReceived / data.totalDeaths).toFixed(2) : 'N/A';
@@ -123,10 +123,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 <span class="stat-label">Shots Hit (Zoomed):</span>
                 <span class="stat-value">${totalShotsHitZoomed.toLocaleString()}</span>
             </div>
-              <div class="stat-row">
-                <span class="stat-label">Total Vehicle Distance:</span>
-                <span class="stat-value">${parseFloat(totalDistanceDrivenKm).toLocaleString()} km (${parseFloat(totalDistanceDrivenMiles).toLocaleString()} mi)</span>
-            </div>
             <div class="stat-row">
                 <span class="stat-label">Number of Jumps:</span>
                 <span class="stat-value">${numberOfJumps.toLocaleString()}</span>
@@ -162,7 +158,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
             <div class="player-name-details">
                 <div class="player-name">${data.nick || 'Unknown Player'}${specialLogoHTML}</div>
                 <div class="player-uid">UID: ${data.uid}</div>
-                <!-- NEW: Biography will be injected here -->
                 ${biographyHTML}
             </div>
         </div>
@@ -176,6 +171,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                     <span class="stat-label">Steam:</span>
                     <span class="${steamHighlightClass}">${steamText}</span>
                 </div>
+                <div class="stat-row"><span class="stat-label">Total Games Played:</span><span class="stat-value">${totalGames.toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Coins:</span><span class="stat-value">${(data.coins || 0).toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Join Date:</span><div class="stat-value-container"><div class="date-with-ago" id="full-join-date-text"><span class="stat-value" id="join-date">${formatDateTime(joinTimestamp, timeZone, timeFormat)}</span> <span class="time-ago" id="join-date-ago">${timeAgo(joinTimestamp)}</span></div><button class="btn-copy-inline" data-copy="full-join-date-text">Copy</button></div></div>
                 <div class="stat-row"><span class="stat-label">Last Played:</span><div class="stat-value-container"><div class="date-with-ago" id="full-last-played-text"><span class="stat-value" id="last-played">${formatDateTime(data.time, timeZone, timeFormat)}</span> <span class="time-ago" id="last-played-ago">${timeAgo(data.time)}</span></div><button class="btn-copy-inline" data-copy="full-last-played-text">Copy</button></div></div>
