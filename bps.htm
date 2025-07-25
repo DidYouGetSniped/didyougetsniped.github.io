@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Broker Performance Rating Explanation</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'JetBrains Mono', monospace; 
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 950px;
+            margin: auto;
+            background: #fff;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+        }
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #3498db;
+            margin-top: 40px;
+            font-size: 1.8em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 30px;
+            font-size: 1.4em;
+        }
+        h4 {
+            color: #1a5276;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .formula-block {
+            background: #e8f4f8;
+            padding: 20px 25px;
+            border-radius: 10px;
+            border: 1px solid #cce7ed;
+            margin: 30px 0;
+            font-size: 1.1em;
+        }
+        .formula-block p {
+            margin-bottom: 10px;
+        }
+        .formula-block strong {
+            color: #2980b9;
+        }
+        .formula-line {
+            font-family: 'JetBrains Mono', monospace; /* Ensuring code blocks use it specifically */
+            background-color: #d1ecf1;
+            padding: 5px 10px;
+            border-radius: 6px;
+            display: block;
+            margin: 8px 0;
+            white-space: pre-wrap; /* Ensures line breaks within the code block */
+            word-break: break-all; /* Helps with very long lines if they occur */
+            color: #333;
+            font-size: 0.95em;
+        }
+        code {
+            background-color: #e8f4f8;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: 'JetBrains Mono', monospace; /* Ensuring inline code uses it */
+            font-weight: bold;
+            color: #c0392b;
+            white-space: nowrap;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 25px;
+        }
+        li {
+            margin-bottom: 12px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .highlight {
+            background-color: #d1ecf1;
+            padding: 10px 15px;
+            border-left: 5px solid #007bff;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        /* Calculator Specific Styles */
+        .calculator {
+            background: #f7f7f7;
+            border: 1px solid #ddd;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .calculator h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            border-bottom: none;
+            color: #2c3e50;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .input-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+            font-size: 0.95em;
+        }
+        .input-group input[type="number"],
+        .input-group input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+            width: calc(100% - 22px); /* Account for padding and border */
+        }
+        .input-group input[type="number"]:focus,
+        .input-group input[type="text"] :focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        .calculator button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745; /* Green for calculate */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .calculator button:hover {
+            background-color: #218838;
+        }
+        .calculator .result {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-align: center;
+            background-color: #e6f7ff;
+            border: 1px solid #99daff;
+            color: #0056b3;
+        }
+        .calculator .result.error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .calculator .result.success-result {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+    </style>
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XGNQRLJMGK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+    
+  gtag('config', 'G-XGNQRLJMGK');
+</script>
+<body>
+    <div class="container">
+        <h1>Detailed Broker Performance Rating Explanation</h1>
+        <p>This document provides a comprehensive breakdown of the <strong>Broker Performance Rating</strong> (BPR) calculation. This score is designed to be a holistic measure of a player's effectiveness, resilience, and overall game impact, moving beyond simple statistics to capture true skill and contribution. Values for the calculator can be found <a href="https://didyougetsniped.github.io/wbinfo" target="_blank" rel="noopener">here</a>.</p>
+        <div class="calculator">
+            <h2>Interactive Performance Calculator</h2>
+            <p>Try the example profile below of <a href="https://didyougetsniped.github.io/wbinfo?uid=5ab2a1a9fd3c7a5019977b68" target="_blank" rel="noopener">JoJa15</a> on 7/25/2025 or enter your own values!</p>
+            <div class="input-group">
+                <label for="total_kills">Total Kills:</label>
+                <input type="number" id="total_kills" placeholder="e.g., 150167" value="150167">
+            </div>
+            <div class="input-group">
+                <label for="damage_dealt">Total Damage Dealt:</label>
+                <input type="number" id="damage_dealt" placeholder="e.g., 9515791" value="9515791">
+            </div>
+            <div class="input-group">
+                <label for="total_deaths">Total Deaths:</label>
+                <input type="number" id="total_deaths" placeholder="e.g., 38819" value="38819">
+            </div>
+            <div class="input-group">
+                <label for="damage_received">Total Damage Received:</label>
+                <input type="number" id="damage_received" placeholder="e.g., 21487962" value="21487962">
+            </div>
+            <div class="input-group">
+                <label for="top_placement_input">'Top X%' for Kills ELO (e.g., 80 for Top 80%):</label>
+                <input type="number" step="any" id="top_placement_input" placeholder="e.g., 1.0832" value="1.0832">
+            </div>
+            <div class="input-group">
+                <label for="total_games">Total Games Played:</label>
+                <input type="number" id="total_games" placeholder="e.g., 6270" value="6270">
+            </div>
+            <div class="input-group">
+                <label for="num_self_destructs">Number of Self Destructs:</label>
+                <input type="number" id="num_self_destructs" placeholder="e.g., 460" value="460">
+            </div>
+            <div class="input-group">
+                <label for="xp">Total XP:</label>
+                <input type="number" id="xp" placeholder="e.g., 25441015" value="25441015">
+            </div>
+            <button id="calculate_button">Calculate Performance Score</button>
+            <div id="calculation_result" class="result">
+                Enter values and click 'Calculate'
+            </div>
+        </div>
+
+        <h2>The Formulas in Detail</h2>
+        <p>The overall performance score is a sum of two primary components:</p>
+
+        <div class="formula-block">
+            <p><strong>Overall Performance Score</strong></p>
+            <div class="formula-line">
+                <code>Overall Score = Core Performance Score + Experience Bonus</code>
+            </div>
+
+            <p><strong>Core Performance Score</strong></p>
+            <p>This is the central part of the calculation, combining combat effectiveness and game impact:</p>
+            <div class="formula-line">
+                <code>Core Performance Score = &radic;(Factor A &times; Factor B)</code>
+            </div>
+
+            <p>Where:</p>
+
+            <p><strong>Factor A: Combat Effectiveness</strong></p>
+            <p>This factor assesses a player's direct combat prowess.</p>
+            <div class="formula-line">
+                <code>Factor A = &radic;(Combat Efficiency) + ELO Bonus</code>
+            </div>
+            <p>With sub-components:</p>
+            <div class="formula-line">
+                <code>Combat Efficiency = (total_kills &times; damage_dealt) / (total_deaths &times; damage_received)</code>
+                <code>ELO Bonus = (1 / kills_elo_rank)^(1/4) / 6.2</code>
+            </div>
+
+            <p><strong>Factor B: Game Impact & Resilience</strong></p>
+            <p>This factor evaluates a player's consistent contribution and survivability.</p>
+            <div class="formula-line">
+                <code>Factor B = Avg Damage Impact + Resilience</code>
+            </div>
+            <p>With sub-components:</p>
+            <div class="formula-line">
+                <code>Avg Damage Impact = damage_dealt / (5000 &times; total_games)</code>
+                <code>Resilience = (damage_received &times; (1 - self_destruct_percentage)) / (400 &times; total_deaths)</code>
+            </div>
+            <p>And specifically for Resilience:</p>
+            <div class="formula-line">
+                <code>self_destruct_percentage = num_self_destructs / total_deaths</code>
+            </div>
+
+            <p><strong>Experience Bonus</strong></p>
+            <p>A minor additional score based on accumulated experience.</p>
+            <div class="formula-line">
+                <code>Experience Bonus = (xp)^(1/4) / 62</code>
+            </div>
+        </div>
+
+        <div class="explanation">
+            <h2>1. Core Performance Score Explained</h2>
+            <p>This is the central pillar of the rating, evaluating a player's direct combat prowess and ability to impact the game while surviving. It is calculated as the square root of the product of two distinct factors:</p>
+            <p><code>Core Performance Score = &radic;(Factor A &times; Factor B)</code></p>
+            <p>This multiplicative structure means a player must perform well in both Factor A (Combat Effectiveness) AND Factor B (Game Impact & Resilience) to achieve a high score. Excelling in only one area will limit the overall core performance score.</p>
+
+            <h3>Factor A: Combat Effectiveness</h3>
+            <p>This factor quantifies a player's direct combat skill, combining their damage-weighted K/D ratio with an ELO-based ranking bonus.</p>
+
+            <h4>A.1. Damage-Weighted K/D Ratio (<code style="white-space: normal;">combat_efficiency</code>)</h4>
+            <p><code>Combat Efficiency = (total_kills &times; damage_dealt) / (total_deaths &times; damage_received)</code></p>
+            <ul>
+                <li><strong>Beyond Simple K/D:</strong> Unlike a standard Kill/Death ratio, this metric deeply integrates damage numbers. It rewards players who not only get kills but also contribute significantly to damage output, and who do so efficiently by taking less damage themselves.</li>
+                <li><strong>Numerator (<code style="white-space: normal;">total_kills &times; damage_dealt</code>):</strong> This powerfully emphasizes offensive contribution. A kill with high damage dealt is weighted much more heavily than a kill with low damage dealt (e.g., a "kill steal").</li>
+                <li><strong>Denominator (<code style="white-space: normal;">total_deaths &times; damage_received</code>):</strong> This part penalizes inefficiency. Taking a lot of damage for each kill or dying frequently will significantly reduce this ratio."</li>
+                <li><strong>Square Root in Factor A:</strong> After `combat_efficiency` is calculated, the entire `factor_a` takes a square root: `&radic;(Combat Efficiency)`. This helps to normalize potentially very large or very small ratios, making their contribution to the overall score more linear and preventing extreme values from skewing the final result too much.</li>
+            </ul>
+
+            <h4>A.2. ELO Bonus (<code style="white-space: normal;">elo_bonus</code>)</h4>
+            <p><code>ELO Bonus = (1 / kills_elo_rank)^(1/4) / 6.2</code></p>
+            <ul>
+                <li><strong>Rewarding Top Tier:</strong> This is arguably the most impactful component for truly elite players. It leverages the `kills_elo_rank` which is a decimal percentage (e.g., 0.00023 for Top 0.023%).</li>
+                <li><strong>Inverse Relationship:</strong> By taking `1 / kills_elo_rank`, a smaller (better) rank results in a much larger number. For example, `1 / 0.00023` is much larger than `1 / 0.005`. This rewards the absolute best players.</li>
+                <li><strong>Fourth Root Dampening:</strong> The `^(1/4)` (fourth root) is applied to this inverse. While the inverse can produce astronomically large numbers for top ranks, the fourth root significantly dampens this growth, making the bonus substantial but not overwhelming compared to combat metrics. It provides a strong, but controlled, exponential advantage.</li>
+                <li><strong>Scaling Constant (<code>/ 6.2</code>):</strong> The division by `6.2` is a tuning parameter. It scales down the ELO bonus to ensure it fits appropriately within the overall `Factor A` calculation, balancing its weight against the `combat_ratio`.</li>
+            </ul>
+
+            <h3>Factor B: Game Impact & Resilience</h3>
+            <p>This factor assesses a player's sustained contribution (damage per game) and their ability to absorb damage before falling in legitimate combat.</p>
+
+            <h4>B.1. Average Damage Impact (<code style="white-space: normal;">avg_damage_impact</code>)</h4>
+            <p><code>Avg Damage Impact = damage_dealt / (5000 &times; total_games)</code></p>
+            <ul>
+                <li><strong>Damage Consistency:</strong> This calculates a player's average damage dealt per game. It rewards players who consistently contribute significant damage across all their matches.</li>
+                <li><strong>Normalization Constant (<code>5000</code>):</strong> The constant `5000` serves as a normalization factor. Dividing by `5000 &times; total_games` ensures that this component doesn't grow uncontrollably with very high total damage from playing many games, effectively making it a 'damage efficiency per game' metric.</li>
+            </ul>
+
+            <h4>B.2. Resilience</h4>
+            <p>First, we calculate the percentage of deaths that were self-inflicted:</p>
+            <p><code>self_destruct_percentage = num_self_destructs / total_deaths</code></p>
+            <p>Then, Resilience is calculated as:</p>
+            <p><code>Resilience = (damage_received &times; (1 - self_destruct_percentage)) / (400 &times; total_deaths)</code></p>
+            <ul>
+                <li><strong>Excluding Self-Destructs:</strong> The calculation first determines the `self_destruct_percentage`. This is crucial because damage taken during a self-destruct isn't indicative of a player's ability to survive legitimate combat. By subtracting this percentage from 1 (`1 - self_destruct_percentage`), only damage received from actual combat engagements is considered.</li>
+                <li><strong>Survivability Metric:</strong> This measures how much "effective" damage a player can absorb before dying in combat. A higher `resilience` score means the player can take more damage per legitimate death, indicating better survivability or defensive play.</li>
+                <li><strong>Normalization Constant (<code>400</code>):</strong> The `400` constant acts as a scaling factor. It normalizes this component to fit appropriately within `Factor B`.</li>
+            </ul>
+
+            <h2>2. Experience Bonus Explained</h2>
+            <p><code>Experience Bonus = (xp)^(1/4) / 62</code></p>
+            <ul>
+                <li><strong>Acknowledging Dedication:</strong> This component provides a small, supplementary bonus for total experience points earned. It's a nod to time invested and general progression, but it's deliberately designed not to overshadow performance metrics.</li>
+                <li><strong>Heavy Dampening (Fourth Root):</strong> The `^(1/4)` (fourth root) applied to `xp` is critical. It ensures that even extremely high XP values only contribute a modest amount to the final score. Without this, a player who simply grinds for thousands of hours could potentially outscore a much more skilled player with less playtime. This root heavily flattens the curve, so doubling XP does not double the bonus.</li>
+                <li><strong>Scaling Constant (<code>/ 62</code>):</strong> The division by `62` further scales down this bonus, ensuring it remains a minor contributor to the `overall_score`, emphasizing that skill and combat performance are the primary drivers of the rating.</li>
+            </ul>
+
+            <h2>Safety Checks and Error Handling</h2>
+            <p>The Calculation includes important safety checks to prevent `ZeroDivisionError` and other issues.</p>
+            <ul>
+                <li>Checks for `total_deaths == 0`, `damage_received == 0`, `kills_elo_rank == 0`, and `total_games == 0`. This ensures that mathematical operations like division are always valid.</li>
+                <li>Validates user input for `kills_elo_rank` to be between 0 and 100% and `num_self_destructs` not exceeding `total_deaths`.</li>
+                <li>Includes general error handling for unexpected calculation issues.</li>
+            </ul>
+
+            <div class="highlight">
+                <h3>What would make a Broker Performance Rating of 1.0?</h3>
+                <p>A <strong>Broker Performance Rating</strong> of 1.0 represents a <strong>very low performance score</strong>, typically indicating a player who is very new, highly inefficient, or significantly struggling with core game mechanics.&nbsp;</p>
+                <p>The following player profile, when entered into the calculator, will result in a score of 1.0000:</p>
+                <ul>
+                    <li><strong>Total Kills:</strong> 7</li>
+                    <li><strong>Damage Dealt:</strong> 35,000</li>
+                    <li><strong>Total Deaths:</strong> 50</li>
+                    <li><strong>Damage Received:</strong> 10,000</li>
+                    <li><strong>'Top X%' Placement for Kills ELO:</strong> 80% (i.e., <code>kills_elo_rank = 0.8</code>)</li>
+                    <li><strong>Total Games Played:</strong> 20</li>
+                    <li><strong>Number of Self Destructs:</strong> 0</li>
+                    <li><strong>Total XP:</strong> 5,650</li>
+                </ul>
+                <p>This profile exemplifies a player with an extremely low K/D ratio, minimal damage contribution per game, poor combat efficiency (taking a lot of damage for little impact), and a low competitive rank. The low game count and XP further reinforce the beginner-level performance.</p>
+            </div>
+
+            <h2>Key Formula Variables (Recap)</h2>
+            <ul>
+                <li><code>total_kills</code> (integer): Total number of enemies eliminated.</li>
+                <li><code>damage_dealt</code> (float): Total damage inflicted upon opponents.</li>
+                <li><code>total_deaths</code> (integer): Total instances of the player being eliminated.</li>
+                <li><code>damage_received</code> (float): Total damage absorbed by the player.</li>
+                <li><code>kills_elo_rank</code> (float): The player's competitive rank for kills, expressed as a decimal (e.g., <code>0.005</code> for Top 0.5%). This is derived from a user input "Top X%" (e.g., <code>0.5</code>) by dividing by 100.</li>
+                <li><code>total_games</code> (integer): The total number of matches played.</li>
+                <li><code>num_self_destructs</code> (integer): Deaths explicitly caused by the player's own actions (e.g., falling off map, environmental hazards).</li>
+                <li><code>xp</code> (float): Total experience points accumulated by the player.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function calculateScore() {
+            // Get input values and convert to numbers, removing commas
+            const total_kills = parseInt(document.getElementById('total_kills').value.replace(/,/g, ''));
+            const damage_dealt = parseFloat(document.getElementById('damage_dealt').value.replace(/,/g, ''));
+            const total_deaths = parseInt(document.getElementById('total_deaths').value.replace(/,/g, ''));
+            const damage_received = parseFloat(document.getElementById('damage_received').value.replace(/,/g, ''));
+            const top_placement_input = parseFloat(document.getElementById('top_placement_input').value.replace(/,/g, ''));
+            const total_games = parseInt(document.getElementById('total_games').value.replace(/,/g, ''));
+            const num_self_destructs = parseInt(document.getElementById('num_self_destructs').value.replace(/,/g, ''));
+            const xp = parseFloat(document.getElementById('xp').value.replace(/,/g, ''));
+
+            const resultDiv = document.getElementById('calculation_result');
+            resultDiv.innerHTML = ''; // Clear previous results
+            resultDiv.className = 'result'; // Reset class for styling
+
+            // Input Validation (similar to Python script)
+            if (isNaN(total_kills) || isNaN(damage_dealt) || isNaN(total_deaths) ||
+                isNaN(damage_received) || isNaN(top_placement_input) || isNaN(total_games) ||
+                isNaN(num_self_destructs) || isNaN(xp)) {
+                resultDiv.innerHTML = '<p>Error: Please fill in all fields with valid numbers.</p>';
+                resultDiv.classList.add('error');
+                return;
+            }
+
+            if (total_deaths === 0) {
+                resultDiv.innerHTML = '<p>Error: Total Deaths cannot be zero for this calculation.</p>';
+                resultDiv.classList.add('error');
+                return;
+            }
+            if (damage_received === 0) {
+                resultDiv.innerHTML = '<p>Error: Damage Received cannot be zero for this calculation.</p>';
+                resultDiv.classList.add('error');
+                return;
+            }
+            if (top_placement_input === 0) {
+                resultDiv.innerHTML = '<p>Error: Kills ELO Rank (\'Top %\') cannot be zero.</p>';
+                resultDiv.classList.add('error');
+                return;
+            }
+            if (total_games === 0) {
+                resultDiv.innerHTML = '<p>Error: Total Games cannot be zero for this calculation.</p>';
+                resultDiv.classList.add('error');
+                return;
+            }
+            if (!(top_placement_input > 0 && top_placement_input <= 100)) {
+                resultDiv.innerHTML = '<p>Error: \'Top %\' placement must be greater than 0 and less than or equal to 100.</p>';
+                resultDiv.classList.add('error');
+                return;
+            }
+            if (num_self_destructs > total_deaths) {
+                resultDiv.innerHTML = '<p>Error: Number of self destructs cannot be greater than total deaths.</p>';
+                resultDiv.classList.add('error');
+                return;
+            }
+            // All non-negative inputs
+            if (total_kills < 0 || damage_dealt < 0 || total_deaths < 0 || damage_received < 0 ||
+                total_games < 0 || num_self_destructs < 0 || xp < 0) {
+                resultDiv.innerHTML = '<p>Error: All input values must be non-negative.</p>';
+                resultDiv.classList.add('error');
+                return;
+            }
+
+
+            // Convert kills_elo_rank (from percentage to decimal)
+            const kills_elo_rank = top_placement_input / 100.0;
+
+            // Perform Calculation (porting Python logic to JavaScript Math functions)
+            try {
+                // Ensure self_destruct_percentage is calculated safely if total_deaths is 0 (though already checked)
+                const self_destruct_percentage = (total_deaths === 0) ? 0 : num_self_destructs / total_deaths;
+
+                // Factor A: Combat Effectiveness
+                const combat_efficiency = (total_kills * damage_dealt) / (total_deaths * damage_received);
+                const elo_bonus = (Math.pow(1 / kills_elo_rank, 1/4)) / 6.2;
+                const factor_a = Math.sqrt(combat_efficiency) + elo_bonus;
+
+                // Factor B: Game Impact & Resilience
+                const avg_damage_impact = damage_dealt / (5000 * total_games);
+                const resilience = (damage_received * (1 - self_destruct_percentage)) / (400 * total_deaths);
+                const factor_b = avg_damage_impact + resilience;
+
+                // Core Performance Score
+                const core_performance_score = Math.sqrt(factor_a * factor_b);
+
+                // Experience Bonus
+                const experience_bonus = (Math.pow(xp, 1/4)) / 62;
+
+                // Final Calculation
+                const overall_score = core_performance_score + experience_bonus;
+
+                // Display Result
+                resultDiv.innerHTML = `<p>Broker Performance Rating: <strong>${overall_score.toFixed(4)}</strong></p>`;
+                resultDiv.classList.add('success-result');
+
+            } catch (e) {
+                resultDiv.innerHTML = `<p>An unexpected error occurred during calculation: ${e.message}</p>`;
+                resultDiv.classList.add('error');
+            }
+        }
+
+        // Attach event listener to the button once the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('calculate_button').addEventListener('click', calculateScore);
+            // Also run calculation on load to show example
+            calculateScore(); 
+        });
+    </script>
+</body>
+</html>
