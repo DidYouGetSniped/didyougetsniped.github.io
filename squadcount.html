@@ -44,7 +44,24 @@
       margin-bottom: 24px;
     }
 
+    /* --- Logo is now slightly bigger --- */
+    .logo {
+      max-width: 180px; /* Constrain width to prevent stretching */
+      height: auto;      /* Maintain aspect ratio */
+      margin-bottom: 16px; /* Add some space below the logo */
+    }
+
     h1{color:var(--success-color);text-align:center;margin-top:0;margin-bottom:4px;letter-spacing:1px}
+    
+    h3 {
+      color: var(--primary-text-color);
+      text-align: center;
+      font-weight: 400; 
+      font-size: 1.1rem;
+      margin-top: 0; 
+      margin-bottom: 16px;
+    }
+
     .update-info{text-align:center;color:var(--secondary-text-color);font-style:italic;margin-top:0;margin-bottom:24px}
     
     .nav-buttons {
@@ -54,16 +71,14 @@
       gap: 16px;
       margin-bottom: 24px;
     }
-    /* Set navigation buttons to white */
     .btn.nav-btn {
-      background-color: var(--primary-text-color); /* White background */
-      color: var(--bg-color); /* Dark text */
+      background-color: var(--primary-text-color);
+      color: var(--bg-color);
       text-decoration: none;
     }
     .btn.nav-btn:hover {
-      background-color: #fff; /* Brighter white on hover */
+      background-color: #fff;
     }
-    /* Keep the active button white, but with a glow */
     .btn.nav-btn.active {
       background-color: var(--primary-text-color);
       cursor: default;
@@ -73,7 +88,6 @@
     .button-group{display:flex;justify-content:center;gap:16px;margin-bottom:16px}
     .btn{font-family:inherit;font-size:1rem;font-weight:700;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;transition:all .3s ease}.btn:hover{transform:translateY(-3px);box-shadow:0 4px 12px rgba(0,0,0,.2)}
     
-    /* Keep the sort button blue */
     #toggleSort{background:var(--accent-color);color:var(--bg-color)}
     #toggleSort:hover{background:var(--accent-hover-color)}
     
@@ -108,7 +122,9 @@
 
   <div class="container">
     <div class="header-panel">
+      <img src="/WB LOGO.png" alt="War Brokers Logo" class="logo">
       <h1>Squad Member Count</h1>
+      <h3>Created By: Did You Get Sniped?</h3>
       <p class="update-info">The member count is updated every 8 hours.</p>
 
       <div class="nav-buttons">
