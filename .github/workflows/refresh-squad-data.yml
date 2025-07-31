@@ -1,0 +1,39 @@
+# .github/workflows/refresh-squad-data.yml
+
+name: Refresh Squad Data
+
+on:
+  # Run this workflow automatically every 8 hours
+  schedule:
+    - cron: '0 */8 * * *'
+  
+  # Allows you to run this workflow manually from the Actions tab in GitHub
+  # This is your secure "Force Refresh" button.
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checks out a copy of your repository so the script can run
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # 2. Sets up the Node.js environment required to run the script
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Use a current Long-Term Support version
+
+      # 3. Runs your data-fetching script
+      - name: Run fetch script
+        run: node fetch-data.js
+
+      # 4. Commits the new/updated squad-data.json file back to your repository
+      #    This action only runs if the file has actually changed.
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: Auto-update squad data'
+          file_pattern: 'squad-data.json'
