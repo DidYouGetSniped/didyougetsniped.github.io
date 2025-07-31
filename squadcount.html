@@ -3,32 +3,197 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Squad List with Member Counts</title>
+  <meta property="og:title" content="Squad Member Count">
+  <meta property="og:description" content="Check squad member count">
+  <title>Squad Member Count</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    :root{--bg-color:#1e1e2e;--surface-color:#313244;--primary-text-color:#cdd6f4;--secondary-text-color:#a6adc8;--border-color:#45475a;--accent-color:#89b4fa;--accent-hover-color:#b4befe;--error-color:#f38ba8;--success-color:#a6e3a1;--warn-color:#f9e2af}body{font-family:'JetBrains Mono',monospace;background-color:var(--bg-color);color:var(--primary-text-color);margin:0;padding:40px 20px;line-height:1.6}.container{max-width:700px;margin:0 auto}h1{color:var(--success-color);text-align:center;margin-bottom:24px;letter-spacing:1px}.button-group{display:flex;justify-content:center;gap:16px;margin-bottom:24px}.btn{font-family:inherit;font-size:1rem;font-weight:700;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;transition:all .3s ease}.btn:hover{transform:translateY(-3px);box-shadow:0 4px 12px rgba(0,0,0,.2)}#toggleSort{background:var(--accent-color);color:var(--bg-color)}#toggleSort:hover{background:var(--accent-hover-color)}ul{list-style-type:none;padding:0}li{background:var(--surface-color);margin:10px 0;padding:16px 20px;border-radius:8px;border-left:4px solid var(--accent-color);display:flex;justify-content:space-between;align-items:center;transition:all .3s ease}li:hover{transform:scale(1.03);box-shadow:0 4px 15px rgba(0,0,0,.2);border-left-color:var(--accent-hover-color)}.squad-name{font-weight:700;font-size:1.1rem;color:var(--primary-text-color);text-decoration:none;transition:color .2s ease}.squad-name:hover{color:var(--accent-color)}.member-count{color:var(--secondary-text-color);background-color:var(--border-color);padding:4px 10px;border-radius:12px;font-size:.9rem}#status{text-align:center;color:var(--secondary-text-color);font-style:italic}.error{color:var(--error-color)!important;font-weight:700}
+    :root{--bg-color:#1e1e2e;--surface-color:#313244;--primary-text-color:#cdd6f4;--secondary-text-color:#a6adc8;--border-color:#45475a;--accent-color:#89b4fa;--accent-hover-color:#b4befe;--error-color:#f38ba8;--success-color:#a6e3a1;--warn-color:#f9e2af}
+    body{
+      font-family:'JetBrains Mono',monospace;
+      background-color: rgba(30, 30, 46, 0.85); 
+      color:var(--primary-text-color);
+      margin:0;
+      padding:40px 20px;
+      line-height:1.6
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background-image: var(--background-image-url);
+      background-size: cover;
+      background-position: center;
+      filter: blur(8px);
+      transform: scale(1.1);
+    }
+    .container{max-width:700px;margin:0 auto;position:relative;z-index:1;text-align:center}
+    
+    .header-panel {
+      background-color: rgba(49, 50, 68, 0.75);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    h1{color:var(--success-color);text-align:center;margin-top:0;margin-bottom:4px;letter-spacing:1px}
+    .update-info{text-align:center;color:var(--secondary-text-color);font-style:italic;margin-top:0;margin-bottom:24px}
+    
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    /* Set navigation buttons to white */
+    .btn.nav-btn {
+      background-color: var(--primary-text-color); /* White background */
+      color: var(--bg-color); /* Dark text */
+      text-decoration: none;
+    }
+    .btn.nav-btn:hover {
+      background-color: #fff; /* Brighter white on hover */
+    }
+    /* Keep the active button white, but with a glow */
+    .btn.nav-btn.active {
+      background-color: var(--primary-text-color);
+      cursor: default;
+      box-shadow: 0 0 10px rgba(205, 214, 244, 0.4);
+    }
+    
+    .button-group{display:flex;justify-content:center;gap:16px;margin-bottom:16px}
+    .btn{font-family:inherit;font-size:1rem;font-weight:700;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;transition:all .3s ease}.btn:hover{transform:translateY(-3px);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+    
+    /* Keep the sort button blue */
+    #toggleSort{background:var(--accent-color);color:var(--bg-color)}
+    #toggleSort:hover{background:var(--accent-hover-color)}
+    
+    ul{list-style-type:none;padding:0;text-align:left}li{background:var(--surface-color);margin:10px 0;padding:16px 20px;border-radius:8px;border-left:4px solid var(--accent-color);display:flex;justify-content:space-between;align-items:center;transition:all .3s ease}li:hover{transform:scale(1.03);box-shadow:0 4px 15px rgba(0,0,0,.2);border-left-color:var(--accent-hover-color)}.squad-name{font-weight:700;font-size:1.1rem;color:var(--primary-text-color);text-decoration:none;transition:color .2s ease}.squad-name:hover{color:var(--accent-color)}.member-count{color:var(--secondary-text-color);background-color:var(--border-color);padding:4px 10px;border-radius:12px;font-size:.9rem}
+    #status{text-align:center;color:var(--secondary-text-color);font-style:italic;margin-bottom:0;}
+    .error{color:var(--error-color)!important;font-weight:700}
+    
+    footer{
+      display: inline-block;
+      text-align:center;
+      margin-top:40px;
+      padding:20px;
+      font-size:.8rem;
+      background-color: rgba(49, 50, 68, 0.75);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      color: var(--primary-text-color);
+    }
+    footer p{margin:5px 0}
   </style>
 </head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XGNQRLJMGK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XGNQRLJMGK');
+</script>
 <body>
 
   <div class="container">
-    <h1>Squads and Member Counts</h1>
-    <div class="button-group">
-        <button id="toggleSort" class="btn">Toggle Sort</button>
+    <div class="header-panel">
+      <h1>Squad Member Count</h1>
+      <p class="update-info">The member count is updated every 8 hours.</p>
+
+      <div class="nav-buttons">
+        <a href="https://didyougetsniped.github.io/wbinfo" class="btn nav-btn">Go To Player Stats</a>
+        <a href="https://didyougetsniped.github.io/squads" class="btn nav-btn active">Go To Squad Stats</a>
+      </div>
+
+      <div class="button-group">
+          <button id="toggleSort" class="btn">Toggle Sort</button>
+      </div>
+      <p id="status" class="loading">Initializing...</p>
     </div>
-    <p id="status" class="loading">Initializing...</p>
+
     <ul id="squadList"></ul>
+  
+    <footer>
+      <p>Thanks to EpicFeathers for his contributions, Pomp for his API, and What U Died and TheChillTankMain for their photos.</p>
+      <p>Disclaimer: This is a third-party project and is not affiliated with, endorsed, or sponsored by War Brokers or its developers.</p>
+    </footer>
   </div>
 
   <script>
+    // --- BACKGROUND SCRIPT (Incorporated directly) ---
+    function setRandomBackground() {
+      const backgroundImages = [
+          'backgrounds/image.png', 'backgrounds/image1.png', 'backgrounds/image2.png',
+          'backgrounds/image3.png', 'backgrounds/image4.png', 'backgrounds/image5.png',
+          'backgrounds/image6.png', 'backgrounds/image7.png', 'backgrounds/image8.png',
+          'backgrounds/image9.png', 'backgrounds/image10.png', 'backgrounds/image11.png',
+          'backgrounds/image12.png', 'backgrounds/image13.png', 'backgrounds/image14.png',
+          'backgrounds/image15.png', 'backgrounds/image16.png'
+      ];
+
+      const lastIndex = parseInt(sessionStorage.getItem('lastBackgroundIndex'), 10);
+      const totalImages = backgroundImages.length;
+      let randomIndex;
+
+      do {
+          randomIndex = Math.floor(Math.random() * totalImages);
+      } while (totalImages > 1 && randomIndex === lastIndex);
+
+      const selectedImage = backgroundImages[randomIndex];
+      document.body.style.setProperty('--background-image-url', `url('${selectedImage}')`);
+      sessionStorage.setItem('lastBackgroundIndex', randomIndex);
+    }
+    setRandomBackground();
+  </script>
+
+  <script>
+    // --- MAIN APPLICATION SCRIPT ---
     const squadListEl = document.getElementById('squadList');
     const statusEl = document.getElementById('status');
     const toggleSortBtn = document.getElementById('toggleSort');
 
     let squadData = [];
     let isDescending = true;
+    
+    function formatTimeAgo(date) {
+      const now = new Date();
+      const seconds = Math.floor((now - date) / 1000);
+      if (seconds < 60) return "just now";
+      let interval = seconds / 31536000;
+      if (interval > 1) {
+        const years = Math.floor(interval);
+        return `${years} year${years > 1 ? 's' : ''} ago`;
+      }
+      interval = seconds / 2592000;
+      if (interval > 1) {
+        const months = Math.floor(interval);
+        return `${months} month${months > 1 ? 's' : ''} ago`;
+      }
+      interval = seconds / 86400;
+      if (interval > 1) {
+        const days = Math.floor(interval);
+        return `${days} day${days > 1 ? 's' : ''} ago`;
+      }
+      interval = seconds / 3600;
+      if (interval > 1) {
+        const hours = Math.floor(interval);
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+      }
+      interval = seconds / 60;
+      const minutes = Math.floor(interval);
+      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    }
 
     function renderSquadList() {
       if (squadData.length === 0) return;
@@ -50,22 +215,25 @@
     async function loadAndDisplayData() {
       statusEl.textContent = 'Loading latest squad data...';
       try {
-        // Fetch the local JSON file generated by our GitHub Action
-        const response = await fetch('squad-data.json');
+        const response = await fetch('squad-data.json?v=' + new Date().getTime()); // Cache-bust
         if (!response.ok) {
           throw new Error('Data file not found. It may be generating for the first time.');
         }
         
         const data = await response.json();
-        
-        // The squad data is now inside the 'squads' property of our object
         squadData = data.squads;
         
         renderSquadList();
 
-        // Display the last updated time in a user-friendly format
         const lastUpdatedDate = new Date(data.lastUpdated);
-        statusEl.textContent = `Last updated: ${lastUpdatedDate.toLocaleString()}`;
+        const dateString = lastUpdatedDate.toLocaleDateString(undefined, { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+        const timeAgoString = formatTimeAgo(lastUpdatedDate);
+
+        statusEl.textContent = `Last updated: ${dateString} (${timeAgoString})`;
         statusEl.style.color = 'var(--success-color)';
         
       } catch (error) {
@@ -80,7 +248,6 @@
       renderSquadList();
     });
 
-    // Start the application
     loadAndDisplayData();
   </script>
 
