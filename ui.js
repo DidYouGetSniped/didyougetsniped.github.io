@@ -297,11 +297,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 <div class="stat-row"><span class="stat-label">XP:</span><span class="stat-value">${(data.xp || 0).toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Squad:</span>${data.squad ? `<a class="stat-value" href="https://didyougetsniped.github.io/squads?squad=${data.squad}" target="_blank" rel="noopener noreferrer">${data.squad}</a>` : `<span class="stat-value">None</span>`}</div>
                 <div class="stat-row"><span class="stat-label">Steam:</span><span class="${steamHighlightClass}">${steamText}</span></div>
-
-<div class="stat-row">
-    <span class="stat-label">Steam:</span>
-    <span class="${steamHighlightClass}">${steamText}</span>
-</div>
                 <div class="stat-row"><span class="stat-label">Total Games Played:</span><span class="stat-value">${totalGames.toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Coins:</span><span class="stat-value">${(data.coins || 0).toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Join Date:</span><div class="stat-value-container"><div class="date-with-ago" id="full-join-date-text"><span class="stat-value" id="join-date">${formatDateTime(joinTimestamp, timeZone, timeFormat)}</span> <span class="time-ago" id="join-date-ago">${timeAgo(joinTimestamp)}</span></div><button class="btn-copy-inline" data-copy="full-join-date-text">Copy</button></div></div>
@@ -398,4 +393,5 @@ export function resetMetaTags() {
     if (ogDescriptionTag) {
         ogDescriptionTag.setAttribute('content', 'Check out your player statistics by name or UID!');
     }
+
 }
