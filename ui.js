@@ -136,7 +136,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const deathStatsHTML = createStatsCardHTML('💀 Deaths by Cause', data.deaths, deaths, 'death-sort-toggle', 'death-stats-grid');
     const winsStatsHTML = createStatsCardHTML('🏆 Wins per Game Mode', data.wins, wins, 'wins-sort-toggle', 'wins-stats-grid', true);
     const lossesStatsHTML = createStatsCardHTML('👎 Losses per Game Mode', data.losses, losses, 'losses-sort-toggle', 'losses-stats-grid', true);
-
     const totalSelfDestructs = Object.values(rawData.self_destructs || {}).reduce((sum, val) => sum + val, 0);
     const totalDamageDealt = Object.values(rawData.damage_dealt || {}).reduce((sum, val) => sum + val, 0);
     const totalDamageReceived = Object.values(rawData.damage_received || {}).reduce((sum, val) => sum + val, 0);
@@ -159,14 +158,11 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const damageReceivedPerGame = totalGames > 0 ? Math.round(totalDamageReceived / totalGames).toLocaleString() : 'N/A';
     const jumpsPerGame = totalGames > 0 ? (numberOfJumps / totalGames).toFixed(2) : 'N/A';
     const headshotsPerGame = totalGames > 0 ? (totalHeadshots / totalGames).toFixed(2) : 'N/A';
-
-    // --- Performance Score Calculation ---
     const topKillsPercent = 100 - (percentiles.killsPercentile || 0);
     const killsEloRankDecimal = topKillsPercent / 100.0;
-    
-    // Get the new Games ELO Rank decimal
     const topGamesPercent = 100 - (percentiles.gamesPercentile || 0);
     const gamesEloRankDecimal = topGamesPercent / 100.0;
+    const topXpPercent = 100 - (percentiles.xpPercentile || 0);
 
     const performanceScore = calculatePerformanceScore(
         data.totalKills || 0,
@@ -179,11 +175,47 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
         totalSelfDestructs,
         data.xp || 0
     );
-    // Update display to 3 decimal places
     const performanceScoreDisplay = performanceScore !== null ? performanceScore.toFixed(3) : 'N/A';
-    // --- End Performance Score Calculation ---
+    let kdMilestoneHTML = ''; // Initialize as an empty string
+    const totalKillsForCalc = data.totalKills || 0;
+    const totalDeathsForCalc = data.totalDeaths || 0;
 
+    if (totalDeathsForCalc > 0) {
+        const current_kd = totalKillsForCalc / totalDeathsForCalc;
 
+        // --- Kills to Rank Up ---
+        const next_kd_ratio = (Math.trunc(current_kd * 10) / 10) + 0.1;
+        const kills_needed = (next_kd_ratio * totalDeathsForCalc) - totalKillsForCalc;
+        const kills_to_rank_up = Math.ceil(kills_needed);
+
+        const rankUpText = kills_to_rank_up > 0
+            ? `Need ${kills_to_rank_up.toLocaleString()} kills for ${next_kd_ratio.toFixed(3)} K/D`
+            : `Next milestone passed`;
+
+        // --- Deaths to Rank Down ---
+        const previous_kd_milestone = (Math.ceil(current_kd * 10) - 1) / 10;
+        let rankDownText = '';
+        if (previous_kd_milestone > 0) {
+            const deaths_needed = (totalKillsForCalc / previous_kd_milestone) - totalDeathsForCalc;
+            const deaths_to_rank_down = Math.ceil(deaths_needed);
+            rankDownText = `Drop to ${previous_kd_milestone.toFixed(3)} in ${deaths_to_rank_down.toLocaleString()} deaths`;
+        } else {
+            rankDownText = 'K/D cannot drop further'; // Handles cases where K/D is < 0.1
+        }
+        
+        // --- Assemble the HTML snippet with new classes ---
+        kdMilestoneHTML = `
+            <div class="stat-row">
+                <span class="stat-label-emoji">📈</span>
+                <span class="stat-value-pill ${kills_to_rank_up > 0 ? 'success' : 'subtle'}">${rankUpText}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label-emoji">📉</span>
+                <span class="stat-value-pill danger">${rankDownText}</span>
+            </div>
+        `;
+    }
+  
     const miscStatsHTML = `
         <div class="stat-card">
             <h3>🔧 Miscellaneous Stats</h3>
@@ -295,6 +327,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 <h3>📊 Basic Information</h3>
                 <div class="stat-row"><span class="stat-label">Level:</span><span class="stat-value highlight">${(data.level || 0).toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">XP:</span><span class="stat-value">${(data.xp || 0).toLocaleString()}</span></div>
+                <div class="stat-row"><span class="stat-label">XP Rank:</span><span class="stat-value">Top ${topXpPercent.toFixed(4)}%</span></div>
                 <div class="stat-row"><span class="stat-label">Squad:</span>${data.squad ? `<a class="stat-value" href="https://didyougetsniped.github.io/squads?squad=${data.squad}" target="_blank" rel="noopener noreferrer">${data.squad}</a>` : `<span class="stat-value">None</span>`}</div>
                 <div class="stat-row"><span class="stat-label">Steam:</span><span class="${steamHighlightClass}">${steamText}</span></div>
                 <div class="stat-row"><span class="stat-label">Total Games Played:</span><span class="stat-value">${totalGames.toLocaleString()}</span></div>
@@ -318,6 +351,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 <div class="stat-row"><span class="stat-label">Games ELO Rank:</span><span class="stat-value">Top ${topGamesPercent.toFixed(4)}%</span></div>
                 <h3 style="margin-top: 10px;">💀 Kills and Deaths</h3>
                 <div class="stat-row"><span class="stat-label">K/D Ratio:</span><span class="stat-value highlight">${data.kdr || '0.000'}</span></div>
+                ${kdMilestoneHTML}
                 <div class="stat-row"><span class="stat-label">Total Kills:</span><span class="stat-value">${(data.totalKills || 0).toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Total Deaths:</span><span class="stat-value">${(data.totalDeaths || 0).toLocaleString()}</span></div>
             </div>

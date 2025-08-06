@@ -74,11 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pushState) history.pushState(stateData, '', stateUrl);
 
             if (uid) {
-                const { rawPlayerData, playerData, killsPercentile, gamesPercentile } = await fetchFullPlayerData(uid);
+                const { rawPlayerData, playerData, killsPercentile, gamesPercentile, xpPercentile } = await fetchFullPlayerData(uid);
                 currentPlayerUID = uid;
                 currentPlayerdata = playerData;
                 updateMetaTags(playerData);
-                displayFullPlayerInfo(playerData, rawPlayerData, { killsPercentile, gamesPercentile });
+                displayFullPlayerInfo(playerData, rawPlayerData, { killsPercentile, gamesPercentile, xpPercentile });
             } else {
                 const searchResults = await searchPlayerByName(searchInput);
                 if (searchResults.length === 0) {

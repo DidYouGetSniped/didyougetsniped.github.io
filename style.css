@@ -296,6 +296,37 @@ body::before {
 .stats-data-grid .stat-row { padding: 6px 0; }
 .weapon-stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
 .weapon-stats-header h3 { margin: 0; }
+.stat-row .stat-label-emoji {
+    font-size: 1.6em;   /* Makes the emoji larger */
+    line-height: 1;     /* Helps with vertical alignment */
+}
+
+.stat-row .stat-value-pill {
+    padding: 5px 12px;  /* Vertical and horizontal padding inside the pill */
+    border-radius: 7px; /* Rounded corners for the pill shape */
+    font-size: 0.9em;   /* Text size inside the pill */
+    font-weight: 600;   /* Bolder text */
+    color: #1a1a1a;     /* White text color */
+    text-align: center;
+}
+
+/* --- Pill Colors --- */
+
+/* Color for the "kills needed" pill (matches the green in your image) */
+.stat-value-pill.success {
+    background-color: #1abc9c;
+    color: #1a1a1a; /* Dark text for better contrast on this green */
+}
+
+/* Color for the "deaths to drop" pill (matches the red in your image) */
+.stat-value-pill.danger {
+    background-color: #e84c3d;
+}
+
+/* A neutral gray for milestones that have already been passed */
+.stat-value-pill.subtle {
+    background-color: #7f8c8d;
+}
 
 .sort-toggle { 
     display: flex; 

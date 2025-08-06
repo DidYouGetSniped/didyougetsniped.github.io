@@ -189,6 +189,7 @@ export async function fetchFullPlayerData(uid) {
     const playerUrl = `${API_BASE_URL}/getPlayer?uid=${uid}`;
     const killsPercentileUrl = `${API_BASE_URL}/percentile/killsElo?uid=${uid}`;
     const gamesPercentileUrl = `${API_BASE_URL}/percentile/gamesElo?uid=${uid}`;
+    const xpPercentileUrl = `${API_BASE_URL}/percentile/xp?uid=${uid}`;
 
     const rawPlayerData = await fetchData(playerUrl);
     if (!rawPlayerData) {
@@ -197,16 +198,17 @@ export async function fetchFullPlayerData(uid) {
 
     const playerData = processPlayerData(rawPlayerData);
 
-    const [killsPercentile, gamesPercentile] = await Promise.all([
+     const [killsPercentile, gamesPercentile, xpPercentile] = await Promise.all([
         fetchData(killsPercentileUrl, {}, 0),
-        fetchData(gamesPercentileUrl, {}, 0)
+        fetchData(gamesPercentileUrl, {}, 0),
+        fetchData(xpPercentileUrl, {}, 0) 
     ]);
 
     if (killsPercentile === 0 || gamesPercentile === 0) {
         console.warn('Could not fetch all percentile data. Some values may be defaulted to 0.');
     }
 
-    return { rawPlayerData, playerData, killsPercentile, gamesPercentile };
+    return { rawPlayerData, playerData, killsPercentile, gamesPercentile, xpPercentile };
 }
 
 export async function searchPlayerByName(query) {
