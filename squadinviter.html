@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>War Brokers Squad Inviter</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0d1117; --card:#0f172a; --text:#e5e7eb;
+      --muted:#94a3b8; --accent:#22d3ee; --accent-2:#38bdf8; --ring:rgba(34,211,238,.35);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100dvh;
+      display:grid; place-items:center; padding:40px;
+      color:var(--text);
+      font:24px/1.7 "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background:
+        radial-gradient(1200px 800px at 10% -10%, #0a2230 0%, transparent 60%),
+        radial-gradient(1200px 800px at 110% 10%, #1f1140 0%, transparent 60%),
+        var(--bg);
+    }
+    .card{
+      width:100%; max-width:1000px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 30%), var(--card);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:24px; padding:44px 34px;
+      box-shadow:0 16px 48px rgba(0,0,0,.45);
+    }
+    h1{margin:0 0 18px; font-size:40px}
+    p{margin:0 0 28px; color:var(--muted); font-size:18px}
+    label{display:block; font-weight:800; margin:16px 0 10px; font-size:20px}
+    .row{display:grid; grid-template-columns:1fr; gap:18px}
+    @media(min-width:820px){ .row{grid-template-columns:1.2fr .8fr} }
+    input[type="text"]{
+      width:100%; padding:20px 22px; border-radius:18px;
+      border:1px solid rgba(255,255,255,.18); background:#0b1220; color:var(--text);
+      outline:none; transition:.15s border-color, .15s box-shadow; font-size:22px;
+    }
+    input::placeholder{color:#64748b}
+    input:focus{border-color:var(--accent); box-shadow:0 0 0 8px var(--ring)}
+    button{
+      margin-top:26px; width:100%;
+      appearance:none; border:0; border-radius:18px; padding:24px 26px; cursor:pointer;
+      font-weight:800; font-size:24px; color:#061018;
+      background:linear-gradient(to bottom right, var(--accent), var(--accent-2));
+      box-shadow:0 14px 28px rgba(34,211,238,.32);
+      transition: filter .15s ease-in-out, transform .05s ease-in-out;
+    }
+    button:hover{filter:brightness(1.06)}
+    button:active{transform:translateY(1px)}
+    .hint{margin-top:14px; color:var(--muted); font-size:16px}
+    .endpoint{margin-top:14px; font-size:16px; color:var(--muted)}
+    code{background:rgba(255,255,255,.08); padding:4px 8px; border-radius:8px}
+    .notice{margin-top:14px; font-size:16px; color:#fca5a5}
+    .notice a{color:#93c5fd; text-decoration:none}
+    .creator{margin-top:32px; text-align:center; font-size:15px; color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Manual WB Squad Inviter</h1>
+    <p>Enter your game token and one UID, then Invite.</p>
+
+    <form id="inviteForm" novalidate>
+      <div class="row">
+        <div>
+          <label for="token">Game token</label>
+          <input id="token" name="token" type="text" placeholder="Paste your game token" required autocomplete="off" spellcheck="false" />
+        </div>
+        <div>
+          <label for="uid">UID</label>
+          <input id="uid" name="uid" type="text" placeholder="Paste a UID" required autocomplete="off" spellcheck="false" />
+        </div>
+      </div>
+      <button type="submit">Invite ➜</button>
+      <div class="hint">If only one tab opens, allow pop‑ups for this file/page.</div>
+      <div class="endpoint">
+        Endpoint: <code>https://store1.warbrokers.io/303/invite_squad_member.php?token=…&uid=…</code>
+      </div>
+      <div id="notice" class="notice" style="display:none;"></div>
+    </form>
+    
+    <div class="creator">Created by Did You Get Sniped?</div>
+  </div>
+
+  <script>
+    const form = document.getElementById('inviteForm');
+    const tokenEl = document.getElementById('token');
+    const uidEl = document.getElementById('uid');
+    const notice = document.getElementById('notice');
+
+    const INVITE_BASE = 'https://store1.warbrokers.io/303/invite_squad_member.php';
+    const INFO_BASE   = 'https://didyougetsniped.github.io/wbinfo?uid=';
+
+    function openViaAnchor(url){
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const token = tokenEl.value.trim();
+      const uid   = uidEl.value.trim();
+
+      const inviteUrl = `${INVITE_BASE}?token=${encodeURIComponent(token)}&uid=${encodeURIComponent(uid)}`;
+      const infoUrl   = `${INFO_BASE}${encodeURIComponent(uid)}`;
+
+      // Strategy: pre-open two blank tabs (most reliable across browsers),
+      // then set their locations; fallback to anchor-click if blocked.
+      let w1 = window.open('', '_blank'); // for invite
+      let w2 = window.open('', '_blank'); // for info
+
+      if (w1) { w1.location.href = inviteUrl; } else { openViaAnchor(inviteUrl); }
+      if (w2) { w2.location.href = infoUrl;   } else { openViaAnchor(infoUrl); }
+
+      // If either was blocked, show a clickable notice
+      const blocked = (!w1 && !w2) || (!w1 || !w2);
+      if (blocked) {
+        notice.style.display = 'block';
+        notice.innerHTML = `Popup blocked. Open manually:
+          <a href="${inviteUrl}" target="_blank" rel="noopener noreferrer">invite</a> ·
+          <a href="${infoUrl}" target="_blank" rel="noopener noreferrer">info</a>`;
+      } else {
+        notice.style.display = 'none';
+      }
+
+      // Clear + refocus UID for next invite
+      setTimeout(() => { uidEl.value = ''; uidEl.focus(); }, 60);
+    });
+  </script>
+</body>
+</html>
