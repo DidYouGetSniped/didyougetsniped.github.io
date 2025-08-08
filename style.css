@@ -413,10 +413,20 @@ h1 { display: flex; align-items: center; justify-content: center; flex-wrap: wra
         word-break: break-all;
     }
 
+    /* Center the War Brokers logo on mobile */
+    .logo,
+    #page-logo {
+        display: block;
+        margin: 0 auto 10px;
+    }
+
+    /* Center the Requests pill on mobile */
     .rate-limit-info {
         position: static;
-        margin-top: 15px;
-        display: inline-block;
+        display: block;
+        width: max-content;
+        margin: 10px auto 0; /* centers horizontally */
+        text-align: center;
     }
 
     .input-group {
