@@ -62,6 +62,8 @@ const PLAYER_BIOGRAPHIES = {
     '60d08b15d142afee4b1dfabe': "Howdy! Welcome to my stats profile. <br> I am the creator of this website. " +
     "I first started playing War Brokers back in 2017. In 2021 I created a YouTube channel. Sometimes I make edits" + 
     " on the <a href='https://war-brokers.fandom.com/wiki/War_Brokers_Wiki' target='_blank' class='no-link-style'>War Brokers Wiki</a>.",
+
+    '614cdc8bd142af3e0f3f8370': "HM: iffypedia - goat of sniping"
 };
 
 async function fetchData(url, options = {}, errorValue = null) {
@@ -216,3 +218,4 @@ export async function searchPlayerByName(query) {
     const searchResults = await fetchData(searchUrl, {}, []);
     return searchResults;
 }
+
