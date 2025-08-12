@@ -9,118 +9,116 @@
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="stylesheet" href="squad.css">
 </head>
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGNQRLJMGK"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
     
-  gtag('config', 'G-XGNQRLJMGK');
+    gtag('config', 'G-XGNQRLJMGK');
 </script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
-  const style=document.createElement('style');
-  style.innerHTML=`*{cursor:url('wb kill.png') 32 32,auto!important;}`;
-  document.head.appendChild(style);
-  const s=['sounds/sound.wav','sounds/sound2.wav','sounds/sound3.wav'];
-  let i=0,t=null,r=100,x=0,y=0;
-  function f(){new Audio(s[i]).play().catch(e=>console.warn('Audio playback failed:',e));}
-  document.addEventListener('mousedown',e=>{
-    if(e.button!==0||e.target.draggable)return;
-    x=e.clientX;y=e.clientY;f();
-    t=setInterval(f,r);
-  });
-  document.addEventListener('mousemove',e=>{
-    if(Math.abs(e.clientX-x)>3||Math.abs(e.clientY-y)>3){
-      clearInterval(t);t=null;
-    }
-  });
-  document.addEventListener('mouseup',e=>{
-    if(e.button!==0)return;
-    clearInterval(t);t=null;
-    i=(i+1)%s.length;
-  });
-  document.addEventListener('mouseleave',()=>{
-    clearInterval(t);t=null;
-  });
+    const style=document.createElement('style');
+    style.innerHTML=`*{cursor:url('wb kill.png') 32 32,auto!important;}`;
+    document.head.appendChild(style);
+    const s=['sounds/sound.wav','sounds/sound2.wav','sounds/sound3.wav','sounds/sound.wav','sounds/sound2.wav','sounds/sound3.wav'];
+    let i=0,t=null,r=100,x=0,y=0;
+    function f(){new Audio(s[i]).play().catch(e=>console.warn('Audio playback failed:',e));}
+    document.addEventListener('mousedown',e=>{
+        if(e.button!==0||e.target.draggable)return;
+        x=e.clientX;y=e.clientY;f();
+        t=setInterval(f,r);
+    });
+    document.addEventListener('mousemove',e=>{
+        if(Math.abs(e.clientX-x)>3||Math.abs(e.clientY-y)>3){
+            clearInterval(t);t=null;
+        }
+    });
+    document.addEventListener('mouseup',e=>{
+        if(e.button!==0)return;
+        clearInterval(t);t=null;
+        i=(i+1)%s.length;
+    });
+    document.addEventListener('mouseleave',()=>{
+        clearInterval(t);t=null;
+    });
 });
 </script>
 <body>
 <div class="container">
-  <header class="header">
-    <div id="rate-limiter" class="rate-limiter">
-      Requests: <span id="request-count">5</span>/5
-      <span id="reset-info" style="display: none;"> (Reset in <span id="reset-timer">60</span>s)</span>
-    </div>
-    <img src="/WB LOGO.png" alt="War Brokers Logo" class="logo">
-    <h1>War Brokers Squad Stats</h1>
-    <h3>Created By: Did You Get Sniped?</h3>
-    <h4>Join the <a href="https://discord.gg/Wb8eTc5HND" target="_blank">Support Server</a></h4>
-    <a href="https://didyougetsniped.github.io/wbinfo" target="_blank" class="btn-nav">Go To Player Stats</a>
-    <a href="https://didyougetsniped.github.io/squadcount" target="_blank" class="btn-nav">Go To Squad Member Count</a>
-  </header>
-  
-  <section class="input-section">
-      <div class="input-wrapper">
-        <div class="input-row">
-          <label for="squad-input">Squad Name:</label>
-          <input type="text" id="squad-input" placeholder="Enter squad name">
-          <button id="fetch-btn" class="btn">Fetch Data</button>
+    <header class="header">
+        <div id="rate-limiter" class="rate-limiter">
+            Requests: <span id="request-count">5</span>/5
+            <span id="reset-info" style="display: none;"> (Reset in <span id="reset-timer">60</span>s)</span>
         </div>
-        <div class="time-options-row">
-            <div class="time-option-group">
-                <label for="timezone-select">Timezone:</label>
-                <select id="timezone-select">
-                    <option value="local">Local Time</option>
-                    <option value="UTC">UTC (Coordinated Universal Time)</option>
-                    <optgroup label="North America"><option value="America/New_York">Eastern (New York)</option><option value="America/Chicago">Central (Chicago)</option><option value="America/Denver">Mountain (Denver)</option><option value="America/Los_Angeles">Pacific (Los Angeles)</option><option value="America/Anchorage">Alaska (Anchorage)</option><option value="Pacific/Honolulu">Hawaii (Honolulu)</option><option value="America/Toronto">Canada - Eastern (Toronto)</option><option value="America/Vancouver">Canada - Pacific (Vancouver)</option><option value="America/Mexico_City">Mexico (Mexico City)</option></optgroup>
-                    <optgroup label="South America"><option value="America/Sao_Paulo">Brazil (São Paulo)</option><option value="America/Argentina/Buenos_Aires">Argentina (Buenos Aires)</option><option value="America/Bogota">Colombia (Bogotá)</option></optgroup>
-                    <optgroup label="Europe"><option value="Europe/London">UK (London)</option><option value="Europe/Paris">Central Europe (Paris)</option><option value="Europe/Berlin">Central Europe (Berlin)</option><option value="Europe/Moscow">Moscow</option><option value="Europe/Kyiv">Eastern Europe (Kyiv)</option></optgroup>
-                    <optgroup label="Asia"><option value="Asia/Dubai">Gulf Standard Time (Dubai)</option><option value="Asia/Kolkata">India (Kolkata)</option><option value="Asia/Shanghai">China (Shanghai)</option><option value="Asia/Hong_Kong">Hong Kong</option><option value="Asia/Singapore">Singapore</option><option value="Asia/Tokyo">Japan (Tokyo)</option><option value="Asia/Seoul">South Korea (Seoul)</option></optgroup>
-                    <optgroup label="Australia & Oceania"><option value="Australia/Sydney">Australia - Eastern (Sydney)</option><option value="Australia/Perth">Australia - Western (Perth)</option><option value="Pacific/Auckland">New Zealand (Auckland)</option></optgroup>
-                    <optgroup label="Africa"><option value="Africa/Cairo">Egypt (Cairo)</option><option value="Africa/Johannesburg">South Africa (Johannesburg)</option><option value="Africa/Lagos">West Africa (Lagos)</option></optgroup>
-                </select>
+        <img src="/WB LOGO.png" alt="War Brokers Logo" class="logo">
+        <h1>War Brokers Squad Stats</h1>
+        <h3>Created By: Did You Get Sniped?</h3>
+        <h4>Join the <a href="https://discord.gg/Wb8eTc5HND" target="_blank">Support Server</a></h4>
+        <a href="https://didyougetsniped.github.io/wbinfo" target="_blank" class="btn-nav">Go To Player Stats</a>
+        <a href="https://didyougetsniped.github.io/squadcount" target="_blank" class="btn-nav">Go To Squad Member Count</a>
+    </header>
+    
+    <section class="input-section">
+        <div class="input-wrapper">
+            <div class="input-row">
+                <label for="squad-input">Squad Name:</label>
+                <input type="text" id="squad-input" placeholder="Enter squad name">
+                <button id="fetch-btn" class="btn">Fetch Data</button>
             </div>
-            <div class="time-option-group">
-                <label for="time-format">Time Format:</label>
-                <select id="time-format"><option value="12">12-hour (AM/PM)</option><option value="24">24-hour</option></select>
+            <div class="time-options-row">
+                <div class="time-option-group">
+                    <label for="timezone-select">Timezone:</label>
+                    <select id="timezone-select">
+                        <option value="local">Local Time</option>
+                        <option value="UTC">UTC (Coordinated Universal Time)</option>
+                        <optgroup label="North America"><option value="America/New_York">Eastern (New York)</option><option value="America/Chicago">Central (Chicago)</option><option value="America/Denver">Mountain (Denver)</option><option value="America/Los_Angeles">Pacific (Los Angeles)</option><option value="America/Anchorage">Alaska (Anchorage)</option><option value="Pacific/Honolulu">Hawaii (Honolulu)</option><option value="America/Toronto">Canada - Eastern (Toronto)</option><option value="America/Vancouver">Canada - Pacific (Vancouver)</option><option value="America/Mexico_City">Mexico (Mexico City)</option></optgroup>
+                        <optgroup label="South America"><option value="America/Sao_Paulo">Brazil (São Paulo)</option><option value="America/Argentina/Buenos_Aires">Argentina (Buenos Aires)</option><option value="America/Bogota">Colombia (Bogotá)</option></optgroup>
+                        <optgroup label="Europe"><option value="Europe/London">UK (London)</option><option value="Europe/Paris">Central Europe (Paris)</option><option value="Europe/Berlin">Central Europe (Berlin)</option><option value="Europe/Moscow">Moscow</option><option value="Europe/Kyiv">Eastern Europe (Kyiv)</option></optgroup>
+                        <optgroup label="Asia"><option value="Asia/Dubai">Gulf Standard Time (Dubai)</option><option value="Asia/Kolkata">India (Kolkata)</option><option value="Asia/Shanghai">China (Shanghai)</option><option value="Asia/Hong_Kong">Hong Kong</option><option value="Asia/Singapore">Singapore</option><option value="Asia/Tokyo">Japan (Tokyo)</option><option value="Asia/Seoul">South Korea (Seoul)</option></optgroup>
+                        <optgroup label="Australia & Oceania"><option value="Australia/Sydney">Australia - Eastern (Sydney)</option><option value="Australia/Perth">Australia - Western (Perth)</option><option value="Pacific/Auckland">New Zealand (Auckland)</option></optgroup>
+                        <optgroup label="Africa"><option value="Africa/Cairo">Egypt (Cairo)</option><option value="Africa/Johannesburg">South Africa (Johannesburg)</option><option value="Africa/Lagos">West Africa (Lagos)</option></optgroup>
+                    </select>
+                </div>
+                <div class="time-option-group">
+                    <label for="time-format">Time Format:</label>
+                    <select id="time-format"><option value="12">12-hour (AM/PM)</option><option value="24">24-hour</option></select>
+                </div>
             </div>
         </div>
-      </div>
     </section>
 
-  <main class="content">
-    <div id="squad-display-section" class="player-header" style="display:none;">
-      <div class="squad-name-wrapper">
-        <div id="squad-name-display" class="player-name"></div>
-        <a id="squad-discord-link" href="#" target="_blank" style="display: none;">
-          <img src="/discord.png" alt="Discord Logo" class="squad-discord-logo">
-        </a>
-      </div>
-      <p id="squad-bio" class="squad-bio" style="display: none;"></p>
-    </div>
-
-    <div id="status-badge" class="status-badge" style="display:none;"></div>
-    <div id="stats-grid" class="stats-grid" style="display:none;"></div>
-    <div id="table-section" style="display:none;">
-      <div class="table-wrapper">
-        <table class="squad-table" id="squad-table">
-          <thead>
-            <tr>
-              <th data-k="nick">Nickname</th><th data-k="uid">UID</th><th data-k="time">Last Seen</th><th data-k="time">Time Ago</th><th data-k="level">Level</th><th data-k="xp">XP</th><th data-k="killsELO">Kills ELO</th><th data-k="gamesELO">Games ELO</th><th data-k="coins">Coins</th><th data-k="steam">Steam</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </main>
+    <main class="content">
+        <div id="squad-display-section" class="player-header" style="display:none;">
+            <div class="squad-name-wrapper">
+                <div id="squad-name-display" class="player-name"></div>
+                <a id="squad-discord-link" href="#" target="_blank" style="display: none;">
+                    <img src="/discord.png" alt="Discord Logo" class="squad-discord-logo">
+                </a>
+            </div>
+            <div id="squad-bio" class="squad-bio" style="display: none;"></div>
+        </div>
+        <div id="status-badge" class="status-badge" style="display:none;"></div>
+        <div id="stats-grid" class="stats-grid" style="display:none;"></div>
+        <div id="table-section" style="display:none;">
+            <div class="table-wrapper">
+                <table class="squad-table" id="squad-table">
+                    <thead>
+                        <tr>
+                            <th data-k="nick">Nickname</th><th data-k="uid">UID</th><th data-k="time">Last Seen</th><th data-k="time">Time Ago</th><th data-k="level">Level</th><th data-k="xp">XP</th><th data-k="killsELO">Kills ELO</th><th data-k="gamesELO">Games ELO</th><th data-k="coins">Coins</th><th data-k="steam">Steam</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
 </div>
 
 <footer class="footer">
-  <p>Thanks to EpicFeathers for his contributions, Pomp for his API, and What U Died and TheChillTankMain for their photos.</p>
-  <p><strong>Disclaimer:</strong> This is a third-party project and is not affiliated with, endorsed, or sponsored by War Brokers or its developers.</p>
+    <p>Thanks to EpicFeathers for his contributions, Pomp for his API, and What U Died and TheChillTankMain for their photos.</p>
+    <p><strong>Disclaimer:</strong> This is a third-party project and is not affiliated with, endorsed, or sponsored by War Brokers or its developers.</p>
 </footer>
 
 <script type="module">
@@ -157,7 +155,6 @@ function updateRateLimiterUI() {
     const now = Date.now();
     requestTimestamps = requestTimestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
     const usedCount = requestTimestamps.length;
-    // MODIFIED: Logic for countdown
     const remainingCount = RATE_LIMIT_COUNT - usedCount;
     requestCountEl.textContent = remainingCount;
 
@@ -301,8 +298,22 @@ async function fetchSquadData(squadName) {
                 squadDiscordLink.href = squadInfo.discordLink;
                 squadDiscordLink.style.display = 'inline-block';
             }
-            if (squadInfo.bio) {
-                squadBio.textContent = squadInfo.bio;
+
+            let bioContent = "";
+            if (squadInfo.sections) {
+                squadInfo.sections.forEach(section => {
+                    if (section.title) {
+                        bioContent += `<h2>${section.title}</h2><p>${section.content}</p><hr>`;
+                    } else {
+                        bioContent += `<p>${section.content}</p><hr>`;
+                    }
+                });
+            } else if (squadInfo.bio) {
+                bioContent = `<p>${squadInfo.bio}</p>`;
+            }
+
+            if (bioContent) {
+                squadBio.innerHTML = bioContent;
                 squadBio.style.display = 'block';
             }
         }
