@@ -402,7 +402,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                     <div class="stat-row"><span class="stat-label">Shots Hit per Fired (Both):</span><span class="stat-value">${accBoth}</span></div>
                     <div class="stat-row"><span class="stat-label">Shots Fired per Game:</span><span class="stat-value">${shotsFiredPerGame}</span></div>
                     <div class="stat-row"><span class="stat-label">Shots Hit per Game:</span><span class="stat-value">${shotsHitPerGame}</span></div>
-                    <div class="stat-row"><span class="stat-label">Number of Jumps:</span><span class="stat-value">${numberOfJumps.toLocaleString()}</span></div>
+                    <div class="stat-row"><span class="stat-label">Total Jumps:</span><span class="stat-value">${numberOfJumps.toLocaleString()}</span></div>
                     <div class="stat-row"><span class="stat-label">Jumps per Game:</span><span class="stat-value">${jumpsPerGame}</span></div>
                     <div class="stat-row"><span class="stat-label">Jumps per Damage Dealt:</span><span class="stat-value">${jumpsPerDamage}</span></div>
                     <div class="stat-row"><span class="stat-label">Missiles Launched:</span><span class="stat-value">${scudsLaunched.toLocaleString()}</span></div>
@@ -501,7 +501,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 ${levelProgressHTML}
                 <div class="stat-row"><span class="stat-label">XP:</span><span class="stat-value">${(data.xp || 0).toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">XP Rank:</span><span class="stat-value">Top ${topXpPercent.toFixed(4)}%</span></div>
-                <div class="stat-row"><span class="stat-label">Squad:</span>${data.squad ? `<a class="stat-value" href="https://didyougetsniped.github.io/squads?squad=${data.squad}" target="_blank" rel="noopener noreferrer">${data.squad}</a>` : `<span class="stat-value">None</span>`}</div>
+                <div class="stat-row"><span class="stat-label">Squad:</span>${data.squad?`<a class="stat-value" href="https://didyougetsniped.github.io/squads?squad=${data.squad}">${data.squad}</a>`:`<span class="stat-value">None</span>`}</div>
                 <div class="stat-row"><span class="stat-label">Steam:</span><span class="${steamHighlightClass}">${steamText}</span></div>
                 <div class="stat-row"><span class="stat-label">Total Games Played:</span><span class="stat-value">${totalGames.toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Coins:</span><span class="stat-value">${(data.coins || 0).toLocaleString()}</span></div>

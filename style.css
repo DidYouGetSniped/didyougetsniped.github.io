@@ -10,7 +10,7 @@
     --bg-message-warning: #fff3cd;
     --bg-raw-json: #2c3e50;
     --bg-highlight: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-    --header-bg: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    --header-bg: #2c7cb1;
     --btn-bg: linear-gradient(135deg, #3498db, #2980b9);
     --btn-copy-bg: linear-gradient(135deg, #28a745, #20c997);
     --text-primary: #2c3e50;
@@ -108,7 +108,9 @@ body::before {
     text-align: center;
     position: relative;
 }
-
+.header h4 a {
+    color: white; 
+}
 .theme-switcher { position: absolute; top: 15px; left: 15px; }
 .theme-switcher label { display: flex; align-items: center; justify-content: space-between; width: 50px; height: 26px; background-color: #4b5563; border-radius: 50px; position: relative; cursor: pointer; padding: 5px; }
 .theme-switcher .ball { position: absolute; width: 18px; height: 18px; background-color: white; border-radius: 50%; top: 4px; left: 4px; transition: transform 0.2s ease-in-out; }
