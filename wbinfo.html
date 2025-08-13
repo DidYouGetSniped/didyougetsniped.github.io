@@ -19,31 +19,12 @@
   gtag('config', 'G-XGNQRLJMGK');
 </script>
 <script>
-document.addEventListener('DOMContentLoaded',function(){
-  const style=document.createElement('style');
-  style.innerHTML=`*{cursor:url('wb kill.png') 32 32,auto!important;}`;
+document.addEventListener('DOMContentLoaded', function() {
+  const style = document.createElement('style');
+  // Cursor hotspot at the center for a 64x64 image
+  // If your file name has a space, encode it or rename to avoid spaces.
+  style.innerHTML = "* { cursor: url('wb kill.png') 32 32, auto !important; }";
   document.head.appendChild(style);
-  const s=['sounds/sound.wav','sounds/sound2.wav','sounds/sound3.wav'];
-  let i=0,t=null,r=100,x=0,y=0;
-  function f(){new Audio(s[i]).play().catch(e=>console.warn('Audio playback failed:',e));}
-  document.addEventListener('mousedown',e=>{
-    if(e.button!==0||e.target.draggable)return;
-    x=e.clientX;y=e.clientY;f();
-    t=setInterval(f,r);
-  });
-  document.addEventListener('mousemove',e=>{
-    if(Math.abs(e.clientX-x)>3||Math.abs(e.clientY-y)>3){
-      clearInterval(t);t=null;
-    }
-  });
-  document.addEventListener('mouseup',e=>{
-    if(e.button!==0)return;
-    clearInterval(t);t=null;
-    i=(i+1)%s.length;
-  });
-  document.addEventListener('mouseleave',()=>{
-    clearInterval(t);t=null;
-  });
 });
 </script>
 <body>

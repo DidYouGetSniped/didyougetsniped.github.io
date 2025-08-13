@@ -87,6 +87,45 @@ body::before {
 .time-option-group { display: flex; align-items: center; gap: 15px; flex: 1 1 300px; }
 .time-option-group label { font-weight: 600; color: var(--text-secondary); flex-shrink: 0; }
 .time-option-group select { flex-grow: 1; }
+/* Progress Bar Styles */
+.progress-container {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color-medium);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 5px;
+}
+
+.progress-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-size: 0.9em;
+}
+
+.progress-percent {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.progress-bar-track {
+    position: relative;
+    height: 10px;
+    background: var(--bg-input-section);
+    border: 1px solid var(--border-color-light);
+    border-radius: 999px; /* Pill shape */
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #2ecc71, #3498db);
+    transition: width 0.2s ease-out;
+}
 
 .input-row input[type="text"], .time-option-group select { 
     padding: 12px 16px; 

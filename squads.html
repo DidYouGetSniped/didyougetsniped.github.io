@@ -18,31 +18,12 @@
     gtag('config', 'G-XGNQRLJMGK');
 </script>
 <script>
-document.addEventListener('DOMContentLoaded',function(){
-    const style=document.createElement('style');
-    style.innerHTML=`*{cursor:url('wb kill.png') 32 32,auto!important;}`;
-    document.head.appendChild(style);
-    const s=['sounds/sound.wav','sounds/sound2.wav','sounds/sound3.wav','sounds/sound.wav','sounds/sound2.wav','sounds/sound3.wav'];
-    let i=0,t=null,r=100,x=0,y=0;
-    function f(){new Audio(s[i]).play().catch(e=>console.warn('Audio playback failed:',e));}
-    document.addEventListener('mousedown',e=>{
-        if(e.button!==0||e.target.draggable)return;
-        x=e.clientX;y=e.clientY;f();
-        t=setInterval(f,r);
-    });
-    document.addEventListener('mousemove',e=>{
-        if(Math.abs(e.clientX-x)>3||Math.abs(e.clientY-y)>3){
-            clearInterval(t);t=null;
-        }
-    });
-    document.addEventListener('mouseup',e=>{
-        if(e.button!==0)return;
-        clearInterval(t);t=null;
-        i=(i+1)%s.length;
-    });
-    document.addEventListener('mouseleave',()=>{
-        clearInterval(t);t=null;
-    });
+document.addEventListener('DOMContentLoaded', function() {
+  const style = document.createElement('style');
+  // Cursor hotspot at the center for a 64x64 image
+  // If your file name has a space, encode it or rename to avoid spaces.
+  style.innerHTML = "* { cursor: url('wb kill.png') 32 32, auto !important; }";
+  document.head.appendChild(style);
 });
 </script>
 <body>
@@ -59,7 +40,6 @@ document.addEventListener('DOMContentLoaded',function(){
         <a href="https://didyougetsniped.github.io/wbinfo" target="_blank" class="btn-nav">Go To Player Stats</a>
         <a href="https://didyougetsniped.github.io/squadcount" target="_blank" class="btn-nav">Go To Squad Member Count</a>
     </header>
-    
     <section class="input-section">
         <div class="input-wrapper">
             <div class="input-row">
@@ -86,6 +66,15 @@ document.addEventListener('DOMContentLoaded',function(){
                     <select id="time-format"><option value="12">12-hour (AM/PM)</option><option value="24">24-hour</option></select>
                 </div>
             </div>
+            <div id="progress-container" class="progress-container" style="display:none;">
+    <div class="progress-info">
+        <span class="progress-label">Fetching: <strong id="progress-user">...</strong></span>
+        <span id="progress-percent" class="progress-percent">0%</span>
+    </div>
+    <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+    </div>
+</div>
         </div>
     </section>
 
@@ -124,6 +113,7 @@ document.addEventListener('DOMContentLoaded',function(){
 <script type="module">
 import { setRandomBackground } from './background.js';
 import { squadDB } from './squaddb.js';
+import { progressBar } from './progressbar.js';
 
 setRandomBackground();
 
@@ -250,7 +240,11 @@ headers.forEach(h => {
 
 tzSelect.onchange = fmtSelect.onchange = () => { if (data.length) fillTable(); };
 
+// In main.js
+// This is the new, optimized fetchSquadData function.
+
 async function fetchSquadData(squadName) {
+    // --- Rate Limiting & UI Reset (No Change) ---
     updateRateLimiterUI();
     if (requestTimestamps.length >= RATE_LIMIT_COUNT) {
         alert(`Rate limit exceeded. Please wait ${resetTimerEl.textContent} seconds.`);
@@ -272,24 +266,65 @@ async function fetchSquadData(squadName) {
     squadDisplaySection.style.display = 'none';
     squadDiscordLink.style.display = 'none';
     squadBio.style.display = 'none';
-    badge.style.display = statsGrid.style.display = tableSec.style.display = 'none';
+    badge.style.display = 'none';
+    statsGrid.style.display = 'none';
+    tableSec.style.display = 'none';
     tbody.innerHTML = '';
     data = [];
+
+    progressBar.show();
 
     try {
         const res = await fetch(`https://wbapi.wbpjs.com/squad/getSquadMembers?squadName=${encodeURIComponent(squad)}`);
         if (!res.ok) throw new Error(`Squad not found or API error (${res.status})`);
+        
         const members = await res.json();
         if (!members.length) {
             alert('No members found for this squad.');
+            progressBar.hide();
             return;
         }
-        const details = await Promise.all(members.map(m => fetch(`https://wbapi.wbpjs.com/players/getPlayer?uid=${m.uid}`).then(r => r.ok ? r.json() : null)));
-        data = details.filter(Boolean);
+
+        // --- THE OPTIMIZATION ---
+        let completedFetches = 0;
+        const totalMembers = members.length;
+
+        // 1. Create an array of promises. Each promise fetches a player AND reports progress.
+        const promises = members.map(async (member) => {
+            try {
+                const playerRes = await fetch(`https://wbapi.wbpjs.com/players/getPlayer?uid=${member.uid}`);
+                if (playerRes.ok) {
+                    return await playerRes.json();
+                }
+                return null; // Return null if the fetch fails for any reason
+            } catch (err) {
+                console.warn(`Failed to fetch details for UID ${member.uid}`, err);
+                return null;
+            } finally {
+                // This `finally` block runs whether the fetch succeeded or failed.
+                completedFetches++;
+                const userLabel = member.nick || `UID: ${member.uid}`;
+                // Update the progress bar as each individual request finishes.
+                progressBar.update(completedFetches, totalMembers, userLabel);
+            }
+        });
+
+        // 2. Wait for ALL the promises to complete.
+        const memberDetails = await Promise.all(promises);
+
+        // 3. Filter out any nulls from failed requests and continue.
+        data = memberDetails.filter(Boolean); // "Boolean" as a function filters out falsy values like null
+
+        // --- End of Optimization ---
+
         if (!data.length) {
             alert('Could not fetch details for any squad members.');
             return;
         }
+
+        progressBar.update(totalMembers, totalMembers, 'Done!');
+        
+        // --- UI Rendering (No Change) ---
         squadNameDisplay.textContent = squad;
         
         const squadInfo = squadDB[squad];
@@ -298,20 +333,14 @@ async function fetchSquadData(squadName) {
                 squadDiscordLink.href = squadInfo.discordLink;
                 squadDiscordLink.style.display = 'inline-block';
             }
-
             let bioContent = "";
             if (squadInfo.sections) {
                 squadInfo.sections.forEach(section => {
-                    if (section.title) {
-                        bioContent += `<h2>${section.title}</h2><p>${section.content}</p><hr>`;
-                    } else {
-                        bioContent += `<p>${section.content}</p><hr>`;
-                    }
+                    bioContent += section.title ? `<h2>${section.title}</h2><p>${section.content}</p><hr>` : `<p>${section.content}</p><hr>`;
                 });
             } else if (squadInfo.bio) {
                 bioContent = `<p>${squadInfo.bio}</p>`;
             }
-
             if (bioContent) {
                 squadBio.innerHTML = bioContent;
                 squadBio.style.display = 'block';
@@ -324,10 +353,15 @@ async function fetchSquadData(squadName) {
         fillTable();
         updateStats();
         tableSec.style.display = 'block';
+
     } catch (err) {
         console.error(err);
         alert('Error fetching data. Check the squad name or try again later.');
     } finally {
+        setTimeout(() => {
+            progressBar.hide();
+        }, 500);
+
         fetchBtn.disabled = false;
         fetchBtn.textContent = 'Fetch Data';
     }
