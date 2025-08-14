@@ -48,31 +48,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateRateLimiterUI() {
         const now = Date.now();
-        requestTimestamps = requestTimestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
+
+        // Check if the reset window has passed since the *first* request was made
+        if (requestTimestamps.length > 0) {
+            const oldestRequestTime = requestTimestamps[0];
+            if (now - oldestRequestTime >= RATE_LIMIT_WINDOW_MS) {
+                // Timer is up. Reset all requests from the window at once.
+                requestTimestamps = [];
+                localStorage.setItem('squadRateLimitRequests', JSON.stringify(requestTimestamps));
+            }
+        }
+
+        // Now, update the UI based on the current state of requestTimestamps
         const usedCount = requestTimestamps.length;
         const remainingCount = RATE_LIMIT_COUNT - usedCount;
         requestCountEl.textContent = remainingCount;
 
-        localStorage.setItem('squadRateLimitRequests', JSON.stringify(requestTimestamps));
-
         if (usedCount > 0) {
+            // Display the countdown timer based on the oldest request
             const oldestRequestTime = requestTimestamps[0];
             const timePassed = now - oldestRequestTime;
             const timeLeft = Math.ceil((RATE_LIMIT_WINDOW_MS - timePassed) / 1000);
 
-            if (timeLeft <= 0) {
-                requestTimestamps = [];
-                localStorage.setItem('squadRateLimitRequests', JSON.stringify(requestTimestamps));
-                requestCountEl.textContent = RATE_LIMIT_COUNT;
-                resetInfoEl.style.display = 'none';
-            } else {
-                resetTimerEl.textContent = timeLeft;
-                resetInfoEl.style.display = 'inline';
-            }
+            resetTimerEl.textContent = Math.max(0, timeLeft); // Ensure timer doesn't show a negative number
+            resetInfoEl.style.display = 'inline';
         } else {
+            // No requests are in the queue, so hide the timer info
             resetInfoEl.style.display = 'none';
         }
     }
+
 
     setInterval(updateRateLimiterUI, 1000);
     updateRateLimiterUI();
