@@ -4,24 +4,26 @@ import { copyToClipboard, extractUID, formatDateTime, getJoinDateFromUID, timeAg
 import { renderPlayerInfo, renderSearchResults, generateRowsHTML, displayMessage, updateMetaTags, resetMetaTags } from '/ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // START: BroadcastChannel and Rate Limit Synchronization Logic
     const rateLimitChannel = new BroadcastChannel('war-brokers-rate-limit');
 
-    // Listen for messages from other tabs
-    rateLimitChannel.onmessage = (event) => {
-        if (event.data.type === 'update-rate-limit') {
-            const { requests } = event.data.payload;
+    // --- Load stored state ---
+    const storedRequests = localStorage.getItem('rateLimitRequests');
+    const storedResetTime = localStorage.getItem('rateLimitResetTime');
 
-            // Overwrite the local rate limit state with the shared state
-            RATE_LIMIT.requests = requests;
+    const initialRequests = storedRequests ? JSON.parse(storedRequests) : [];
+    const RATE_LIMIT = { ...RATE_LIMIT_CONFIG, requests: initialRequests };
 
-            // Manually trigger a UI update to reflect the new state
-            updateRateLimitDisplay();
-        }
-    };
-    // END: BroadcastChannel and Rate Limit Synchronization Logic
+    if (storedResetTime) {
+        RATE_LIMIT.resetTime = parseInt(storedResetTime, 10);
+    } else {
+        RATE_LIMIT.resetTime = null;
+    }
 
-    setRandomBackground();
+    let countdownInterval = null;
+    let currentPlayerUID = null;
+    let currentPlayerdata = null;
+    let sortByKills = true, sortByDeaths = true, sortByVehicleKills = true, sortByWins = true, sortByLosses = true;
+    let timeAgoInterval = null;
 
     const themeToggle = document.getElementById('theme-toggle');
     const uidInput = document.getElementById('uid-input');
@@ -34,16 +36,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const requestsRemainingEl = document.getElementById('requests-remaining');
     const countdownEl = document.getElementById('countdown');
 
-    const RATE_LIMIT = { ...RATE_LIMIT_CONFIG, requests: [] };
-    let currentPlayerUID = null;
-    let currentPlayerdata = null; 
-    let sortByKills = true;
-    let sortByDeaths = true;
-    let sortByVehicleKills = true;
-    let sortByWins = true;
-    let sortByLosses = true;
-    let countdownInterval = null;
-    let timeAgoInterval = null;
+    // --- Sync from other tabs ---
+    rateLimitChannel.onmessage = (event) => {
+        if (event.data.type === 'update-rate-limit') {
+            RATE_LIMIT.requests = event.data.payload.requests;
+            RATE_LIMIT.resetTime = event.data.payload.resetTime;
+
+            localStorage.setItem('rateLimitRequests', JSON.stringify(RATE_LIMIT.requests));
+            if (RATE_LIMIT.resetTime) {
+                localStorage.setItem('rateLimitResetTime', RATE_LIMIT.resetTime);
+            } else {
+                localStorage.removeItem('rateLimitResetTime');
+            }
+
+            updateRateLimitDisplay();
+        }
+    };
 
     if (themeToggle) {
         const isCurrentlyDark = document.documentElement.classList.contains('dark');
@@ -58,9 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (timeAgoInterval) clearInterval(timeAgoInterval);
         playerInfoContainer.innerHTML = '';
         messageContainer.innerHTML = '';
-
         resetMetaTags();
-        
+
         const searchInput = uidInput.value.trim();
         if (!searchInput) {
             displayMessage(messageContainer, 'Please enter a player name or UID.', 'info');
@@ -68,12 +75,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const uid = extractUID(searchInput);
-        
         const now = Date.now();
+
         RATE_LIMIT.requests = RATE_LIMIT.requests.filter(time => now - time < RATE_LIMIT.timeWindow);
+        localStorage.setItem('rateLimitRequests', JSON.stringify(RATE_LIMIT.requests));
+
         if (RATE_LIMIT.requests.length >= RATE_LIMIT.maxRequests) {
-            const oldestRequest = Math.min(...RATE_LIMIT.requests);
-            const seconds = Math.ceil((RATE_LIMIT.timeWindow - (now - oldestRequest)) / 1000);
+            const seconds = Math.ceil((RATE_LIMIT.resetTime - now) / 1000);
             displayMessage(messageContainer, `Rate limit exceeded. Please wait ${seconds} seconds.`, 'error');
             return;
         }
@@ -83,18 +91,20 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchBtn.disabled = true;
 
         try {
-            // Add request timestamp
-            RATE_LIMIT.requests.push(Date.now());
-            
-            // Post a message to other tabs when the rate limit changes
+            RATE_LIMIT.requests.push(now);
+            RATE_LIMIT.resetTime = Math.min(...RATE_LIMIT.requests) + RATE_LIMIT.timeWindow;
+
+            localStorage.setItem('rateLimitRequests', JSON.stringify(RATE_LIMIT.requests));
+            localStorage.setItem('rateLimitResetTime', RATE_LIMIT.resetTime);
+
             rateLimitChannel.postMessage({
                 type: 'update-rate-limit',
                 payload: {
                     requests: RATE_LIMIT.requests,
-                    remaining: RATE_LIMIT.maxRequests - RATE_LIMIT.requests.length,
-                    resetTime: RATE_LIMIT.requests.length > 0 ? Math.min(...RATE_LIMIT.requests) + RATE_LIMIT.timeWindow : null
+                    resetTime: RATE_LIMIT.resetTime
                 }
             });
+
             updateRateLimitDisplay();
 
             const stateData = uid ? { uid } : { name: searchInput };
@@ -127,11 +137,11 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchBtn.disabled = false;
         }
     }
-    
+
     function displayFullPlayerInfo(processedData, rawData, percentiles) {
         const sortStates = { kills: sortByKills, deaths: sortByDeaths, vehicleKills: sortByVehicleKills, wins: sortByWins, losses: sortByLosses };
         const timePrefs = { timeZone: timezoneSelect.value, timeFormat: timeFormatSelect.value };
-        
+
         playerInfoContainer.innerHTML = renderPlayerInfo(processedData, rawData, percentiles, sortStates, timePrefs);
         playerInfoContainer.style.display = 'block';
 
@@ -152,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rerenderVehicleKillsStats = () => document.getElementById('vehicle-kills-grid').innerHTML = generateRowsHTML(currentPlayerdata.kills_per_vehicle, sortByVehicleKills);
     const rerenderWinsStats = () => document.getElementById('wins-stats-grid').innerHTML = generateRowsHTML(currentPlayerdata.wins, sortByWins);
     const rerenderLossesStats = () => document.getElementById('losses-stats-grid').innerHTML = generateRowsHTML(currentPlayerdata.losses, sortByLosses);
-    
+
     function updateDisplayedDates() {
         if (!currentPlayerUID || !currentPlayerdata) return;
         const timeZone = timezoneSelect.value;
@@ -167,17 +177,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const lastPlayedAgoEl = document.getElementById('last-played-ago');
         if (joinDateAgoEl) joinDateAgoEl.textContent = timeAgo(getJoinDateFromUID(currentPlayerdata.uid));
         if (lastPlayedAgoEl) lastPlayedAgoEl.textContent = timeAgo(currentPlayerdata.time);
-    };
-    
+    }
+
     const updateRateLimitDisplay = () => {
         const now = Date.now();
         RATE_LIMIT.requests = RATE_LIMIT.requests.filter(time => now - time < RATE_LIMIT.timeWindow);
+
+        if (RATE_LIMIT.requests.length > 0) {
+            RATE_LIMIT.resetTime = Math.min(...RATE_LIMIT.requests) + RATE_LIMIT.timeWindow;
+            localStorage.setItem('rateLimitResetTime', RATE_LIMIT.resetTime);
+        } else {
+            if (RATE_LIMIT.resetTime && now >= RATE_LIMIT.resetTime) {
+                RATE_LIMIT.requests = [];
+                RATE_LIMIT.resetTime = null;
+                localStorage.removeItem('rateLimitRequests');
+                localStorage.removeItem('rateLimitResetTime');
+                rateLimitChannel.postMessage({ type: 'update-rate-limit', payload: { requests: [], resetTime: null } });
+            }
+        }
+
         const remaining = RATE_LIMIT.maxRequests - RATE_LIMIT.requests.length;
         requestsRemainingEl.textContent = `Requests: ${remaining}/${RATE_LIMIT.maxRequests}`;
+
         if (countdownInterval) clearInterval(countdownInterval);
-        if (RATE_LIMIT.requests.length > 0) {
-            const oldestRequest = Math.min(...RATE_LIMIT.requests);
-            let timeUntilReset = Math.ceil((RATE_LIMIT.timeWindow - (now - oldestRequest)) / 1000);
+
+        if (RATE_LIMIT.resetTime) {
+            let timeUntilReset = Math.ceil((RATE_LIMIT.resetTime - now) / 1000);
             countdownInterval = setInterval(() => {
                 if (timeUntilReset > 0) {
                     countdownEl.textContent = `(Reset in ${timeUntilReset}s)`;
@@ -185,6 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     countdownEl.textContent = '';
                     clearInterval(countdownInterval);
+                    RATE_LIMIT.requests = [];
+                    RATE_LIMIT.resetTime = null;
+                    localStorage.removeItem('rateLimitRequests');
+                    localStorage.removeItem('rateLimitResetTime');
+                    rateLimitChannel.postMessage({ type: 'update-rate-limit', payload: { requests: [], resetTime: null } });
                     updateRateLimitDisplay();
                 }
             }, 1000);
@@ -207,7 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 uidInput.value = target.closest('.search-result-item').dataset.uid;
                 fetchPlayerInfo();
             } else if (target.matches('[data-copy]')) {
-                const text = target.dataset.copy === 'raw' ? document.getElementById('raw-json-content').textContent : document.getElementById(target.dataset.copy).textContent;
+                const text = target.dataset.copy === 'raw'
+                    ? document.getElementById('raw-json-content').textContent
+                    : document.getElementById(target.dataset.copy).textContent;
                 copyToClipboard(text, target);
             } else if (targetId === 'weapon-sort-toggle') { sortByKills = target.checked; rerenderWeaponStats(); }
             else if (targetId === 'death-sort-toggle') { sortByDeaths = target.checked; rerenderDeathStats(); }
@@ -229,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initialize() {
+        setRandomBackground();
         setupEventListeners();
         timezoneSelect.value = 'local';
         updateRateLimitDisplay();

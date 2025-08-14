@@ -3,23 +3,19 @@ import { squadDB } from './squaddb.js';
 import { progressBar } from './progressbar.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // START: BroadcastChannel and Rate Limit Synchronization Logic
-    // Moved inside DOMContentLoaded to ensure elements are available
     const rateLimitChannel = new BroadcastChannel('war-brokers-rate-limit');
 
-    // Listen for messages from other tabs
+    const storedRequests = localStorage.getItem('squadRateLimitRequests');
+    let requestTimestamps = storedRequests ? JSON.parse(storedRequests) : [];
+
     rateLimitChannel.onmessage = (event) => {
         if (event.data.type === 'update-rate-limit') {
             const { requests } = event.data.payload;
-            
-            // Overwrite the local rate limit state with the shared state
             requestTimestamps = requests;
-            
-            // Manually trigger a UI update to reflect the new state
+            localStorage.setItem('squadRateLimitRequests', JSON.stringify(requestTimestamps));
             updateRateLimiterUI();
         }
     };
-    // END: BroadcastChannel and Rate Limit Synchronization Logic
 
     setRandomBackground();
 
@@ -36,12 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableSec = document.getElementById('table-section');
     const tbody = document.querySelector('#squad-table tbody');
     const headers = document.querySelectorAll('#squad-table th');
+    const rateLimitAlert = document.getElementById('rate-limit-alert');
+    const alertTimer = document.getElementById('alert-timer');
 
-    let data = [], sortKey = null, sortDir = 'asc';
+    let data = [],
+        sortKey = null,
+        sortDir = 'asc';
 
     const RATE_LIMIT_COUNT = 5;
     const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-    let requestTimestamps = [];
 
     const requestCountEl = document.getElementById('request-count');
     const resetInfoEl = document.getElementById('reset-info');
@@ -54,21 +53,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const remainingCount = RATE_LIMIT_COUNT - usedCount;
         requestCountEl.textContent = remainingCount;
 
+        localStorage.setItem('squadRateLimitRequests', JSON.stringify(requestTimestamps));
+
         if (usedCount > 0) {
             const oldestRequestTime = requestTimestamps[0];
             const timePassed = now - oldestRequestTime;
             const timeLeft = Math.ceil((RATE_LIMIT_WINDOW_MS - timePassed) / 1000);
-            resetTimerEl.textContent = timeLeft > 0 ? timeLeft : 0;
-            resetInfoEl.style.display = 'inline';
+
+            if (timeLeft <= 0) {
+                requestTimestamps = [];
+                localStorage.setItem('squadRateLimitRequests', JSON.stringify(requestTimestamps));
+                requestCountEl.textContent = RATE_LIMIT_COUNT;
+                resetInfoEl.style.display = 'none';
+            } else {
+                resetTimerEl.textContent = timeLeft;
+                resetInfoEl.style.display = 'inline';
+            }
         } else {
             resetInfoEl.style.display = 'none';
         }
     }
+
     setInterval(updateRateLimiterUI, 1000);
     updateRateLimiterUI();
 
-    const diff = (s) => { if (s < 60) return s + 's'; const m = s / 60 | 0; if (m < 60) return m + 'm'; const h = m / 60 | 0; if (h < 24) return h + 'h'; return (h / 24 | 0) + 'd'; };
-    const fmtDate = (t) => new Intl.DateTimeFormat('en-US', { timeZone: tzSelect.value === 'local' ? Intl.DateTimeFormat().resolvedOptions().timeZone : tzSelect.value, year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: fmtSelect.value === '12' }).format(new Date(t * 1000));
+    const diff = (s) => {
+        if (s < 60) return s + 's';
+        const m = s / 60 | 0;
+        if (m < 60) return m + 'm';
+        const h = m / 60 | 0;
+        if (h < 24) return h + 'h';
+        return (h / 24 | 0) + 'd';
+    };
+
+    const fmtDate = (t) => new Intl.DateTimeFormat('en-US', {
+        timeZone: tzSelect.value === 'local' ? Intl.DateTimeFormat().resolvedOptions().timeZone : tzSelect.value,
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: fmtSelect.value === '12'
+    }).format(new Date(t * 1000));
 
     function fillTable() {
         tbody.innerHTML = '';
@@ -90,23 +117,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateStats() {
-        const now = Date.now() / 1000 | 0, th = 60 * 60 * 24 * 60;
-        let inactive = 0, steam = 0, xp = 0, lvl = 0, kE = 0, gE = 0, coins = 0;
+        const now = Date.now() / 1000 | 0,
+            th = 60 * 60 * 24 * 60;
+        let inactive = 0,
+            steam = 0,
+            xp = 0,
+            lvl = 0,
+            kE = 0,
+            gE = 0,
+            coins = 0;
         data.forEach(p => {
             if (now - p.time > th) inactive++;
             if (p.steam) steam++;
-            xp += p.xp || 0; lvl += p.level || 0; kE += p.killsELO || 0; gE += p.gamesELO || 0; coins += p.coins || 0;
+            xp += p.xp || 0;
+            lvl += p.level || 0;
+            kE += p.killsELO || 0;
+            gE += p.gamesELO || 0;
+            coins += p.coins || 0;
         });
-        const total = data.length, inPct = total > 0 ? inactive / total : 0;
+        const total = data.length,
+            inPct = total > 0 ? inactive / total : 0;
         badge.textContent = `Status: ${inPct >= .85 ? 'Inactive' : 'Active'} (${Math.round(inPct * 100)}% inactive)`;
         badge.className = 'status-badge ' + (inPct >= .85 ? 'inactive' : 'active');
         badge.style.display = 'block';
-        
+
         const avgLevel = total > 0 ? (lvl / total).toFixed(1) : 0;
         const avgKillsELO = total > 0 ? (kE / total).toFixed(2) : 0;
         const avgGamesELO = total > 0 ? (gE / total).toFixed(2) : 0;
         const steamPct = total > 0 ? (steam / total * 100).toFixed(1) : 0;
-        const avgCoins = total > 0 ? (coins / total).toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0';
+        const avgCoins = total > 0 ? (coins / total).toLocaleString(undefined, {
+            maximumFractionDigits: 0
+        }) : '0';
 
         statsGrid.innerHTML = `
             <div class="stat-card"><div class="stat-row"><span class="stat-label">Average Level</span><span class="stat-value">${avgLevel}</span></div></div>
@@ -123,10 +164,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function sortData(k, d) {
         data.sort((a, b) => {
-            let A = a[k], B = b[k];
-            if (k === 'steam') { A = A ? 'Yes' : 'No'; B = B ? 'Yes' : 'No'; }
-            if (typeof A === 'string') { return d === 'asc' ? A.localeCompare(B) : B.localeCompare(A); }
-            A = A || 0; B = B || 0;
+            let A = a[k],
+                B = b[k];
+            if (k === 'steam') {
+                A = A ? 'Yes' : 'No';
+                B = B ? 'Yes' : 'No';
+            }
+            if (typeof A === 'string') {
+                return d === 'asc' ? A.localeCompare(B) : B.localeCompare(A);
+            }
+            A = A || 0;
+            B = B || 0;
             return d === 'asc' ? A - B : B - A;
         });
     }
@@ -144,23 +192,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    tzSelect.onchange = fmtSelect.onchange = () => { if (data.length) fillTable(); };
+    tzSelect.onchange = fmtSelect.onchange = () => {
+        if (data.length) fillTable();
+    };
 
     async function fetchSquadData(squadName) {
-        // --- Rate Limiting & UI Reset ---
         updateRateLimiterUI();
         if (requestTimestamps.length >= RATE_LIMIT_COUNT) {
-            alert(`Rate limit exceeded. Please wait ${resetTimerEl.textContent} seconds.`);
+            const now = Date.now();
+            const oldestRequestTime = requestTimestamps[0];
+            const timePassed = now - oldestRequestTime;
+            const timeLeft = Math.ceil((RATE_LIMIT_WINDOW_MS - timePassed) / 1000);
+
+            alertTimer.textContent = timeLeft;
+            rateLimitAlert.style.display = 'block';
+
+            setTimeout(() => {
+                rateLimitAlert.style.display = 'none';
+            }, timeLeft * 1000 + 500);
             return;
         }
+
         const squad = squadName.trim();
         if (!squad) {
+            rateLimitAlert.style.display = 'none';
             alert('Please enter a squad name.');
             return;
         }
+
+        rateLimitAlert.style.display = 'none';
+
         requestTimestamps.push(Date.now());
-        
-        // START: Post a message to other tabs when the rate limit changes
+        localStorage.setItem('squadRateLimitRequests', JSON.stringify(requestTimestamps));
+
         rateLimitChannel.postMessage({
             type: 'update-rate-limit',
             payload: {
@@ -169,8 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 resetTime: requestTimestamps.length > 0 ? requestTimestamps[0] + RATE_LIMIT_WINDOW_MS : null
             }
         });
-        // END: Post a message to other tabs
-        
+
         updateRateLimiterUI();
         const url = new URL(window.location);
         url.searchParams.set('squad', squad);
@@ -192,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch(`https://wbapi.wbpjs.com/squad/getSquadMembers?squadName=${encodeURIComponent(squad)}`);
             if (!res.ok) throw new Error(`Squad not found or API error (${res.status})`);
-            
+
             const members = await res.json();
             if (!members.length) {
                 alert('No members found for this squad.');
@@ -230,9 +293,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             progressBar.update(totalMembers, totalMembers, 'Done!');
-            
+
             squadNameDisplay.textContent = squad;
-            
+
             const squadInfo = squadDB[squad];
             if (squadInfo) {
                 if (squadInfo.discordLink) {
@@ -262,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (err) {
             console.error(err);
+            rateLimitAlert.style.display = 'none';
             alert('Error fetching data. Check the squad name or try again later.');
         } finally {
             setTimeout(() => {
@@ -273,8 +337,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    fetchBtn.addEventListener('click', () => { fetchSquadData(squadInput.value); });
-    squadInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { fetchBtn.click(); } });
+    fetchBtn.addEventListener('click', () => {
+        fetchSquadData(squadInput.value);
+    });
+    squadInput.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+            fetchBtn.click();
+        }
+    });
 
     const params = new URLSearchParams(window.location.search);
     const squadFromUrl = params.get('squad');

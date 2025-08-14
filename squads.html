@@ -1,29 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta property="og:title" content="War Brokers Squad Stats">
-<meta property="og:description" content="Check squad-wide activity and statistics!">
-<title>War Brokers Squad Stats</title>
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="stylesheet" href="squad.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="War Brokers Squad Stats">
+    <meta property="og:description" content="Check squad-wide activity and statistics!">
+    <title>War Brokers Squad Stats</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="squad.css">
 </head>
+    <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGNQRLJMGK"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);} 
+  gtag('js', new Date());
     
-    gtag('config', 'G-XGNQRLJMGK');
+  gtag('config', 'G-XGNQRLJMGK');
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const style = document.createElement('style');
-    // Cursor hotspot at the center for a 64x64 image
-    // If your file name has a space, encode it or rename to avoid spaces.
-    style.innerHTML = "* { cursor: url('wb kill.png') 32 32, auto !important; }";
-    document.head.appendChild(style);
+  const style = document.createElement('style');
+  // Cursor hotspot at the center for a 64x64 image
+  // If your file name has a space, encode it or rename to avoid spaces.
+  style.innerHTML = "* { cursor: url('wb kill.png') 32 32, auto !important; }";
+  document.head.appendChild(style);
 });
 </script>
 <body>
@@ -37,8 +38,8 @@ document.addEventListener('DOMContentLoaded', function() {
         <h1>War Brokers Squad Stats</h1>
         <h3>Created By: Did You Get Sniped?</h3>
         <h4>Join the <a href="https://discord.gg/Wb8eTc5HND" target="_blank">Support Server</a></h4>
-        <a href="https://didyougetsniped.github.io/wbinfo" target="_blank" class="btn-nav">Go To Player Stats</a>
-        <a href="https://didyougetsniped.github.io/squadcount" target="_blank" class="btn-nav">Go To Squad Member Count</a>
+        <a href="https://didyougetsniped.github.io/wbinfo" target="_self" class="btn-nav">Go To Player Stats</a>
+        <a href="https://didyougetsniped.github.io/squadcount" target="_self" class="btn-nav">Go To Squad Member Count</a>
     </header>
     <section class="input-section">
         <div class="input-wrapper">
@@ -77,6 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
         </div>
     </section>
+    <div id="rate-limit-alert" class="rate-limit-alert" style="display: none;">
+  Rate limit exceeded. Please wait <span id="alert-timer"></span> seconds.
+</div>
 
     <main class="content">
         <div id="squad-display-section" class="player-header" style="display:none;">
