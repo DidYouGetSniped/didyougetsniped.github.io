@@ -4,6 +4,23 @@ import { copyToClipboard, extractUID, formatDateTime, getJoinDateFromUID, timeAg
 import { renderPlayerInfo, renderSearchResults, generateRowsHTML, displayMessage, updateMetaTags, resetMetaTags } from '/ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // START: BroadcastChannel and Rate Limit Synchronization Logic
+    const rateLimitChannel = new BroadcastChannel('war-brokers-rate-limit');
+
+    // Listen for messages from other tabs
+    rateLimitChannel.onmessage = (event) => {
+        if (event.data.type === 'update-rate-limit') {
+            const { requests } = event.data.payload;
+
+            // Overwrite the local rate limit state with the shared state
+            RATE_LIMIT.requests = requests;
+
+            // Manually trigger a UI update to reflect the new state
+            updateRateLimitDisplay();
+        }
+    };
+    // END: BroadcastChannel and Rate Limit Synchronization Logic
+
     setRandomBackground();
 
     const themeToggle = document.getElementById('theme-toggle');
@@ -66,7 +83,18 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchBtn.disabled = true;
 
         try {
+            // Add request timestamp
             RATE_LIMIT.requests.push(Date.now());
+            
+            // Post a message to other tabs when the rate limit changes
+            rateLimitChannel.postMessage({
+                type: 'update-rate-limit',
+                payload: {
+                    requests: RATE_LIMIT.requests,
+                    remaining: RATE_LIMIT.maxRequests - RATE_LIMIT.requests.length,
+                    resetTime: RATE_LIMIT.requests.length > 0 ? Math.min(...RATE_LIMIT.requests) + RATE_LIMIT.timeWindow : null
+                }
+            });
             updateRateLimitDisplay();
 
             const stateData = uid ? { uid } : { name: searchInput };
@@ -182,10 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const text = target.dataset.copy === 'raw' ? document.getElementById('raw-json-content').textContent : document.getElementById(target.dataset.copy).textContent;
                 copyToClipboard(text, target);
             } else if (targetId === 'weapon-sort-toggle') { sortByKills = target.checked; rerenderWeaponStats(); }
-              else if (targetId === 'death-sort-toggle') { sortByDeaths = target.checked; rerenderDeathStats(); }
-              else if (targetId === 'vehicle-sort-toggle') { sortByVehicleKills = target.checked; rerenderVehicleKillsStats(); }
-              else if (targetId === 'wins-sort-toggle') { sortByWins = target.checked; rerenderWinsStats(); }
-              else if (targetId === 'losses-sort-toggle') { sortByLosses = target.checked; rerenderLossesStats(); }
+            else if (targetId === 'death-sort-toggle') { sortByDeaths = target.checked; rerenderDeathStats(); }
+            else if (targetId === 'vehicle-sort-toggle') { sortByVehicleKills = target.checked; rerenderVehicleKillsStats(); }
+            else if (targetId === 'wins-sort-toggle') { sortByWins = target.checked; rerenderWinsStats(); }
+            else if (targetId === 'losses-sort-toggle') { sortByLosses = target.checked; rerenderLossesStats(); }
         });
 
         window.addEventListener('popstate', (event) => {
