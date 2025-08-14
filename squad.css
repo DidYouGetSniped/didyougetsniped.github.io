@@ -297,10 +297,10 @@ body::before {
 .footer strong { color: var(--text-primary); }
 
 /* ================================
-   Responsive/mobile enhancements
-   (Desktop unchanged)
-   Add to the end of your CSS file
-   ================================ */
+  Responsive/mobile enhancements
+  (Desktop unchanged)
+  Add to the end of your CSS file
+  ================================ */
 
 /* Better performance for parallax-style bg on mobile/tablet */
 @media (max-width: 1024px) {
@@ -320,22 +320,29 @@ body::before {
     padding-bottom: calc(12px + env(safe-area-inset-bottom));
     padding-left: calc(12px + env(safe-area-inset-left));
   }
-}
 
-/* Header: scale down, avoid overlap of rate limiter */
-@media (max-width: 768px) {
-  .header { padding: 28px 20px; }
-  .logo { max-width: 150px; margin-bottom: 18px; }
+  /* --- BEGIN FIX --- */
+  .header {
+    padding: 28px 20px 10px; /* Reduced bottom padding */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .logo { 
+    max-width: 150px; 
+    margin-bottom: 0px; /* Remove the bottom margin to pull it up */
+  }
   .header h1 { font-size: 1.6em; }
   .rate-limiter {
     position: static;
     display: inline-block;
     margin: 8px auto 0;
+    align-self: flex-end; /* Align the requests to the right */
+    order: -1; /* Place it before other elements in the flex container */
   }
-}
-
-/* Player hero area */
-@media (max-width: 768px) {
+  /* --- END FIX --- */
+  
+  /* Player hero area */
   .player-header { padding: 18px; }
   .player-name { font-size: 1.7em; }
   .squad-discord-logo { height: 28px; }
