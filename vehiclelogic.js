@@ -12,25 +12,25 @@ const TRACKED_VEHICLES = [
 
 const vehicleThresholds = {
     // Jets
-    'jet 2 fin':        { gold: 3000, silver: 2000, bronze: 400 },
-    'jet 1 fin':        { gold: 3000, silver: 2000, bronze: 400 },
+    'jet 2 fin':        { gold: 2400, silver: 1000, bronze: 200 },
+    'jet 1 fin':        { gold: 2400, silver: 1000, bronze: 200 },
     
     // Ground Vehicles
-    'tank lvl 1':       { gold: 1000, silver: 500,  bronze: 50 },
-    'tank lvl 2':       { gold: 1000, silver: 500,  bronze: 50 },
-    'tank lvl 3':       { gold: 1000, silver: 500,  bronze: 50 },
-    'apc lvl 1':        { gold: 750,  silver: 300,  bronze: 40 },
-    'apc lvl 2':        { gold: 500,  silver: 200,  bronze: 25 },
-    'apc lvl 3':        { gold: 500,  silver: 200,  bronze: 25 },
+    'tank lvl 1':       { gold: 2400, silver: 1000, bronze: 200 },
+    'tank lvl 2':       { gold: 2400, silver: 1000, bronze: 200 },
+    'tank lvl 3':       { gold: 2400, silver: 1000, bronze: 200 },
+    'apc lvl 1':        { gold: 2400, silver: 1000, bronze: 200 },
+    'apc lvl 2':        { gold: 2400, silver: 1000, bronze: 200 },
+    'apc lvl 3':        { gold: 2400, silver: 1000, bronze: 200 },
 
     // Helicopters
-    'heli lvl 3':       { gold: 750, silver: 300, bronze: 40 },
-    'heli lvl 2':       { gold: 750, silver: 300, bronze: 40 },
-    'heli lvl 1':       { gold: 500, silver: 200, bronze: 25 },
+    'heli lvl 3':       { gold: 2400, silver: 1000, bronze: 200 },
+    'heli lvl 2':       { gold: 2400, silver: 1000, bronze: 200 },
+    'heli lvl 1':       { gold: 2400, silver: 1000, bronze: 200 },
 
     // Misc/Meme
-    'car':              { gold: 250, silver: 100, bronze: 10 },
-    'heli (no weapon)': { gold: 50,  silver: 20,  bronze: 5 },
+    'car':              { gold: 2400, silver: 1000, bronze: 200 },
+    'heli (no weapon)': { gold: 500,  silver: 200,  bronze: 50 },
 };
 
 /**
@@ -92,4 +92,5 @@ export function generateVehicleStarsHTML(vehicleKillsData) {
             </div>
         </div>
     `;
+
 }
