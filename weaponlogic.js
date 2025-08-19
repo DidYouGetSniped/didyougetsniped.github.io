@@ -14,27 +14,27 @@ const TRACKED_WEAPONS = [
 
 const weaponThresholds = {
     // High-Usage Primaries
-    'ar rifle':          { gold: 12000, silver: 6000, bronze: 750 },
-    'ak rifle':          { gold: 12000, silver: 6000, bronze: 750 },
-    'ar3':               { gold: 15000, silver: 7500, bronze: 1000 },
-    'smg':               { gold: 12000, silver: 6000, bronze: 750 },
-    'mp7':               { gold: 12000, silver: 6000, bronze: 750 },
-    'sniper rifle':      { gold: 12000, silver: 6000, bronze: 750 },
-    'mutant':            { gold: 8000, silver: 4000, bronze: 500 },
+    'ar rifle':          { gold: 11000, silver: 6000, bronze: 750 },
+    'ak rifle':          { gold: 11000, silver: 6000, bronze: 750 },
+    'ar3':               { gold: 11000, silver: 6000, bronze: 750 },
+    'smg':               { gold: 11000, silver: 6000, bronze: 750 },
+    'mp7':               { gold: 11000, silver: 6000, bronze: 750 },
+    'sniper rifle':      { gold: 11000, silver: 6000, bronze: 750 },
+    'mutant':            { gold: 6000, silver: 4000, bronze: 500 },
 
     // Powerful/Popular Weapons
-    'vss':               { gold: 8000, silver: 4000, bronze: 500 },
-    '50 cal sniper':     { gold: 8000, silver: 4000, bronze: 500 },
+    'vss':               { gold: 6000, silver: 4000, bronze: 500 },
+    '50 cal sniper':     { gold: 6000, silver: 4000, bronze: 500 },
     'lmg':               { gold: 5000, silver: 2500, bronze: 300 },
-    'scar':              { gold: 7500, silver: 3500, bronze: 400 },
-    'vek':               { gold: 7500, silver: 3500, bronze: 400 },
+    'scar':              { gold: 6000, silver: 4000, bronze: 500 },
+    'vek':               { gold: 6000, silver: 4000, bronze: 500 },
 
     // Situational & Secondary Weapons
     'tactical shotgun':  { gold: 5000, silver: 2500, bronze: 300 },
-    'shotgun':           { gold: 5000, silver: 2500, bronze: 300 },
+    'shotgun':           { gold: 6000, silver: 4000, bronze: 500 },
     'sawed-off shotgun': { gold: 4000, silver: 2000, bronze: 250 },
-    'aksmg':             { gold: 4000, silver: 2000, bronze: 250 },
-    'auto sniper':       { gold: 4000, silver: 2000, bronze: 250 },
+    'aksmg':             { gold: 6000, silver: 4000, bronze: 500 },
+    'auto sniper':       { gold: 6000, silver: 4000, bronze: 500 },
     'marksman\'s rifle': { gold: 3000, silver: 1500, bronze: 200 },
     'g3a3':              { gold: 3000, silver: 1500, bronze: 200 },
     'kbar':              { gold: 3000, silver: 1500, bronze: 200 },
@@ -133,4 +133,5 @@ export function generateWeaponStarsHTML(weaponKillsData) {
             </div>
         </div>
     `;
+
 }
