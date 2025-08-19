@@ -1,4 +1,6 @@
 import { formatDateTime, timeAgo, getJoinDateFromUID } from '/utils.js';
+import { generateWeaponStarsHTML } from '/weaponlogic.js';
+import { generateVehicleStarsHTML } from '/vehiclelogic.js'; // <-- Import new vehicle logic
 
 // Dark-only: force classes immediately and remove any light mode class
 (() => {
@@ -257,6 +259,10 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
 
     const weaponKillsData = {};
     if (data.weaponStats) for (const weaponName in data.weaponStats) weaponKillsData[weaponName] = data.weaponStats[weaponName].kills;
+    
+    // Generate both achievement sections
+    const weaponStarsHTML = generateWeaponStarsHTML(weaponKillsData);
+    const vehicleStarsHTML = generateVehicleStarsHTML(data.kills_per_vehicle);
 
     const weaponStatsHTML = createStatsCardHTML('🔫 Kills per Weapon', weaponKillsData, kills, 'weapon-sort-toggle', 'weapon-stats-grid');
     const vehicleKillsStatsHTML = createStatsCardHTML('🚗 Kills per Vehicle', data.kills_per_vehicle, vehicleKills, 'vehicle-sort-toggle', 'vehicle-kills-grid');
@@ -272,18 +278,13 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const totalShotsFiredZoomed = Object.values(rawData.shots_fired_zoomed || {}).reduce((sum, val) => sum + val, 0);
     const totalShotsHitUnzoomed = Object.values(rawData.shots_hit_unzoomed || {}).reduce((sum, val) => sum + val, 0);
     const totalShotsHitZoomed = Object.values(rawData.shots_hit_zoomed || {}).reduce((sum, val) => sum + val, 0);
-
-    // New combined totals
     const totalShotsFired = totalShotsFiredUnzoomed + totalShotsFiredZoomed;
     const totalShotsHit = totalShotsHitUnzoomed + totalShotsHitZoomed;
-
     const numberOfJumps = rawData.number_of_jumps || 0;
     const scudsLaunched = rawData.scuds_launched || 0;
-
     const totalWins = Object.values(data.wins || {}).reduce((sum, val) => sum + val, 0);
     const totalLosses = Object.values(data.losses || {}).reduce((sum, val) => sum + val, 0);
     const totalGames = totalWins + totalLosses;
-
     const damageRatio = totalDamageReceived > 0 ? (totalDamageDealt / totalDamageReceived).toFixed(2) : 'N/A';
     const totalKills = data.totalKills || 0;
     const totalDeaths = data.totalDeaths || 0;
@@ -297,27 +298,21 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const deathsPerGame = totalGames > 0 ? (totalDeaths / totalGames).toFixed(2) : 'N/A';
     const accUnzoomed = totalShotsFiredUnzoomed > 0 ? ((totalShotsHitUnzoomed / totalShotsFiredUnzoomed) * 100).toFixed(2) + '%' : 'N/A';
     const accZoomed = totalShotsFiredZoomed > 0 ? ((totalShotsHitZoomed / totalShotsFiredZoomed) * 100).toFixed(2) + '%' : 'N/A';
-
-    // New combined accuracy and per-game metrics
     const accBoth = totalShotsFired > 0 ? ((totalShotsHit / totalShotsFired) * 100).toFixed(2) + '%' : 'N/A';
     const shotsFiredPerGame = totalGames > 0 ? (totalShotsFired / totalGames).toFixed(2) : 'N/A';
     const shotsHitPerGame = totalGames > 0 ? (totalShotsHit / totalGames).toFixed(2) : 'N/A';
-
     const jumpsPerGame = totalGames > 0 ? (numberOfJumps / totalGames).toFixed(2) : 'N/A';
     const jumpsPerDamage = totalDamageDealt > 0 ? (numberOfJumps / totalDamageDealt).toFixed(6) : 'N/A';
     const headshotsPerGame = totalGames > 0 ? (totalHeadshots / totalGames).toFixed(2) : 'N/A';
     const headshotsPerKill = totalKills > 0 ? (totalHeadshots / totalKills).toFixed(2) : 'N/A';
     const missilesPerGame = totalGames > 0 ? (scudsLaunched / totalGames).toFixed(2) : 'N/A';
-
     const missileLaunchGames = valueForKeyCI(data.wins, 'Missile Launch') + valueForKeyCI(data.losses, 'Missile Launch');
     const missilesPerMissileLaunchGame = missileLaunchGames > 0 ? (scudsLaunched / missileLaunchGames).toFixed(2) : 'N/A';
-
     const topKillsPercent = 100 - (percentiles.killsPercentile || 0);
     const killsEloRankDecimal = topKillsPercent / 100.0;
     const topGamesPercent = 100 - (percentiles.gamesPercentile || 0);
     const gamesEloRankDecimal = topGamesPercent / 100.0;
     const topXpPercent = 100 - (percentiles.xpPercentile || 0);
-
     const performanceScore = calculatePerformanceScore(
         totalKills,
         totalDamageDealt,
@@ -330,7 +325,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
         data.xp || 0
     );
     const performanceScoreDisplay = performanceScore !== null ? performanceScore.toFixed(3) : 'N/A';
-
     let kdMilestoneHTML = '';
     if (totalDeaths > 0) {
         const current_kd = totalKills / totalDeaths;
@@ -544,8 +538,12 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
             </div>
         </div>
 
+        ${weaponStarsHTML}
         ${weaponStatsHTML}
+        
+        ${vehicleStarsHTML}
         ${vehicleKillsStatsHTML}
+        
         ${deathStatsHTML}
 
         <div class="dual-stats-grid">

@@ -98,7 +98,6 @@ body::before {
     background: var(--bg-container);
     border-radius: 15px;
     box-shadow: var(--box-shadow);
-    overflow: hidden;
 }
 
 .header {
@@ -107,6 +106,8 @@ body::before {
     padding: 30px;
     text-align: center;
     position: relative;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 .header h4 a {
     color: white; 
@@ -299,33 +300,28 @@ body::before {
 .weapon-stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
 .weapon-stats-header h3 { margin: 0; }
 .stat-row .stat-label-emoji {
-    font-size: 1.6em;   /* Makes the emoji larger */
-    line-height: 1;     /* Helps with vertical alignment */
+    font-size: 1.6em;
+    line-height: 1;
 }
 
 .stat-row .stat-value-pill {
-    padding: 5px 12px;  /* Vertical and horizontal padding inside the pill */
-    border-radius: 7px; /* Rounded corners for the pill shape */
-    font-size: 0.9em;   /* Text size inside the pill */
-    font-weight: 600;   /* Bolder text */
-    color: #1a1a1a;     /* White text color */
+    padding: 5px 12px;
+    border-radius: 7px;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #1a1a1a;
     text-align: center;
 }
 
-/* --- Pill Colors --- */
-
-/* Color for the "kills needed" pill (matches the green in your image) */
 .stat-value-pill.success {
     background-color: #1abc9c;
-    color: #1a1a1a; /* Dark text for better contrast on this green */
+    color: #1a1a1a;
 }
 
-/* Color for the "deaths to drop" pill (matches the red in your image) */
 .stat-value-pill.danger {
     background-color: #e84c3d;
 }
 
-/* A neutral gray for milestones that have already been passed */
 .stat-value-pill.subtle {
     background-color: #7f8c8d;
 }
@@ -374,77 +370,113 @@ h1 { display: flex; align-items: center; justify-content: center; flex-wrap: wra
 }
 
 @media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    .header,
-    .input-section,
-    .stat-card {
-        padding: 15px;
-    }
-    
-    .player-info {
-        padding: 0;
-    }
-
-    .header {
-        padding-top: 70px;
-    }
-
-    .header h1,
-    .player-name {
-        font-size: 1.8em;
-        line-height: 1.2;
-    }
-    
-    .header h3, .header h4 {
-        font-size: 0.9em;
-    }
-
-    .stat-card h3 {
-        font-size: 1.15em;
-    }
-    
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .player-uid {
-        font-size: 1em;
-        word-break: break-all;
-    }
-
-    /* Center the War Brokers logo on mobile */
-    .logo,
-    #page-logo {
-        display: block;
-        margin: 0 auto 10px;
-    }
-
-    /* Center the Requests pill on mobile */
-    .rate-limit-info {
-        position: static;
-        display: block;
-        width: max-content;
-        margin: 10px auto 0; /* centers horizontally */
-        text-align: center;
-    }
-
-    .input-group {
-        flex-direction: column;
-        align-items: stretch;
-    }
+    body { padding: 10px; }
+    .header, .input-section, .stat-card { padding: 15px; }
+    .player-info { padding: 0; }
+    .header { padding-top: 70px; }
+    .header h1, .player-name { font-size: 1.8em; line-height: 1.2; }
+    .header h3, .header h4 { font-size: 0.9em; }
+    .stat-card h3 { font-size: 1.15em; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .player-uid { font-size: 1em; word-break: break-all; }
+    .logo, #page-logo { display: block; margin: 0 auto 10px; }
+    .rate-limit-info { position: static; display: block; width: max-content; margin: 10px auto 0; text-align: center; }
+    .input-group { flex-direction: column; align-items: stretch; }
 }
 
 @media (min-width: 769px) {
-    .time-options {
-        flex-direction: row;
-    }
+    .time-options { flex-direction: row; }
+    .time-option { flex-direction: row; align-items: center; flex: 1; }
+}
 
-    .time-option {
-        flex-direction: row;
-        align-items: center;
-        flex: 1;
-    }
+/* --- Generic Achievements Section --- */
+.achievements-section {
+    background: var(--bg-stat-card);
+    border: 1px solid var(--border-color-light);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.achievements-section h3 {
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    font-size: 1.3em;
+    border-bottom: 2px solid var(--border-color-focus);
+    padding-bottom: 8px;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+    justify-content: center;
+}
+
+.achievement-star-card {
+    background: var(--bg-input-section);
+    border: 1px solid var(--border-color-light);
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    position: relative; /* Needed for the tooltip */
+}
+
+.achievement-star-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+}
+
+.achievement-star-card .achievement-name {
+    font-weight: 600;
+    font-size: 0.95em;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    line-height: 1.3;
+    min-height: 2.6em; /* Reserve space for two lines of text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.achievement-star-card .stars {
+    font-size: 2.5em;
+    line-height: 1;
+}
+
+.achievement-star-card .star.gold { color: #FFD700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.7); }
+.achievement-star-card .star.silver { color: #C0C0C0; text-shadow: 0 0 8px rgba(192, 192, 192, 0.7); }
+.achievement-star-card .star.bronze { color: #864d13; text-shadow: 0 0 8px rgba(205, 127, 50, 0.7); }
+
+.achievement-star-card .star.locked {
+    color: var(--border-color-medium);
+    opacity: 0.6;
+    text-shadow: none;
+}
+
+/* Custom Tooltip styles */
+.achievement-star-card[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 105%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--bg-raw-json);
+    color: var(--text-raw-json);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    pointer-events: none;
+}
+
+.achievement-star-card[data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
 }
