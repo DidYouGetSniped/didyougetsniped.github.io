@@ -41,8 +41,8 @@ const weaponThresholds = {
     'hunting rifle':     { gold: 2500, silver: 1200, bronze: 150 },
     
     // Sidearms
-    'revolver':          { gold: 2000, silver: 1000, bronze: 100 },
-    'desert eagle':      { gold: 2000, silver: 1000, bronze: 100 },
+    'revolver':          { gold: 2000, silver: 1000, bronze: 400 },
+    'desert eagle':      { gold: 2000, silver: 1000, bronze: 300 },
     'auto pistol':       { gold: 1500, silver: 750,  bronze: 75 },
     'pistol':            { gold: 1500, silver: 750,  bronze: 75 },
 

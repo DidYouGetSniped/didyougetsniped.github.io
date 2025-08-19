@@ -10,14 +10,10 @@ const TRACKED_VEHICLES = [
     'Car', 'Heli (No Weapon)'
 ].sort();
 
-/**
- * Unique kill thresholds for each vehicle achievement.
- * Keys MUST be lowercase for case-insensitive matching.
- */
 const vehicleThresholds = {
     // Jets
-    'jet 2 fin':        { gold: 5000, silver: 2500, bronze: 500 },
-    'jet 1 fin':        { gold: 4000, silver: 2000, bronze: 400 },
+    'jet 2 fin':        { gold: 3000, silver: 2000, bronze: 400 },
+    'jet 1 fin':        { gold: 3000, silver: 2000, bronze: 400 },
     
     // Ground Vehicles
     'tank lvl 1':       { gold: 1000, silver: 500,  bronze: 50 },
