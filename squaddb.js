@@ -1,8 +1,35 @@
 export const squadDB = {
-    // Example Squads (keys are now case-sensitive):
     "APG": {
         discordLink: "https://discord.gg/Wb8eTc5HND",
         bio: ""
+    },
+    "CAESAR": {
+        discordLink: "",
+        sections: [
+            {
+                title: "History",
+                content: `Forged in the winter of 2022–2023 by <a href="https://didyougetsniped.github.io/wbinfo?uid=600722c9bfea71503dbd4905">Colonel Grant</a> and <a href="https://didyougetsniped.github.io/wbinfo?uid=6006c985d142af9d4670c226">Nyarlatothep</a>, CAESAR takes its name from the legendary Gaius Julius Caesar—peerless general, masterful orator, and brilliant strategist, whose glory rivalled that of Alexander the Great. His legacy of conquest and command inspires us still. Our ranks, titles, and communications echo the traditions of ancient Rome, whose indomitable legions bent the known world to their will.
+Our motto: Res, non verba — “Deeds, not words.” We demand from every recruit the highest standard of conduct. Chivalry is not optional; it is our only law.`
+            },
+            {
+                title: "Current status",
+                content: `Today, CAESAR stands as the largest squad in the game. Our numbers ensure a constant presence on the battlefield—wherever one of us fights, reinforcements are never far behind. Training drills, trials of skill, and squad wars keep our edge sharp.
+Leadership rests in the hands of proven veterans whose loyalty is unshakable: <a href="https://didyougetsniped.github.io/wbinfo?uid=63c8fbcfd142aff929a28ea2">Colonel Fires</a>, <a href="https://didyougetsniped.github.io/wbinfo?uid=6698bdf3d142af601f50256a">WhatUdied</a>, <a href="https://didyougetsniped.github.io/wbinfo?uid=5f086e2dd142afe8153aef05">The_Annihilator</a>, <a href="https://didyougetsniped.github.io/wbinfo?uid=63c8ffa1d142afe031a28e1d">Commander Phoenix</a>, and, at the helm, <a href="https://didyougetsniped.github.io/wbinfo?uid=6006c985d142af9d4670c226">Nyarlatothep</a> and <a href="https://didyougetsniped.github.io/wbinfo?uid=600722c9bfea71503dbd4905">Colonel Grant</a>.
+
+Legion—forward! March!`
+            }
+        ]
+    },
+    "GLORY": {
+        discordLink: "https://discord.gg/Gaf5A2qhJE",
+        sections: [
+            {
+                title: "",
+                content: `GLORY is a small squad founded in early 2024 by <a href="https://didyougetsniped.github.io/wbinfo?uid=6525d440bfea71842f848771">Shockwave</a>. 
+Based on the idea of glory in battle, the official anthem is “For the Glory”. 
+The squad has two co-leaders, <a href="https://didyougetsniped.github.io/wbinfo?uid=64bd8a6abfea715e02356aef">WarfrogYT</a> and <a href="https://didyougetsniped.github.io/wbinfo?uid=63d04d93d142afb3369576af">Ryguy11</a>.`
+            }
+        ]
     },
     "PAIN": {
         discordLink: "",  // No Discord link provided
@@ -24,23 +51,6 @@ as <a href="https://didyougetsniped.github.io/wbinfo?uid=620d0ee2d142af7f01de402
                 title: "Current Status",
                 content: `Under their leadership, PAIN grew from 31 to 64 members before removing inactive players to maintain activity standards. 
 As of July 2025, with <a href="https://didyougetsniped.github.io/wbinfo?uid=655e46dad142af8267cdf387">Bogdan_23</a> as the newest squad leader, PAIN is entering another recruiting phase to welcome new players and strengthen its community.`
-            }
-        ]
-    },
-    "CAESAR": {
-        discordLink: "",
-        sections: [
-            {
-                title: "History",
-                content: `Forged in the winter of 2022–2023 by <a href="https://didyougetsniped.github.io/wbinfo?uid=600722c9bfea71503dbd4905">Colonel Grant</a> and <a href="https://didyougetsniped.github.io/wbinfo?uid=6006c985d142af9d4670c226">Nyarlatothep</a>, CAESAR takes its name from the legendary Gaius Julius Caesar—peerless general, masterful orator, and brilliant strategist, whose glory rivalled that of Alexander the Great. His legacy of conquest and command inspires us still. Our ranks, titles, and communications echo the traditions of ancient Rome, whose indomitable legions bent the known world to their will.
-Our motto: Res, non verba — “Deeds, not words.” We demand from every recruit the highest standard of conduct. Chivalry is not optional; it is our only law.`
-            },
-            {
-                title: "Current status",
-                content: `Today, CAESAR stands as the largest squad in the game. Our numbers ensure a constant presence on the battlefield—wherever one of us fights, reinforcements are never far behind. Training drills, trials of skill, and squad wars keep our edge sharp.
-Leadership rests in the hands of proven veterans whose loyalty is unshakable: <a href="https://didyougetsniped.github.io/wbinfo?uid=63c8fbcfd142aff929a28ea2">Colonel Fires</a>, <a href="https://didyougetsniped.github.io/wbinfo?uid=6698bdf3d142af601f50256a">WhatUdied</a>, <a href="https://didyougetsniped.github.io/wbinfo?uid=5f086e2dd142afe8153aef05">The_Annihilator</a>, <a href="https://didyougetsniped.github.io/wbinfo?uid=63c8ffa1d142afe031a28e1d">Commander Phoenix</a>, and, at the helm, <a href="https://didyougetsniped.github.io/wbinfo?uid=6006c985d142af9d4670c226">Nyarlatothep</a> and <a href="https://didyougetsniped.github.io/wbinfo?uid=600722c9bfea71503dbd4905">Colonel Grant</a>.
-
-Legion—forward! March!`
             }
         ]
     },
