@@ -65,8 +65,8 @@ export function generateVehicleStarsHTML(vehicleKillsData) {
         return { name: vehicleName, kills, tier, thresholds };
     }).filter(Boolean);
 
-    // Default sort: By Tier (color), then by Kill Count within each tier
-    vehicleData.sort((a, b) => b.tier - a.tier || b.kills - a.kills);
+    // Sort by Tier (descending), then alphabetically within each tier
+    vehicleData.sort((a, b) => b.tier - a.tier || a.name.localeCompare(b.name));
 
     const starsHTML = vehicleData.map(data => {
         let starColorClass = 'locked';

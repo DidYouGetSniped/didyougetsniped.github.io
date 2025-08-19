@@ -106,8 +106,8 @@ export function generateWeaponStarsHTML(weaponKillsData) {
         return { name: weaponName, kills, tier, thresholds };
     }).filter(Boolean);
 
-    // Default sort: By Tier (color), then by Kill Count within each tier
-    weaponData.sort((a, b) => b.tier - a.tier || b.kills - a.kills);
+    // Sort by Tier (descending), then alphabetically within each tier
+    weaponData.sort((a, b) => b.tier - a.tier || a.name.localeCompare(b.name));
 
     const starsHTML = weaponData.map(data => {
         let starColorClass = 'locked';
