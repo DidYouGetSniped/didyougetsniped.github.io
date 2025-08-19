@@ -12,23 +12,20 @@ const TRACKED_WEAPONS = [
     'SCAR', 'Shotgun', 'SMG', 'Sniper Rifle', 'Tactical Shotgun', 'VEK', 'VSS'
 ].sort();
 
-/**
- * Unique kill thresholds for each weapon achievement.
- * Keys MUST be lowercase for case-insensitive matching.
- */
 const weaponThresholds = {
     // High-Usage Primaries
-    'ar rifle':          { gold: 15000, silver: 7500, bronze: 1000 },
-    'ak rifle':          { gold: 15000, silver: 7500, bronze: 1000 },
+    'ar rifle':          { gold: 12000, silver: 6000, bronze: 750 },
+    'ak rifle':          { gold: 12000, silver: 6000, bronze: 750 },
     'ar3':               { gold: 15000, silver: 7500, bronze: 1000 },
     'smg':               { gold: 12000, silver: 6000, bronze: 750 },
     'mp7':               { gold: 12000, silver: 6000, bronze: 750 },
     'sniper rifle':      { gold: 12000, silver: 6000, bronze: 750 },
+    'mutant':            { gold: 8000, silver: 4000, bronze: 500 },
 
     // Powerful/Popular Weapons
     'vss':               { gold: 8000, silver: 4000, bronze: 500 },
     '50 cal sniper':     { gold: 8000, silver: 4000, bronze: 500 },
-    'lmg':               { gold: 7500, silver: 3500, bronze: 400 },
+    'lmg':               { gold: 5000, silver: 2500, bronze: 300 },
     'scar':              { gold: 7500, silver: 3500, bronze: 400 },
     'vek':               { gold: 7500, silver: 3500, bronze: 400 },
 
@@ -50,13 +47,13 @@ const weaponThresholds = {
     'pistol':            { gold: 1500, silver: 750,  bronze: 75 },
 
     // Explosives & Heavy Weapons
-    'rpg':               { gold: 3500, silver: 1750, bronze: 200 },
-    'bgm':               { gold: 3500, silver: 1750, bronze: 200 },
-    'minigun':           { gold: 2000, silver: 1000, bronze: 100 },
+    'rpg':               { gold: 1500, silver: 700,  bronze: 120 },
+    'bgm':               { gold: 1500, silver: 700, bronze: 120 },
+    'minigun':           { gold: 5000, silver: 2500, bronze: 300 },
     'grenade launcher':  { gold: 1500, silver: 750,  bronze: 75 },
     'grenade':           { gold: 1500, silver: 750,  bronze: 75 },
     'homing':            { gold: 1000, silver: 500,  bronze: 50 },
-    'air strike':        { gold: 1000, silver: 500,  bronze: 50 },
+    'air strike':        { gold: 1500, silver: 700,  bronze: 120 },
     'laser trip mine':   { gold: 1000, silver: 500,  bronze: 50 },
 
     // Melee & Meme Weapons
@@ -66,10 +63,9 @@ const weaponThresholds = {
     'mace':              { gold: 500,  silver: 200,  bronze: 25 },
     'butterfly knife':   { gold: 250,  silver: 100,  bronze: 10 },
     'chainsaw':          { gold: 100,  silver: 40,   bronze: 5 },
-    'fists':             { gold: 100,  silver: 40,   bronze: 5 },
+    'fists':             { gold: 1000,  silver: 500,   bronze: 50 },
 
     // Utility & Placeables
-    'mutant':            { gold: 200,  silver: 75,   bronze: 10 },
     'mg turret':         { gold: 200,  silver: 75,   bronze: 10 },
     'implosion grenade': { gold: 100,  silver: 40,   bronze: 5 },
     'concussion grenade':{ gold: 100,  silver: 40,   bronze: 5 },
