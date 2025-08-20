@@ -67,8 +67,8 @@ const weaponThresholds = {
 
     // Utility & Placeables
     'mg turret':         { gold: 200,  silver: 75,   bronze: 10 },
-    'implosion grenade': { gold: 100,  silver: 40,   bronze: 5 },
-    'concussion grenade':{ gold: 100,  silver: 40,   bronze: 5 },
+    'implosion grenade': { gold: 50,  silver: 20,   bronze: 5 },
+    'concussion grenade':{ gold: 50,  silver: 20,   bronze: 5 },
 };
 
 /**
@@ -135,3 +135,4 @@ export function generateWeaponStarsHTML(weaponKillsData) {
     `;
 
 }
+
