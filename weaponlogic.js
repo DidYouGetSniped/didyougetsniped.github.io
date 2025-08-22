@@ -59,11 +59,11 @@ const weaponThresholds = {
     // Melee & Meme Weapons
     'crossbow':          { gold: 2000, silver: 1000, bronze: 100 },
     'rubber chicken':    { gold: 500,  silver: 200,  bronze: 25 },
-    'knife':             { gold: 500,  silver: 200,  bronze: 25 },
+    'knife':             { gold: 1000,  silver: 500,   bronze: 50 },
     'mace':              { gold: 500,  silver: 200,  bronze: 25 },
     'butterfly knife':   { gold: 250,  silver: 100,  bronze: 10 },
     'chainsaw':          { gold: 100,  silver: 40,   bronze: 5 },
-    'fists':             { gold: 1000,  silver: 500,   bronze: 50 },
+    'fists':             { gold: 500,  silver: 200,   bronze: 25 },
 
     // Utility & Placeables
     'mg turret':         { gold: 200,  silver: 75,   bronze: 10 },
@@ -135,4 +135,5 @@ export function generateWeaponStarsHTML(weaponKillsData) {
     `;
 
 }
+
 
