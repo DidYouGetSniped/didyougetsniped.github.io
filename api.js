@@ -53,9 +53,21 @@ const IGNORED_WEAPON_CODES = [
 ];
 
 const SPECIAL_LINKS = {
-    '60d08b15d142afee4b1dfabe': { discord: 'https://discord.com/users/1014162018992914433', youtube: 'https://youtube.com/@DidYouGetSniped' }, // DYGS
-    '6011bb49d142afed6b12d43e': { discord: 'https://discord.com/users/643617634419474432', youtube: 'https://youtube.com/@paperclipFPS' }, // Paperclip
-    '65b99682d142af8101fc7025': { discord: 'https://discord.com/users/1133760136897380356', youtube: 'https://www.youtube.com/channel/UC3WathZqJpuFuGOuDBZ-jCQ' } // Imagine Dying
+    '60d08b15d142afee4b1dfabe': { 
+        discord: 'https://discord.com/users/1014162018992914433', 
+        youtube: 'https://youtube.com/@DidYouGetSniped' 
+    }, // DYGS
+    '6011bb49d142afed6b12d43e': { 
+        discord: 'https://discord.com/users/643617634419474432', 
+        youtube: 'https://youtube.com/@paperclipFPS' 
+    }, // Paperclip
+    '65b99682d142af8101fc7025': { 
+        discord: 'https://discord.com/users/1133760136897380356', 
+        youtube: 'https://www.youtube.com/channel/UC3WathZqJpuFuGOuDBZ-jCQ' 
+    }, // Imagine Dying
+    '6449c8acd142afb66d07f776': { 
+        discord: 'https://discord.com/users/1093985963014889552' 
+    } // Invis
 };
 
 const PLAYER_BIOGRAPHIES = {
@@ -63,7 +75,11 @@ const PLAYER_BIOGRAPHIES = {
     "I first started playing War Brokers back in 2017. In 2021 I created a YouTube channel. Sometimes I make edits" + 
     " on the <a href='https://war-brokers.fandom.com/wiki/War_Brokers_Wiki' target='_blank' class='no-link-style'>War Brokers Wiki</a>.",
 
-    '614cdc8bd142af3e0f3f8370': "HM: iffypedia - goat of sniping"
+    '614cdc8bd142af3e0f3f8370': "HM: iffypedia - goat of sniping",
+
+    '6449c8acd142afb66d07f776': "Hi there. My name is Invis. I am a retired warbrokers player who was well known for his sniping. " +
+    "I have been in 3 squads, CAESAR, UMS, and AI. You can always talk to me on discord. " +
+    "Thanks for stopping by my stats! :)"
 };
 
 async function fetchData(url, options = {}, errorValue = null) {
@@ -218,4 +234,5 @@ export async function searchPlayerByName(query) {
     const searchResults = await fetchData(searchUrl, {}, []);
     return searchResults;
 }
+
 
