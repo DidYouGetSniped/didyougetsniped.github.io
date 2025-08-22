@@ -142,8 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const total = data.length,
             inPct = total > 0 ? inactive / total : 0;
-        badge.textContent = `Status: ${inPct >= .85 ? 'Inactive' : 'Active'} (${Math.round(inPct * 100)}% inactive)`;
-        badge.className = 'status-badge ' + (inPct >= .85 ? 'inactive' : 'active');
+        badge.textContent = `Status: ${inPct >= .80 ? 'Inactive' : 'Active'} (${Math.round(inPct * 100)}% inactive)`;
+        badge.className = 'status-badge ' + (inPct >= .80 ? 'inactive' : 'active');
         badge.style.display = 'block';
 
         const avgLevel = total > 0 ? (lvl / total).toFixed(1) : 0;
@@ -358,3 +358,4 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchSquadData(squadFromUrl);
     }
 });
+
