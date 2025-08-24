@@ -447,7 +447,7 @@ h1 { display: flex; align-items: center; justify-content: center; flex-wrap: wra
 
 .achievement-star-card .star.gold { color: #FFD700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.7); }
 .achievement-star-card .star.silver { color: #C0C0C0; text-shadow: 0 0 8px rgba(192, 192, 192, 0.7); }
-.achievement-star-card .star.bronze { color: #864d13; text-shadow: 0 0 8px rgba(205, 127, 50, 0.7); }
+.achievement-star-card .star.bronze { color: #af967a; text-shadow: 0 0 8px rgba(205, 127, 50, 0.7); }
 
 .achievement-star-card .star.locked {
     color: var(--border-color-medium);
