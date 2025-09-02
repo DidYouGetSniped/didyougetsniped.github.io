@@ -22,15 +22,13 @@ const vehicleThresholds = {
     'apc lvl 1':        { gold: 2400, silver: 1000, bronze: 200 },
     'apc lvl 2':        { gold: 2400, silver: 1000, bronze: 200 },
     'apc lvl 3':        { gold: 2400, silver: 1000, bronze: 200 },
+    'car':              { gold: 2400, silver: 1000, bronze: 200 },
 
     // Helicopters
     'heli lvl 3':       { gold: 2400, silver: 1000, bronze: 200 },
     'heli lvl 2':       { gold: 2400, silver: 1000, bronze: 200 },
     'heli lvl 1':       { gold: 2400, silver: 1000, bronze: 200 },
-
-    // Misc/Meme
-    'car':              { gold: 2400, silver: 1000, bronze: 200 },
-    'heli (no weapon)': { gold: 500,  silver: 200,  bronze: 50 },
+    'heli (no weapon)': { gold: 50,  silver: 30,  bronze: 10 },   
 };
 
 /**
@@ -94,3 +92,4 @@ export function generateVehicleStarsHTML(vehicleKillsData) {
     `;
 
 }
+
