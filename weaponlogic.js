@@ -39,6 +39,7 @@ const weaponThresholds = {
     'g3a3':              { gold: 3000, silver: 1500, bronze: 200 },
     'kbar':              { gold: 3000, silver: 1500, bronze: 200 },
     'hunting rifle':     { gold: 2500, silver: 1200, bronze: 150 },
+    'crossbow':          { gold: 2000, silver: 1000, bronze: 100 },
     
     // Sidearms
     'revolver':          { gold: 2000, silver: 1000, bronze: 400 },
@@ -57,12 +58,11 @@ const weaponThresholds = {
     'laser trip mine':   { gold: 1000, silver: 500,  bronze: 50 },
 
     // Melee & Meme Weapons
-    'crossbow':          { gold: 2000, silver: 1000, bronze: 100 },
-    'rubber chicken':    { gold: 500,  silver: 200,  bronze: 25 },
+    'rubber chicken':    { gold: 1000,  silver: 500,   bronze: 50 },
     'knife':             { gold: 1000,  silver: 500,   bronze: 50 },
     'mace':              { gold: 500,  silver: 200,  bronze: 25 },
-    'butterfly knife':   { gold: 250,  silver: 100,  bronze: 10 },
-    'chainsaw':          { gold: 100,  silver: 40,   bronze: 5 },
+    'butterfly knife':   { gold: 1000,  silver: 500,   bronze: 50 },
+    'chainsaw':          { gold: 1000,  silver: 500,   bronze: 50 },
     'fists':             { gold: 500,  silver: 200,   bronze: 25 },
 
     // Utility & Placeables
@@ -135,5 +135,6 @@ export function generateWeaponStarsHTML(weaponKillsData) {
     `;
 
 }
+
 
 
