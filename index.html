@@ -25,12 +25,100 @@
     gtag('js', new Date());
     gtag('config', 'G-XGNQRLJMGK');
   </script>
+
+  <style>
+    /* To-Do List Styles */
+    .todo-section {
+      margin-top: 0px;
+    }
+
+    .todo-section h2 {
+      margin: 0 0 16px 0;
+      font-size: 1.25rem;
+      color: var(--text);
+    }
+
+    .todo-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      transition: background-color 200ms ease;
+    }
+
+    .todo-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .todo-item label {
+      color: var(--text);
+      transition: color 200ms ease, text-decoration 200ms ease;
+    }
+
+    .todo-item input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      position: relative;
+      transition: background-color 200ms ease, border-color 200ms ease;
+      flex-shrink: 0;
+      display: grid;
+      place-content: center;
+    }
+
+    .todo-item input[type="checkbox"]::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      transform: scale(0);
+      transition: 120ms transform ease-in-out;
+      box-shadow: inset 1em 1em var(--accent-1);
+      clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+      transform-origin: bottom left;
+    }
+
+    .todo-item input[type="checkbox"]:checked::before {
+      transform: scale(1);
+    }
+    
+    .todo-item input[type="checkbox"]:checked {
+      border-color: var(--accent-1);
+    }
+
+    /* Styles for completed/checked items */
+    .todo-item input[type="checkbox"]:checked + label {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    /* When the checkbox is disabled */
+    .todo-item input[type="checkbox"]:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .todo-item input[type="checkbox"]:disabled + label {
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
     <div class="container">
       <h1>Welcome to Did You Get Sniped's Site!</h1>
-      <p class="tagline">Quick links and updates</p>
+      <p class="tagline">Quick links, Updates, and To-do</p>
       <div class="header-accent" aria-hidden="true"></div>
     </div>
   </header>
@@ -61,29 +149,28 @@
 
     <section class="updates-section" aria-labelledby="updates-title">
       <div class="updates-header">
-  <h2 id="updates-title">Updates</h2>
-  <div class="updates-controls">
-    <!-- New "Open Updates" button -->
-    <a href="updates.html" target="_blank" rel="noopener noreferrer" class="btn glass-btn small-btn">
-      Open Updates
-    </a>
+        <h2 id="updates-title">Updates</h2>
+        <div class="updates-controls">
+          <!-- New "Open Updates" button -->
+          <a href="updates.html" target="_blank" rel="noopener noreferrer" class="btn glass-btn small-btn">
+            Open Updates
+          </a>
 
-    <div class="updates-nav" role="group" aria-label="Scroll updates">
-      <button class="icon-btn glass" id="updates-prev" aria-label="Previous updates" disabled>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-      <button class="icon-btn glass" id="updates-next" aria-label="Next updates">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-</div>
+          <div class="updates-nav" role="group" aria-label="Scroll updates">
+            <button class="icon-btn glass" id="updates-prev" aria-label="Previous updates" disabled>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="icon-btn glass" id="updates-next" aria-label="Next updates">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Populated from updates.html. Shows 3 at a time with smooth scrolling. -->
@@ -92,6 +179,28 @@
         <li class="skeleton glass"><span class="sk-time"></span><span class="sk-line"></span></li>
         <li class="skeleton glass"><span class="sk-time"></span><span class="sk-line"></span></li>
         <li class="skeleton glass"><span class="sk-time"></span><span class="sk-line"></span></li>
+      </ul>
+    </section>
+
+    <section class="todo-section" aria-labelledby="todo-title">
+      <h2 id="todo-title">To-Do List</h2>
+      <ul class="todo-list">
+        <li class="todo-item glass">
+          <input type="checkbox" id="todo1" disabled>
+          <label for="todo1">Add Squad Inviter to Home page</label>
+        </li>
+        <li class="todo-item glass">
+          <input type="checkbox" id="todo2" disabled>
+          <label for="todo2">Squad Inviter Navigation Bar</label>
+        </li>
+        <li class="todo-item glass">
+          <input type="checkbox" id="todo3" disabled>
+          <label for="todo3">Add More To-Do things</label>
+        </li>
+        <li class="todo-item glass">
+          <input type="checkbox" id="todo4" checked disabled>
+          <label for="todo4">Fix Home Nav on Squad Count</label>
+        </li>
       </ul>
     </section>
 
