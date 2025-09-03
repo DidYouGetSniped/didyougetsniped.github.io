@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <h4>Join the <a href="https://discord.gg/Wb8eTc5HND" target="_blank">Support Server</a></h4>
       <p class="update-info">The member count is updated every 8 hours.</p>
       <div class="nav-buttons">
-        <a href="https://didyougetsniped.github.io/" class="btn nav-btn">Home</a>
+        <a href="/index.html" class="btn nav-btn">Home</a>
       </div>
       <div class="button-group">
         <button id="toggleSort" class="btn">Toggle Sort</button>
@@ -59,14 +59,14 @@ document.addEventListener('DOMContentLoaded', function() {
     setRandomBackground();
   </script>
   
-  <script>
+    <script>
     // --- MAIN APPLICATION SCRIPT ---
     const squadListEl = document.getElementById('squadList');
     const statusEl = document.getElementById('status');
     const toggleSortBtn = document.getElementById('toggleSort');
 
     let squadData = [];
-    let isDescending = true;
+    let sortMode = 'countDesc'; // New state: 'countDesc', 'countAsc', or 'alphaAsc'
 
     function formatTimeAgo(date) {
       const now = new Date();
@@ -100,11 +100,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderSquadList() {
       if (squadData.length === 0) return;
 
-      const sortedSquads = [...squadData].sort((a, b) =>
-        isDescending ? b.count - a.count : a.count - b.count
-      );
+      const sortedSquads = [...squadData]; // Create a mutable copy
 
-      toggleSortBtn.textContent = `Sort: ${isDescending ? 'Least Members' : 'Most Members'}`;
+      // Updated sorting logic with three modes
+      if (sortMode === 'countDesc') {
+        sortedSquads.sort((a, b) => b.count - a.count);
+        toggleSortBtn.textContent = 'Sort: Least Members';
+      } else if (sortMode === 'countAsc') {
+        sortedSquads.sort((a, b) => a.count - b.count);
+        toggleSortBtn.textContent = 'Sort: Alphabetical (A-Z)';
+      } else { // 'alphaAsc'
+        sortedSquads.sort((a, b) => a.name.localeCompare(b.name));
+        toggleSortBtn.textContent = 'Sort: Most Members';
+      }
 
       squadListEl.innerHTML = sortedSquads.map(item => `
         <li>
@@ -145,8 +153,15 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
+    // Updated event listener to cycle through the three modes
     toggleSortBtn.addEventListener('click', () => {
-      isDescending = !isDescending;
+      if (sortMode === 'countDesc') {
+        sortMode = 'countAsc';
+      } else if (sortMode === 'countAsc') {
+        sortMode = 'alphaAsc';
+      } else { // 'alphaAsc'
+        sortMode = 'countDesc';
+      }
       renderSquadList();
     });
 

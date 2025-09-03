@@ -361,7 +361,7 @@ body::after {
   margin-left: 0;
 }
 
-.updates-list.is-carousel li {
+.updates-list.is-carousel > li {
   margin: 0;
   padding: 20px;
   min-height: 100px;
@@ -370,7 +370,8 @@ body::after {
   border-radius: var(--radius);
 }
 
-.updates-list.is-carousel li:hover {
+/* This is the corrected rule */
+.updates-list.is-carousel > li:hover {
   transform: translateY(-3px);
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
   border-color: rgba(255, 255, 255, 0.3);
@@ -590,4 +591,35 @@ body::after {
   .discord-link {
     border: 2px solid white;
   }
+}
+
+/* Prevent glowing bullet on nested change items */
+.changes-list li::before {
+  content: none !important;
+}
+
+/* Tighter spacing for nested change items */
+.changes-list {
+  margin-top: 4px;      /* just a little space below the date */
+  margin-left: 1.2em;   /* small indent */
+  padding-left: 0.8em;  /* for bullets */
+  list-style: disc;
+}
+
+.changes-list li {
+  margin: 2px 0;        /* smaller gap between change items */
+  padding: 0;           /* remove the big padding from parent li */
+}
+
+/* Clean up the nested list inside the carousel cards */
+.updates-list.is-carousel .changes-list { 
+  padding: 0;       /* Removes default browser indentation */
+  margin-top: 6px;  /* Small space below the date */
+  margin-left: 4px; /* Slight indent for the text */
+}
+
+.updates-list.is-carousel .changes-list li {
+  padding: 0;       /* CRITICAL: Resets the card padding */
+  margin: 2px 0;    /* Tight vertical spacing between lines */
+  min-height: auto; /* Resets the card min-height */
 }
