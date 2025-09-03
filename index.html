@@ -25,94 +25,6 @@
     gtag('js', new Date());
     gtag('config', 'G-XGNQRLJMGK');
   </script>
-
-  <style>
-    /* To-Do List Styles */
-    .todo-section {
-      margin-top: 0px;
-    }
-
-    .todo-section h2 {
-      margin: 0 0 16px 0;
-      font-size: 1.25rem;
-      color: var(--text);
-    }
-
-    .todo-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      gap: 12px;
-    }
-
-    .todo-item {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
-      border-radius: var(--radius);
-      transition: background-color 200ms ease;
-    }
-
-    .todo-item:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .todo-item label {
-      color: var(--text);
-      transition: color 200ms ease, text-decoration 200ms ease;
-    }
-
-    .todo-item input[type="checkbox"] {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 22px;
-      height: 22px;
-      border: 2px solid var(--border);
-      border-radius: 6px;
-      position: relative;
-      transition: background-color 200ms ease, border-color 200ms ease;
-      flex-shrink: 0;
-      display: grid;
-      place-content: center;
-    }
-
-    .todo-item input[type="checkbox"]::before {
-      content: "";
-      width: 12px;
-      height: 12px;
-      transform: scale(0);
-      transition: 120ms transform ease-in-out;
-      box-shadow: inset 1em 1em var(--accent-1);
-      clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-      transform-origin: bottom left;
-    }
-
-    .todo-item input[type="checkbox"]:checked::before {
-      transform: scale(1);
-    }
-    
-    .todo-item input[type="checkbox"]:checked {
-      border-color: var(--accent-1);
-    }
-
-    /* Styles for completed/checked items */
-    .todo-item input[type="checkbox"]:checked + label {
-      color: var(--muted);
-      text-decoration: line-through;
-    }
-
-    /* When the checkbox is disabled */
-    .todo-item input[type="checkbox"]:disabled {
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    .todo-item input[type="checkbox"]:disabled + label {
-      cursor: not-allowed;
-    }
-  </style>
 </head>
 <body>
   <header class="site-header">
@@ -160,12 +72,39 @@
         <a class="btn glass-btn" href="/bpr.html" aria-label="Open BPR">Open BPR</a>
       </article>
     </section>
+      <!-- Image Carousel Section -->
+    <section class="advert-section" aria-labelledby="advert-title">
+      <div class="advert-header">
+        <h2 id="advert-title">Adverts</h2>
+        <div class="advert-controls">
+          <button class="icon-btn glass" id="advert-prev" aria-label="Previous image" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button class="icon-btn glass" id="advert-next" aria-label="Next image">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <ul class="advert-list is-carousel" id="advert-list" aria-live="polite">
+        <li class="advert-item glass">
+  <a href="https://youtu.be/0j49IODwckA" target="_blank" rel="noopener noreferrer">
+    <img src="/advert/image1.png" alt="Advertisement 1" loading="lazy" />
+  </a>
+</li>
+      </ul>
+    </section>
 
     <section class="updates-section" aria-labelledby="updates-title">
       <div class="updates-header">
         <h2 id="updates-title">Updates</h2>
         <div class="updates-controls">
-          <!-- New "Open Updates" button -->
           <a href="updates.html" target="_blank" rel="noopener noreferrer" class="btn glass-btn small-btn">
             Open Updates
           </a>
@@ -312,6 +251,44 @@
 
       loadUpdates();
     })();
+
+    // === Advert Carousel ===
+(() => {
+  const scroller = document.getElementById('advert-list');
+  const prevBtn = document.getElementById('advert-prev');
+  const nextBtn = document.getElementById('advert-next');
+
+  function updateNav() {
+    if (!scroller) return;
+    const max = scroller.scrollWidth - scroller.clientWidth - 5;
+    prevBtn.disabled = scroller.scrollLeft <= 5;
+    nextBtn.disabled = scroller.scrollLeft >= max;
+  }
+
+  function pageScroll(dir) {
+    if (!scroller) return;
+    const currentScroll = scroller.scrollLeft;
+    const scrollAmount = scroller.clientWidth;
+    let targetScroll = currentScroll + (dir * scrollAmount);
+    targetScroll = Math.max(0, targetScroll);
+    targetScroll = Math.min(targetScroll, scroller.scrollWidth - scroller.clientWidth);
+    scroller.scroll({ left: targetScroll, behavior: 'smooth' });
+  }
+
+  prevBtn?.addEventListener('click', () => pageScroll(-1));
+  nextBtn?.addEventListener('click', () => pageScroll(1));
+
+  let raf;
+  scroller?.addEventListener('scroll', () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(updateNav);
+  });
+  window.addEventListener('resize', updateNav);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) updateNav(); });
+
+  updateNav();
+})();
+
   </script>
 </body>
 </html>
