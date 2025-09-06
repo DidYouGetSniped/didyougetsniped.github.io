@@ -60,6 +60,17 @@
     .notice{margin-top:14px; font-size:16px; color:#fca5a5}
     .notice a{color:#93c5fd; text-decoration:none}
     .creator{margin-top:32px; text-align:center; font-size:15px; color:var(--muted)}
+
+    /* New: section + steps styling */
+    h2{margin:32px 0 12px; font-size:28px}
+    .section{margin-top:26px; padding-top:18px; border-top:1px solid rgba(255,255,255,.12)}
+    .steps{margin:0; padding-left:22px; color:var(--muted); font-size:18px}
+    .steps li{margin:0 0 10px}
+    kbd{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:6px; padding:2px 6px; font-size:.8em
+    }
   </style>
 </head>
 <!-- Google tag (gtag.js) -->
@@ -94,7 +105,22 @@
       </div>
       <div id="notice" class="notice" style="display:none;"></div>
     </form>
-    
+
+    <!-- New: How to get your token -->
+    <section class="section" id="how-to-token">
+      <h2>How to get your game token</h2>
+      <ol class="steps">
+        <li>Open <a href="https://warbrokers.io" target="_blank" rel="noopener noreferrer">warbrokers.io</a> and log in.</li>
+        <li>Right‑click the page and choose <strong>Inspect</strong> (or press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> on Windows/Linux, <kbd>Cmd</kbd>+<kbd>Option</kbd>+<kbd>I</kbd> on Mac).</li>
+        <li>Go to the <strong>Console</strong> tab.</li>
+        <li>Type <code>getCookie("game_token")</code> and press <kbd>Enter</kbd>.
+          <br/>Chrome tip: if pasting is blocked, type <code>allow pasting</code> and press <kbd>Enter</kbd>, then paste again.
+        </li>
+        <li>Copy the value that appears and paste it into the <strong>Game token</strong> field above.</li>
+      </ol>
+      <p class="hint">Do this on the War Brokers tab, not on this page. Keep your token private — it grants access to your account.</p>
+    </section>
+
     <div class="creator">Created by Did You Get Sniped?</div>
   </div>
 
@@ -151,6 +177,4 @@
     });
   </script>
 </body>
-
 </html>
-
