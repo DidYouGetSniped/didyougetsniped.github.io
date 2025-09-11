@@ -71,6 +71,32 @@
       border:1px solid rgba(255,255,255,.16);
       border-radius:6px; padding:2px 6px; font-size:.8em
     }
+    
+    /* Added: Navigation */
+    nav {
+      position: absolute;
+      top: 30px;
+      left: 40px;
+      z-index: 10;
+    }
+    .nav-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all .15s ease-in-out;
+    }
+    .nav-btn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+      background: rgba(34,211,238,.1);
+      transform: translateY(-1px);
+    }
   </style>
 </head>
 <!-- Google tag (gtag.js) -->
@@ -83,6 +109,10 @@
   gtag('config', 'G-XGNQRLJMGK');
 </script>
 <body>
+  <nav>
+    <a href="/index.html" class="btn nav-btn">Home</a>
+  </nav>
+
   <div class="card">
     <h1>Manual Squad Inviter</h1>
     <p>Enter your game token and one UID, then Invite.</p>
