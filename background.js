@@ -1,67 +1,47 @@
-export function setRandomBackground({ maxImages = 21, folder = 'backgrounds', includePlain = true } = {}) {
-    // normalize folder (no trailing slash)
-    const base = folder.replace(/\/$/, '');
+export function setRandomBackground() {
+    const backgroundImages = [
+    'backgrounds/image.png',
+    'backgrounds/image1.png',
+    'backgrounds/image2.png',
+    'backgrounds/image3.png',
+    'backgrounds/image4.png',
+    'backgrounds/image5.png',
+    'backgrounds/image6.png',
+    'backgrounds/image7.png',
+    'backgrounds/image8.png',
+    'backgrounds/image9.png',
+    'backgrounds/image10.png',
+    'backgrounds/image11.png',
+    'backgrounds/image12.png',
+    'backgrounds/image13.png',
+    'backgrounds/image14.png',
+    'backgrounds/image15.png',
+    'backgrounds/image16.png',
+    'backgrounds/image17.png',
+    'backgrounds/image18.png',
+    'backgrounds/image19.png',
+    'backgrounds/image20.png',
+    'backgrounds/image21.png'
+];
 
-    // build image list
-    const images = [];
-    if (includePlain) images.push(`${base}/image.png`);
-    for (let i = 1; i <= Math.max(0, Math.floor(maxImages)); i++) {
-        images.push(`${base}/image${i}.png`);
-    }
+    // 1. Get the INDEX of the last image used. We parse it as an integer.
+    const lastIndex = parseInt(sessionStorage.getItem('lastBackgroundIndex'), 10);
+    const totalImages = backgroundImages.length;
+    let randomIndex;
 
-    const total = images.length;
-    if (total === 0) {
-        console.warn('setRandomBackground: no images in list');
-        return;
-    }
+    // 2. Use a do-while loop to generate a new random index.
+    //    The loop will continue as long as the new index is the same as the last one.
+    //    This guarantees the new index will be different (unless there's only one image).
+    do {
+        randomIndex = Math.floor(Math.random() * totalImages);
+    } while (totalImages > 1 && randomIndex === lastIndex);
 
-    // read last index safely
-    const lastRaw = sessionStorage.getItem('lastBackgroundIndex');
-    const lastIndex = lastRaw === null ? -1 : parseInt(lastRaw, 10);
+    // 3. Select the image from the array using our new, unique random index.
+    const selectedImage = backgroundImages[randomIndex];
 
-    // pick a random index (avoid repeating last one when possible)
-    let randomIndex = 0;
-    if (total === 1) {
-        randomIndex = 0;
-    } else {
-        let attempts = 0;
-        do {
-            randomIndex = Math.floor(Math.random() * total);
-            attempts++;
-        } while (randomIndex === lastIndex && attempts < 10);
+    // 4. Apply the new background image.
+    document.body.style.setProperty('--background-image-url', `url('${selectedImage}')`);
 
-        // if unlucky, pick the next index deterministically
-        if (randomIndex === lastIndex && total > 1) {
-            randomIndex = (lastIndex + 1) % total;
-        }
-    }
-
-    const selected = images[randomIndex];
-
-    // Preload and then apply (so we only set the background when the image is valid)
-    const img = new Image();
-    img.onload = () => {
-        try {
-            // set CSS variable (for your CSS that uses var(--background-image-url))
-            document.body.style.setProperty('--background-image-url', `url("${selected}")`);
-            // also directly set background-image as a fallback
-            document.body.style.backgroundImage = `url("${selected}")`;
-            // persist the index
-            sessionStorage.setItem('lastBackgroundIndex', String(randomIndex));
-            console.log(`setRandomBackground: applied ${selected} (index ${randomIndex})`);
-        } catch (err) {
-            console.error('setRandomBackground: error applying background', err);
-        }
-    };
-    img.onerror = () => {
-        console.error(`setRandomBackground: failed to load ${selected}`);
-        // fallback to first image (if different)
-        if (images[0] && selected !== images[0]) {
-            document.body.style.setProperty('--background-image-url', `url("${images[0]}")`);
-            document.body.style.backgroundImage = `url("${images[0]}")`;
-            sessionStorage.setItem('lastBackgroundIndex', '0');
-            console.log(`setRandomBackground: fallback to ${images[0]}`);
-        }
-    };
-    img.src = selected;
+    // 5. Save the NEW index for the next page load.
+    sessionStorage.setItem('lastBackgroundIndex', randomIndex);
 }
