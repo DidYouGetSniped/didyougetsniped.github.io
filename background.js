@@ -1,23 +1,14 @@
 export function setRandomBackground() {
-    const backgroundImages = [
-        'backgrounds/image.png',
-        'backgrounds/image1.png',
-        'backgrounds/image2.png',
-        'backgrounds/image3.png',
-        'backgrounds/image4.png',
-        'backgrounds/image5.png',
-        'backgrounds/image6.png',
-        'backgrounds/image7.png',
-        'backgrounds/image8.png',
-        'backgrounds/image9.png',
-        'backgrounds/image10.png',
-        'backgrounds/image11.png',
-        'backgrounds/image12.png',
-        'backgrounds/image13.png',
-        'backgrounds/image14.png',
-        'backgrounds/image15.png',
-        'backgrounds/image16.png'
-    ];
+    // Set the maximum number of images (excluding plain "image.png")
+    const MAX_IMAGES = 21;
+
+    // Start with plain "image.png"
+    const backgroundImages = ['backgrounds/image.png'];
+
+    // Then add image1.png through imageN.png (N = MAX_IMAGES)
+    for (let i = 1; i <= MAX_IMAGES; i++) {
+        backgroundImages.push(`backgrounds/image${i}.png`);
+    }
 
     // 1. Get the INDEX of the last image used. We parse it as an integer.
     const lastIndex = parseInt(sessionStorage.getItem('lastBackgroundIndex'), 10);
@@ -25,8 +16,6 @@ export function setRandomBackground() {
     let randomIndex;
 
     // 2. Use a do-while loop to generate a new random index.
-    //    The loop will continue as long as the new index is the same as the last one.
-    //    This guarantees the new index will be different (unless there's only one image).
     do {
         randomIndex = Math.floor(Math.random() * totalImages);
     } while (totalImages > 1 && randomIndex === lastIndex);
