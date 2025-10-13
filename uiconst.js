@@ -83,9 +83,6 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
 
     const weaponStarsHTML = generateWeaponStarsHTML(weaponKillsData);
     const vehicleStarsHTML = generateVehicleStarsHTML(data.kills_per_vehicle);
-    const totalVehicleKills = data.totalVehicleKills || 0;
-    const totalWeaponKills = data.totalWeaponKills || 0;
-
     const weaponStatsHTML = createStatsCardHTML('🔫 Kills per Weapon', weaponKillsData, kills, 'weapon-sort-toggle', 'weapon-stats-grid');
     const vehicleKillsStatsHTML = createStatsCardHTML('🚗 Kills per Vehicle', data.kills_per_vehicle, vehicleKills, 'vehicle-sort-toggle', 'vehicle-kills-grid');
     const deathStatsHTML = createStatsCardHTML('💀 Deaths by Cause', data.deaths, deaths, 'death-sort-toggle', 'death-stats-grid');
