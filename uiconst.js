@@ -112,6 +112,7 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
     const totalDeaths = data.totalDeaths || 0;
     const weaponKillsTotal = data.weaponKillsTotal || 0;  // ADD THIS
     const vehicleKillsTotal = data.vehicleKillsTotal || 0; // ADD THIS
+    const weaponKillsPerVehicleKill = vehicleKillsTotal > 0 ? (weaponKillsTotal / vehicleKillsTotal).toFixed(2) : 'N/A';
     const damagePerKill = totalKills > 0 ? (totalDamageDealt / totalKills).toFixed(2) : 'N/A';
     const damagePerDeath = totalDeaths > 0 ? (totalDamageReceived / totalDeaths).toFixed(2) : 'N/A';
     const selfDestructPercentage = totalDeaths > 0 ? ((totalSelfDestructs / totalDeaths) * 100).toFixed(2) : '0.00';
@@ -158,6 +159,6 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
     selfDestructsPerGame, damagePerGame, damageReceivedPerGame, killsPerGame, deathsPerGame, accUnzoomed, accZoomed, accBoth,
     shotsFiredPerGame, shotsHitPerGame, jumpsPerGame, jumpsPerDamage, headshotsPerGame, headshotsPerKill, missilesPerGame,
     missileLaunchGames, missilesPerMissileLaunchGame, topKillsPercent, topGamesPercent, topXpPercent, performanceScoreDisplay,
-    weaponKillsTotal, vehicleKillsTotal // ADD THIS LINE
+    weaponKillsTotal, vehicleKillsTotal, weaponKillsPerVehicleKill // ADD THIS LINE
     };
 }

@@ -243,6 +243,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 <div>
                     <div class="stat-row"><span class="stat-label">Kills per Game:</span><span class="stat-value">${consts.killsPerGame}</span></div>
                     <div class="stat-row"><span class="stat-label">Deaths per Game:</span><span class="stat-value">${consts.deathsPerGame}</span></div>
+                    <div class="stat-row"><span class="stat-label">Weapon Kills per Vehicle Kill:</span><span class="stat-value">${consts.weaponKillsPerVehicleKill}</span></div>
                     <div class="stat-row"><span class="stat-label">Self Destructs:</span><span class="stat-value">${consts.totalSelfDestructs.toLocaleString()}</span></div>
                     <div class="stat-row"><span class="stat-label">Self Destructs per Game:</span><span class="stat-value">${consts.selfDestructsPerGame}</span></div>
                     <div class="stat-row"><span class="stat-label">Self Destruct % of Deaths:</span><span class="stat-value">${consts.selfDestructPercentage}%</span></div>
@@ -255,9 +256,9 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                     <div class="stat-row"><span class="stat-label">Damage Received per Game:</span><span class="stat-value">${consts.damageReceivedPerGame}</span></div>
                     <div class="stat-row"><span class="stat-label">Total Headshots:</span><span class="stat-value">${consts.totalHeadshots.toLocaleString()}</span></div>
                     <div class="stat-row"><span class="stat-label">Headshots per Game:</span><span class="stat-value">${consts.headshotsPerGame}</span></div>
-                    <div class="stat-row"><span class="stat-label">Headshots per Kill:</span><span class="stat-value">${consts.headshotsPerKill}</span></div>
                 </div>
                 <div>
+                    <div class="stat-row"><span class="stat-label">Headshots per Kill:</span><span class="stat-value">${consts.headshotsPerKill}</span></div>
                     <div class="stat-row"><span class="stat-label">Shots Fired (Unzoomed):</span><span class="stat-value">${consts.totalShotsFiredUnzoomed.toLocaleString()}</span></div>
                     <div class="stat-row"><span class="stat-label">Shots Fired (Zoomed):</span><span class="stat-value">${consts.totalShotsFiredZoomed.toLocaleString()}</span></div>
                     <div class="stat-row"><span class="stat-label">Shots Hit (Unzoomed):</span><span class="stat-value">${consts.totalShotsHitUnzoomed.toLocaleString()}</span></div>
