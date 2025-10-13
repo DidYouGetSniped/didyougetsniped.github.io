@@ -125,6 +125,8 @@ function processPlayerData(rawPlayerData) {
         .filter(([key]) => key !== 'v30')
         .reduce((sum, [, value]) => sum + value, 0);
     processed.totalKills = weaponKillsTotal + vehicleKillsTotal;
+processed.weaponKillsTotal = weaponKillsTotal;  // ADD THIS LINE
+processed.vehicleKillsTotal = vehicleKillsTotal; // ADD THIS LINE
     const weaponDeathsTotal = Object.values(raw_deaths).reduce((sum, val) => sum + val, 0);
     const selfDestructDeathsTotal = Object.values(raw_self_destructs).reduce((sum, val) => sum + val, 0);
     processed.totalDeaths = weaponDeathsTotal + selfDestructDeathsTotal;

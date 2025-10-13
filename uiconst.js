@@ -2,8 +2,6 @@ import { getJoinDateFromUID } from '/utils.js';
 import { generateWeaponStarsHTML } from '/weaponlogic.js';
 import { generateVehicleStarsHTML } from '/vehiclelogic.js';
 
-// --- Helper functions moved from ui.js ---
-
 function calculatePerformanceScore(total_kills, damage_dealt, total_deaths, damage_received, kills_elo_rank, games_elo_rank, total_games, num_self_destructs, xp) {
     try {
         if (total_deaths === 0 || damage_received === 0 || kills_elo_rank === 0 || games_elo_rank === 0 || total_games === 0) {
@@ -85,6 +83,8 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
 
     const weaponStarsHTML = generateWeaponStarsHTML(weaponKillsData);
     const vehicleStarsHTML = generateVehicleStarsHTML(data.kills_per_vehicle);
+    const totalVehicleKills = data.totalVehicleKills || 0;
+    const totalWeaponKills = data.totalWeaponKills || 0;
 
     const weaponStatsHTML = createStatsCardHTML('🔫 Kills per Weapon', weaponKillsData, kills, 'weapon-sort-toggle', 'weapon-stats-grid');
     const vehicleKillsStatsHTML = createStatsCardHTML('🚗 Kills per Vehicle', data.kills_per_vehicle, vehicleKills, 'vehicle-sort-toggle', 'vehicle-kills-grid');
@@ -110,6 +110,8 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
     const damageRatio = totalDamageReceived > 0 ? (totalDamageDealt / totalDamageReceived).toFixed(2) : 'N/A';
     const totalKills = data.totalKills || 0;
     const totalDeaths = data.totalDeaths || 0;
+    const weaponKillsTotal = data.weaponKillsTotal || 0;  // ADD THIS
+    const vehicleKillsTotal = data.vehicleKillsTotal || 0; // ADD THIS
     const damagePerKill = totalKills > 0 ? (totalDamageDealt / totalKills).toFixed(2) : 'N/A';
     const damagePerDeath = totalDeaths > 0 ? (totalDamageReceived / totalDeaths).toFixed(2) : 'N/A';
     const selfDestructPercentage = totalDeaths > 0 ? ((totalSelfDestructs / totalDeaths) * 100).toFixed(2) : '0.00';
@@ -149,12 +151,13 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
     const performanceScoreDisplay = performanceScore !== null ? performanceScore.toFixed(3) : 'N/A';
 
     return {
-        weaponKillsData, weaponStarsHTML, vehicleStarsHTML, weaponStatsHTML, vehicleKillsStatsHTML, deathStatsHTML, winsStatsHTML, lossesStatsHTML,
-        totalSelfDestructs, totalDamageDealt, totalDamageReceived, totalHeadshots, totalShotsFiredUnzoomed, totalShotsFiredZoomed,
-        totalShotsHitUnzoomed, totalShotsHitZoomed, totalShotsFired, totalShotsHit, numberOfJumps, scudsLaunched, totalWins,
-        totalLosses, totalGames, damageRatio, totalKills, totalDeaths, damagePerKill, damagePerDeath, selfDestructPercentage,
-        selfDestructsPerGame, damagePerGame, damageReceivedPerGame, killsPerGame, deathsPerGame, accUnzoomed, accZoomed, accBoth,
-        shotsFiredPerGame, shotsHitPerGame, jumpsPerGame, jumpsPerDamage, headshotsPerGame, headshotsPerKill, missilesPerGame,
-        missileLaunchGames, missilesPerMissileLaunchGame, topKillsPercent, topGamesPercent, topXpPercent, performanceScoreDisplay
+    weaponKillsData, weaponStarsHTML, vehicleStarsHTML, weaponStatsHTML, vehicleKillsStatsHTML, deathStatsHTML, winsStatsHTML, lossesStatsHTML,
+    totalSelfDestructs, totalDamageDealt, totalDamageReceived, totalHeadshots, totalShotsFiredUnzoomed, totalShotsFiredZoomed,
+    totalShotsHitUnzoomed, totalShotsHitZoomed, totalShotsFired, totalShotsHit, numberOfJumps, scudsLaunched, totalWins,
+    totalLosses, totalGames, damageRatio, totalKills, totalDeaths, damagePerKill, damagePerDeath, selfDestructPercentage,
+    selfDestructsPerGame, damagePerGame, damageReceivedPerGame, killsPerGame, deathsPerGame, accUnzoomed, accZoomed, accBoth,
+    shotsFiredPerGame, shotsHitPerGame, jumpsPerGame, jumpsPerDamage, headshotsPerGame, headshotsPerKill, missilesPerGame,
+    missileLaunchGames, missilesPerMissileLaunchGame, topKillsPercent, topGamesPercent, topXpPercent, performanceScoreDisplay,
+    weaponKillsTotal, vehicleKillsTotal // ADD THIS LINE
     };
 }

@@ -271,7 +271,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                     <div class="stat-row"><span class="stat-label">Jumps per Game:</span><span class="stat-value">${consts.jumpsPerGame}</span></div>
                     <div class="stat-row"><span class="stat-label">Jumps per Damage Dealt:</span><span class="stat-value">${consts.jumpsPerDamage}</span></div>
                     <div class="stat-row"><span class="stat-label">Missiles Launched:</span><span class="stat-value">${consts.scudsLaunched.toLocaleString()}</span></div>
-                    <div class="stat-row"><span class="stat-label">Missiles Launched per Game:</span><span class="stat-value">${consts.missilesPerGame}</span></div>
                     <div class="stat-row"><span class="stat-label">Missiles Launched per Missile Launch Game:</span><span class="stat-value">${consts.missilesPerMissileLaunchGame}</span></div>
                 </div>
             </div>
@@ -392,6 +391,8 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 ${kdMilestoneHTML}
                 <div class="stat-row"><span class="stat-label">Total Kills:</span><span class="stat-value">${consts.totalKills.toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Total Deaths:</span><span class="stat-value">${consts.totalDeaths.toLocaleString()}</span></div>
+                <div class="stat-row"><span class="stat-label">Total Weapon Kills:</span><span class="stat-value">${consts.weaponKillsTotal.toLocaleString()}</span></div>
+                <div class="stat-row"><span class="stat-label">Total Vehicle Kills:</span><span class="stat-value">${consts.vehicleKillsTotal.toLocaleString()}</span></div>
             </div>
         </div>
 
