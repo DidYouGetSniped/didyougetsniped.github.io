@@ -64,23 +64,23 @@ async function run() {
     
     // Optional: Keep only last 2880 data points (15 min * 2880 = 30 days of data)
     const maxDataPoints = 2880;
-    if (playerData.length > maxDataPoints) {
-      playerData = playerData.slice(-maxDataPoints);
+    if (dataArray.length > maxDataPoints) {
+      dataArray = dataArray.slice(-maxDataPoints);
       console.log(`Trimmed data to last ${maxDataPoints} points (30 days)`);
     }
     
     // Create the final data object with a timestamp and the player data array
     const dataToSave = {
       lastUpdated: timestamp,
-      dataPoints: playerData.length,
+      dataPoints: dataArray.length,
       currentPlayers: playerCount,
-      data: playerData
+      data: dataArray
     };
     
     // Save the object to a JSON file, nicely formatted
     writeFileSync(dataFilePath, JSON.stringify(dataToSave, null, 2));
     
-    console.log(`Successfully fetched and wrote player data. Total data points: ${playerData.length}`);
+    console.log(`Successfully fetched and wrote player data. Total data points: ${dataArray.length}`);
   } catch (error) {
     console.error("An error occurred during the fetch process:", error);
     process.exit(1); // Exit with an error code
