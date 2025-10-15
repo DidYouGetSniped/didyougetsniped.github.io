@@ -44,19 +44,20 @@ async function run() {
     console.log(`Players online: ${playerCount}`);
     
     // Load existing data from JSON file
-    let playerData = [];
+    let dataArray = [];
     const dataFilePath = path.join(__dirname, 'player-tracker-data.json');
     
     try {
       const existingData = readFileSync(dataFilePath, 'utf-8');
-      playerData = JSON.parse(existingData);
+      const parsed = JSON.parse(existingData);
+      dataArray = parsed.data || [];
     } catch (err) {
       console.log('No existing data file found. Creating new one...');
-      playerData = [];
+      dataArray = [];
     }
     
     // Add new data point
-    playerData.push({
+    dataArray.push({
       timestamp: timestamp,
       players: playerCount
     });
