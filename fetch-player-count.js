@@ -61,11 +61,11 @@ async function run() {
       players: playerCount
     });
     
-    // Optional: Keep only last 672 data points (15 min * 672 = 7 days of data)
-    const maxDataPoints = 672;
+    // Optional: Keep only last 2880 data points (15 min * 2880 = 30 days of data)
+    const maxDataPoints = 2880;
     if (playerData.length > maxDataPoints) {
       playerData = playerData.slice(-maxDataPoints);
-      console.log(`Trimmed data to last ${maxDataPoints} points (7 days)`);
+      console.log(`Trimmed data to last ${maxDataPoints} points (30 days)`);
     }
     
     // Create the final data object with a timestamp and the player data array
