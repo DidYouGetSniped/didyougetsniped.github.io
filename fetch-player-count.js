@@ -6,26 +6,25 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
- * Fetches JSON from a URL and throws an error if the response is not ok.
- * @param {string} url The URL to fetch.
- * @returns {Promise<any>} The JSON response.
- */
-async function fetchJson(url) {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
-  }
-  return response.json();
-}
-
-/**
  * Fetches the current number of players online.
  * @returns {Promise<number>} The number of players online.
  */
 async function fetchPlayerCount() {
   try {
-    const data = await fetchJson('https://wbapi.wbpjs.com/status/playersOnline');
-    return data.playersOnline || 0;
+    const response = await fetch('https://wbapi.wbpjs.com/status/playersOnline');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch player count: ${response.statusText}`);
+    }
+
+    // The API returns a plain number (like "99"), not an object
+    const text = await response.text();
+    const count = Number(text.trim());
+
+    if (isNaN(count)) {
+      throw new Error(`Unexpected response format: ${text}`);
+    }
+
+    return count;
   } catch (err) {
     console.warn('Could not fetch player count:', err.message);
     return 0;
@@ -41,49 +40,62 @@ async function run() {
     const playerCount = await fetchPlayerCount();
     const timestamp = new Date().toISOString();
     
-    console.log(`Players online: ${playerCount}`);
-    
     // Load existing data from JSON file
     let dataArray = [];
     const dataFilePath = path.join(__dirname, 'player-tracker-data.json');
-    
+    let lastPlayerCount = null;
+
     try {
       const existingData = readFileSync(dataFilePath, 'utf-8');
       const parsed = JSON.parse(existingData);
       dataArray = parsed.data || [];
+      if (dataArray.length > 0) {
+        lastPlayerCount = dataArray[dataArray.length - 1].players;
+      }
     } catch (err) {
       console.log('No existing data file found. Creating new one...');
       dataArray = [];
     }
-    
+
+    // Compute difference from last known value
+    let diffText = "";
+    if (lastPlayerCount !== null) {
+      const diff = playerCount - lastPlayerCount;
+      if (diff > 0) diffText = `(+${diff} since last check)`;
+      else if (diff < 0) diffText = `(${diff} since last check)`;
+      else diffText = `(no change)`;
+    }
+
+    console.log(`Players online: ${playerCount} ${diffText}`);
+
     // Add new data point
     dataArray.push({
       timestamp: timestamp,
       players: playerCount
     });
-    
-    // Optional: Keep only last 2880 data points (15 min * 2880 = 30 days of data)
+
+    // Keep only the last 2880 data points (≈30 days if checked every 15 min)
     const maxDataPoints = 2880;
     if (dataArray.length > maxDataPoints) {
       dataArray = dataArray.slice(-maxDataPoints);
       console.log(`Trimmed data to last ${maxDataPoints} points (30 days)`);
     }
-    
-    // Create the final data object with a timestamp and the player data array
+
+    // Prepare data object for saving
     const dataToSave = {
       lastUpdated: timestamp,
       dataPoints: dataArray.length,
       currentPlayers: playerCount,
       data: dataArray
     };
-    
-    // Save the object to a JSON file, nicely formatted
+
+    // Write to JSON file
     writeFileSync(dataFilePath, JSON.stringify(dataToSave, null, 2));
-    
+
     console.log(`Successfully fetched and wrote player data. Total data points: ${dataArray.length}`);
   } catch (error) {
     console.error("An error occurred during the fetch process:", error);
-    process.exit(1); // Exit with an error code
+    process.exit(1);
   }
 }
 
