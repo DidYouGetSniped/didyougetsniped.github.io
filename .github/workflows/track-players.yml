@@ -14,17 +14,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
+      # 1️⃣ Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      # 3. Cache node_modules (optional, speeds up repeated runs)
+      # 3️⃣ Cache node_modules (optional)
       - name: Cache Node modules
         uses: actions/cache@v3
         with:
@@ -33,33 +33,37 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # 4. Install dependencies (if you have any)
+      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: npm install || echo "No dependencies to install"
 
-      # 5. Run the player count fetch
+      # 5️⃣ Run the player count fetch
       - name: Fetch player count
         run: |
           echo "Running fetch at UTC: $(date -u)"
-          node fetch-player-count.js || exit 1
+          node fetch-player-count.js
 
-      # 6. Check if the JSON file changed
+      # 6️⃣ Check if JSON file changed
       - name: Check if player-tracker-data.json changed
         id: changed
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+
           git fetch origin main
+          git checkout main
+
           git add player-tracker-data.json
-          if git diff --quiet --cached player-tracker-data.json; then
+
+          if git diff --quiet --cached; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      # 7. Commit and push only if file changed
+      # 7️⃣ Commit and push changes only if changed
       - name: Commit and push changes
         if: steps.changed.outputs.changed == 'true'
         run: |
           git commit -m "Update player count data - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-          git push origin main
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
