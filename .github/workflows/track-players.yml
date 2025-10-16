@@ -4,7 +4,7 @@ on:
   schedule:
     # Runs every 15 minutes (UTC)
     - cron: '*/15 * * * *'
-  workflow_dispatch: # Manual trigger for testing
+  workflow_dispatch: # Manual trigger
 
 permissions:
   contents: write
@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: '18'
 
-      # 3️⃣ Cache node_modules (optional)
+      # 3️⃣ Cache Node modules (optional)
       - name: Cache Node modules
         uses: actions/cache@v3
         with:
@@ -43,27 +43,11 @@ jobs:
           echo "Running fetch at UTC: $(date -u)"
           node fetch-player-count.js
 
-      # 6️⃣ Check if JSON file changed
-      - name: Check if player-tracker-data.json changed
-        id: changed
+      # 6️⃣ Commit and push the updated JSON
+      - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-
-          git fetch origin main
-          git checkout main
-
           git add player-tracker-data.json
-
-          if git diff --quiet --cached; then
-            echo "changed=false" >> $GITHUB_OUTPUT
-          else
-            echo "changed=true" >> $GITHUB_OUTPUT
-          fi
-
-      # 7️⃣ Commit and push changes only if changed
-      - name: Commit and push changes
-        if: steps.changed.outputs.changed == 'true'
-        run: |
-          git commit -m "Update player count data - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          git commit -m "Update player count data - $(date -u '+%Y-%m-%d %H:%M:%S UTC')" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
