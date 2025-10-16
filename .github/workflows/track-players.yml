@@ -4,7 +4,7 @@ on:
   schedule:
     # Runs every 15 minutes (UTC)
     - cron: '*/15 * * * *'
-  workflow_dispatch: # Manual trigger
+  workflow_dispatch: # Manual trigger for testing
 
 permissions:
   contents: write
@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repository
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -24,26 +24,15 @@ jobs:
         with:
           node-version: '18'
 
-      # 3️⃣ Cache Node modules (optional)
-      - name: Cache Node modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      # 4️⃣ Install dependencies
+      # 3️⃣ Install dependencies (if any)
       - name: Install dependencies
         run: npm install || echo "No dependencies to install"
 
-      # 5️⃣ Run the player count fetch
+      # 4️⃣ Run the player count fetch
       - name: Fetch player count
-        run: |
-          echo "Running fetch at UTC: $(date -u)"
-          node fetch-player-count.js
+        run: node fetch-player-count.js
 
-      # 6️⃣ Commit and push the updated JSON
+      # 5️⃣ Commit and push JSON (always)
       - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
