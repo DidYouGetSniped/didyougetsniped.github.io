@@ -4,369 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>War Brokers Player Count Tracker</title>
+    <link rel="stylesheet" href="playercounttracker.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.45/moment-timezone-with-data.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #161a23;
-            --bg-tertiary: #1f2736;
-            --text-primary: #ffffff;
-            --text-secondary: #a0aec0;
-            --border-color: #3b3f4a;
-            --accent-blue: #0ea5e9;
-            --accent-green: #28a745;
-            --accent-danger: #dc2626;
-        }
-
-        body {
-            position: relative;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-image: var(--background-image-url);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            filter: blur(8px);
-            z-index: -1;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-        }
-
-        .back-link {
-    color: #ffffff;
-    background-color: var(--accent-blue);
-    text-decoration: none;
-    font-size: 14px;
-    padding: 8px 16px;
-    border: 1px solid var(--accent-blue);
-    border-radius: 6px;
-    transition: all 0.2s;
-}
-
-.back-link:hover {
-    background-color: #0284c7;
-    color: #ffffff;
-}
-
-.back-link:visited {
-    color: #ffffff;
-}
-        .container {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .sidebar {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            height: fit-content;
-        }
-
-        .sidebar h2 {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-
-        .setting-group {
-            margin-bottom: 20px;
-        }
-
-        .setting-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .setting-group select,
-        .setting-group input {
-            width: 100%;
-            padding: 8px 10px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            border-radius: 6px;
-            font-size: 13px;
-        }
-
-        .setting-group input:focus,
-        .setting-group select:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-        }
-
-        .setting-group input[type="checkbox"] {
-            width: auto;
-            margin-right: 8px;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            font-size: 13px;
-            cursor: pointer;
-            color: var(--text-primary);
-        }
-
-        .slider-container {
-            margin-top: 8px;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: var(--bg-tertiary);
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--accent-blue);
-            cursor: pointer;
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--accent-blue);
-            cursor: pointer;
-            border: none;
-        }
-
-        .slider-value {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-            text-align: center;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 8px;
-            flex-direction: column;
-        }
-
-        .btn {
-            padding: 10px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: var(--accent-blue);
-            color: var(--text-primary);
-        }
-
-        .btn-primary:hover {
-            background: #0284c7;
-        }
-
-        .btn-success {
-            background: var(--accent-green);
-            color: var(--text-primary);
-        }
-
-        .btn-success:hover {
-            background: #20c997;
-        }
-
-        .btn-danger {
-            background: var(--accent-danger);
-            color: var(--text-primary);
-        }
-
-        .btn-danger:hover {
-            background: #b91c1c;
-        }
-
-        .main {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .stats {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .stat-box {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 12px 16px;
-            min-width: 150px;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .stat-value {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--accent-blue);
-        }
-
-        .chart-container {
-            position: relative;
-            height: 500px;
-            margin-bottom: 20px;
-            background: var(--bg-tertiary);
-            border-radius: 6px;
-            padding: 16px;
-        }
-
-        #playerChart {
-            width: 100%;
-            height: 100%;
-        }
-
-        .legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            justify-content: center;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
-        }
-
-        .status {
-            padding: 12px 16px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 13px;
-            margin-top: 16px;
-        }
-
-        .status.active {
-            border-color: var(--accent-green);
-            background: rgba(40, 167, 69, 0.1);
-        }
-
-        .status.error {
-            border-color: var(--accent-danger);
-            background: rgba(220, 38, 38, 0.1);
-        }
-
-        .status-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .status-dot.active {
-            background: var(--accent-green);
-        }
-
-        .status-dot.error {
-            background: var(--accent-danger);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                height: auto;
-            }
-
-            .chart-container {
-                height: 350px;
-            }
-        }
-    </style>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGNQRLJMGK"></script>
@@ -428,6 +70,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     <option value="168">Last 7 Days</option>
                     <option value="720">Last 30 Days</option>
                     <option value="all">All Data</option> 
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label>Data Density</label>
+                <select id="dataDensity">
+                    <option value="all">All Points</option>
+                    <option value="standard">Standard</option>
+                    <option value="minimal">Minimal</option>
                 </select>
             </div>
 
@@ -499,6 +150,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
 
+            <div id="dateDisplay" class="date-display" style="display: none;"></div>
+
             <div class="chart-container" id="chartWrapper">
                 <canvas id="playerChart"></canvas>
             </div>
@@ -524,6 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const tensionSlider = document.getElementById('tension');
         const tensionValue = document.getElementById('tensionValue');
         const timeRangeSelect = document.getElementById('timeRange');
+        const dataDensitySelect = document.getElementById('dataDensity');
         const showGridCheckbox = document.getElementById('showGrid');
         const refreshBtn = document.getElementById('refreshBtn');
         const exportBtn = document.getElementById('exportBtn');
@@ -536,6 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const dataPointsEl = document.getElementById('dataPoints');
         const lastUpdateEl = document.getElementById('lastUpdate');
         const chartWrapper = document.getElementById('chartWrapper');
+        const dateDisplay = document.getElementById('dateDisplay');
         const timezoneSelect = document.getElementById('timezone');
         const use24HourCheckbox = document.getElementById('use24Hour');
         const ctx = document.getElementById('playerChart').getContext('2d');
@@ -544,34 +199,16 @@ document.addEventListener('DOMContentLoaded', function() {
         let trackerData = null;
         let refreshInterval = null;
 
-        // Load preferences from storage
-        function loadPreferences() {
-            const prefs = JSON.parse(localStorage.getItem('playerTrackerPrefs')) || {};
-            
-            if (prefs.chartType) chartTypeSelect.value = prefs.chartType;
-            if (prefs.tension) tensionSlider.value = prefs.tension;
-            if (prefs.timeRange) timeRangeSelect.value = prefs.timeRange;
-            if (prefs.showGrid !== undefined) showGridCheckbox.checked = prefs.showGrid;
-            if (prefs.autoRefresh !== undefined) autoRefreshCheckbox.checked = prefs.autoRefresh;
-            if (prefs.timezone) timezoneSelect.value = prefs.timezone;
-            if (prefs.use24Hour !== undefined) use24HourCheckbox.checked = prefs.use24Hour;
-            
-            tensionValue.textContent = tensionSlider.value;
-        }
-
-        // Save preferences to storage
-        function savePreferences() {
-            const prefs = {
-                chartType: chartTypeSelect.value,
-                tension: tensionSlider.value,
-                timeRange: timeRangeSelect.value,
-                showGrid: showGridCheckbox.checked,
-                autoRefresh: autoRefreshCheckbox.checked,
-                timezone: timezoneSelect.value,
-                use24Hour: use24HourCheckbox.checked
-            };
-            localStorage.setItem('playerTrackerPrefs', JSON.stringify(prefs));
-        }
+        // Load preferences from state (not localStorage to avoid storage API issues)
+        const preferences = {
+            chartType: 'line',
+            tension: 0.4,
+            timeRange: '12',
+            showGrid: true,
+            autoRefresh: true,
+            timezone: 'local',
+            use24Hour: true
+        };
 
         function formatTimestamp(timestamp) {
             let m = moment(timestamp);
@@ -636,22 +273,56 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!trackerData || !trackerData.data) return [];
             
             const range = timeRangeSelect.value;
-            if (range === 'all') return trackerData.data;
+            let filtered = range === 'all' ? trackerData.data : trackerData.data.filter(d => {
+                const hours = parseInt(range);
+                const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000);
+                return new Date(d.timestamp) > cutoffTime;
+            });
 
-            const hours = parseInt(range);
-            const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000);
-            return trackerData.data.filter(d => new Date(d.timestamp) > cutoffTime);
+            // Apply data density filtering
+            const density = dataDensitySelect.value;
+            if (density === 'standard') {
+                // Show approximately every 3rd point
+                filtered = filtered.filter((_, i) => i % 3 === 0);
+            } else if (density === 'minimal') {
+                // Show approximately every 6th point
+                filtered = filtered.filter((_, i) => i % 6 === 0);
+            }
+            // 'all' shows all points
+
+            return filtered;
         }
 
         function updateChart() {
             const filtered = getFilteredData();
             if (filtered.length === 0) {
                 if (chart) chart.destroy();
+                dateDisplay.style.display = 'none';
                 return;
             }
 
-            const labels = filtered.map(d => formatTimestamp(d.timestamp));
+            // Get unique dates
+            const uniqueDates = [];
+            let currentDate = null;
+            filtered.forEach(d => {
+                const date = new Date(d.timestamp).toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                if (date !== currentDate) {
+                    uniqueDates.push(date);
+                    currentDate = date;
+                }
+            });
 
+            // Display dates
+            if (uniqueDates.length > 0) {
+                dateDisplay.textContent = uniqueDates.join(' → ');
+                dateDisplay.style.display = 'block';
+            }
+
+            const labels = filtered.map(d => formatTimestamp(d.timestamp));
             const data = filtered.map(d => d.players);
 
             let backgroundColor = 'rgba(14, 165, 233, 0.1)';
@@ -718,35 +389,34 @@ document.addEventListener('DOMContentLoaded', function() {
         tensionSlider.addEventListener('input', (e) => {
             tensionValue.textContent = e.target.value;
             updateChart();
-            savePreferences();
         });
 
         chartTypeSelect.addEventListener('change', () => {
             updateChart();
-            savePreferences();
         });
         
         timeRangeSelect.addEventListener('change', () => {
             updateChart();
             updateStats();
-            savePreferences();
+        });
+        
+        dataDensitySelect.addEventListener('change', () => {
+            updateChart();
+            updateStats();
         });
         
         showGridCheckbox.addEventListener('change', () => {
             updateChart();
-            savePreferences();
         });
 
         timezoneSelect.addEventListener('change', () => {
             updateChart();
             updateStats();
-            savePreferences();
         });
 
         use24HourCheckbox.addEventListener('change', () => {
             updateChart();
             updateStats();
-            savePreferences();
         });
 
         refreshBtn.addEventListener('click', loadTrackerData);
@@ -775,9 +445,13 @@ document.addEventListener('DOMContentLoaded', function() {
             exportImageBtn.textContent = '⏳ Exporting...';
             
             try {
-                const canvas = await html2canvas(chartWrapper, {
+                // Export the entire main section including header, stats, date display, and chart
+                const canvas = await html2canvas(document.querySelector('.main'), {
                     backgroundColor: '#161a23',
-                    scale: 2
+                    scale: 4,
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false
                 });
                 
                 const link = document.createElement('a');
@@ -799,7 +473,6 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 stopAutoRefresh();
             }
-            savePreferences();
         });
 
         function startAutoRefresh() {
@@ -811,7 +484,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (refreshInterval) clearInterval(refreshInterval);
         }
 
-        loadPreferences();
         loadTrackerData();
         if (autoRefreshCheckbox.checked) {
             startAutoRefresh();
