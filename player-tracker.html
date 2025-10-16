@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>War Brokers Player Tracker</title>
+    <title>War Brokers Player Count Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <style>
         * {
@@ -25,13 +25,31 @@
         }
 
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+    position: relative;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    overflow: hidden; /* needed for pseudo-element */
+}
+
+/* Background overlay with blur */
+body::before {
+    content: "";
+    position: fixed; /* so it stays behind scrolling content */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: var(--background-image-url);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(8px);
+    z-index: -1; /* behind all content */
+}
 
         .header {
             display: flex;
@@ -341,9 +359,28 @@
         }
     </style>
 </head>
+ <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XGNQRLJMGK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+    
+  gtag('config', 'G-XGNQRLJMGK');
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const style = document.createElement('style');
+  // Cursor hotspot at the center for a 64x64 image
+  // If your file name has a space, encode it or rename to avoid spaces.
+  style.innerHTML = "* { cursor: url('wb kill.png') 16 16, auto !important; }";
+  document.head.appendChild(style);
+});
+</script>
+
 <body>
     <div class="header">
-        <h1>📊 War Brokers Player Tracker</h1>
+        <h1>📊 War Brokers Player Count Tracker</h1>
         <a href="./" class="back-link">← Back to Stats</a>
     </div>
 
@@ -363,7 +400,6 @@
                 <label>Chart Type</label>
                 <select id="chartType">
                     <option value="line">Line Chart</option>
-                    <option value="area">Area Chart</option>
                     <option value="bar">Bar Chart</option>
                 </select>
             </div>
@@ -384,7 +420,7 @@
                     <option value="48">Last 48 Hours</option>
                     <option value="168">Last 7 Days</option>
                     <option value="720">Last 30 Days</option>
-                    <option value="all">All Data</option>
+                    <option value="all">All Data</option> 
                 </select>
             </div>
 
@@ -394,15 +430,6 @@
                     <input type="checkbox" id="showGrid" checked>
                     Show grid lines
                 </label>
-            </div>
-
-            <div class="setting-group">
-                <label>Theme</label>
-                <select id="theme">
-                    <option value="gradient">Gradient</option>
-                    <option value="solid">Solid</option>
-                    <option value="rainbow">Rainbow</option>
-                </select>
             </div>
 
             <div class="button-group">
@@ -420,7 +447,7 @@
             <div class="chart-header">
                 <div>
                     <h2 style="margin-bottom: 8px;">Player Count Over Time</h2>
-                    <p style="font-size: 12px; color: var(--text-secondary);">Auto-updated data from GitHub Actions every 15 minutes (30 days history)</p>
+                    <p style="font-size: 12px; color: var(--text-secondary);">Auto-updated data ~every 15 minutes</p>
                 </div>
                 <div class="stats">
                     <div class="stat-box">
@@ -464,7 +491,6 @@
         const tensionValue = document.getElementById('tensionValue');
         const timeRangeSelect = document.getElementById('timeRange');
         const showGridCheckbox = document.getElementById('showGrid');
-        const themeSelect = document.getElementById('theme');
         const refreshBtn = document.getElementById('refreshBtn');
         const exportBtn = document.getElementById('exportBtn');
         const statusEl = document.getElementById('status');
@@ -562,14 +588,6 @@
             let borderColor = '#0ea5e9';
             let tension = parseFloat(tensionSlider.value);
 
-            const theme = themeSelect.value;
-            if (theme === 'gradient') {
-                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, 'rgba(14, 165, 233, 0.3)');
-                gradient.addColorStop(1, 'rgba(14, 165, 233, 0)');
-                backgroundColor = gradient;
-            }
-
             const chartType = chartTypeSelect.value;
             let fill = chartType !== 'bar';
             if (chartType === 'bar') fill = false;
@@ -577,7 +595,7 @@
             if (chart) chart.destroy();
 
             chart = new Chart(ctx, {
-                type: chartType === 'area' ? 'line' : chartType,
+                type: chartType, // just use the selected type directly
                 data: {
                     labels: labels,
                     datasets: [{
@@ -639,7 +657,6 @@
             updateStats();
         });
         showGridCheckbox.addEventListener('change', updateChart);
-        themeSelect.addEventListener('change', updateChart);
 
         refreshBtn.addEventListener('click', loadTrackerData);
         exportBtn.addEventListener('click', () => {
@@ -679,5 +696,9 @@
             startAutoRefresh();
         }
     </script>
+    <script type="module">
+    import { setRandomBackground } from './background.js';
+    setRandomBackground();
+  </script>
 </body>
 </html>

@@ -26,6 +26,15 @@
     gtag('config', 'G-XGNQRLJMGK');
   </script>
 </head>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const style = document.createElement('style');
+  // Cursor hotspot at the center for a 64x64 image
+  // If your file name has a space, encode it or rename to avoid spaces.
+  style.innerHTML = "* { cursor: url('wb kill.png') 16 16, auto !important; }";
+  document.head.appendChild(style);
+});
+</script>
 <body>
   <header class="site-header">
     <div class="container">
@@ -39,7 +48,7 @@
     <section class="cards" aria-label="Main pages">
       <article class="card glass">
         <div class="card-glow"></div>
-        <h2>WB Info</h2>
+        <h2>Player Stats</h2>
         <p>Check out your player stats here</p>
         <a class="btn glass-btn" href="/wbinfo.html" aria-label="Open WB Info">Open WB Info</a>
       </article>
@@ -67,7 +76,7 @@
 
       <article class="card glass">
         <div class="card-glow"></div>
-        <h2>War Brokers Player Count Tracker</h2>
+        <h2>Player Count Tracker</h2>
         <p>See how many people are online</p>
         <a class="btn glass-btn" href="/player-tracker.html" aria-label="Open Player Count Tracker">Open Player Count Tracker</a>
       </article>
