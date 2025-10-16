@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <body>
     <div class="header">
         <h1>📊 War Brokers Player Count Tracker</h1>
-        <a href="./" class="back-link">← Back to Stats</a>
+        <a href="./" class="back-link">← Back to Home</a>
     </div>
 
     <div class="container">
@@ -172,326 +172,364 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
     <script>
-        const autoRefreshCheckbox = document.getElementById('autoRefresh');
-        const chartTypeSelect = document.getElementById('chartType');
-        const tensionSlider = document.getElementById('tension');
-        const tensionValue = document.getElementById('tensionValue');
-        const timeRangeSelect = document.getElementById('timeRange');
-        const dataDensitySelect = document.getElementById('dataDensity');
-        const showGridCheckbox = document.getElementById('showGrid');
-        const refreshBtn = document.getElementById('refreshBtn');
-        const exportBtn = document.getElementById('exportBtn');
-        const exportImageBtn = document.getElementById('exportImageBtn');
-        const statusEl = document.getElementById('status');
-        const statusText = document.getElementById('statusText');
-        const currentPlayersEl = document.getElementById('currentPlayers');
-        const peakPlayersEl = document.getElementById('peakPlayers');
-        const avgPlayersEl = document.getElementById('avgPlayers');
-        const dataPointsEl = document.getElementById('dataPoints');
-        const lastUpdateEl = document.getElementById('lastUpdate');
-        const chartWrapper = document.getElementById('chartWrapper');
-        const dateDisplay = document.getElementById('dateDisplay');
-        const timezoneSelect = document.getElementById('timezone');
-        const use24HourCheckbox = document.getElementById('use24Hour');
-        const ctx = document.getElementById('playerChart').getContext('2d');
+    const autoRefreshCheckbox = document.getElementById('autoRefresh');
+    const chartTypeSelect = document.getElementById('chartType');
+    const tensionSlider = document.getElementById('tension');
+    const tensionValue = document.getElementById('tensionValue');
+    const timeRangeSelect = document.getElementById('timeRange');
+    const dataDensitySelect = document.getElementById('dataDensity');
+    const showGridCheckbox = document.getElementById('showGrid');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const exportImageBtn = document.getElementById('exportImageBtn');
+    const statusEl = document.getElementById('status');
+    const statusText = document.getElementById('statusText');
+    const currentPlayersEl = document.getElementById('currentPlayers');
+    const peakPlayersEl = document.getElementById('peakPlayers');
+    const avgPlayersEl = document.getElementById('avgPlayers');
+    const dataPointsEl = document.getElementById('dataPoints');
+    const lastUpdateEl = document.getElementById('lastUpdate');
+    const chartWrapper = document.getElementById('chartWrapper');
+    const dateDisplay = document.getElementById('dateDisplay');
+    const timezoneSelect = document.getElementById('timezone');
+    const use24HourCheckbox = document.getElementById('use24Hour');
+    const ctx = document.getElementById('playerChart').getContext('2d');
 
-        let chart = null;
-        let trackerData = null;
-        let refreshInterval = null;
+    let chart = null;
+    let trackerData = null;
+    let refreshInterval = null;
 
-        // Load preferences from state (not localStorage to avoid storage API issues)
-        const preferences = {
-            chartType: 'line',
-            tension: 0.4,
-            timeRange: '12',
-            showGrid: true,
-            autoRefresh: true,
-            timezone: 'local',
-            use24Hour: true
-        };
+    // Load all preferences from localStorage (with defaults)
+    const savedPrefs = localStorage.getItem('playerTrackerPrefs');
+    const preferences = savedPrefs ? JSON.parse(savedPrefs) : {
+        chartType: 'line',
+        tension: 0.4,
+        timeRange: '12',
+        dataDensity: 'all',
+        showGrid: true,
+        autoRefresh: true,
+        timezone: 'local',
+        use24Hour: true
+    };
 
-        function formatTimestamp(timestamp) {
-            let m = moment(timestamp);
+    // Apply loaded prefs to UI elements
+    chartTypeSelect.value = preferences.chartType;
+    tensionSlider.value = preferences.tension;
+    tensionValue.textContent = preferences.tension;
+    timeRangeSelect.value = preferences.timeRange;
+    dataDensitySelect.value = preferences.dataDensity || 'all';
+    showGridCheckbox.checked = preferences.showGrid;
+    autoRefreshCheckbox.checked = preferences.autoRefresh;
+    timezoneSelect.value = preferences.timezone;
+    use24HourCheckbox.checked = preferences.use24Hour;
+
+    function savePreferences() {
+        localStorage.setItem('playerTrackerPrefs', JSON.stringify(preferences));
+    }
+
+    function formatTimestamp(timestamp) {
+        let m = moment(timestamp);
+        
+        if (timezoneSelect.value !== 'local') {
+            m = m.tz(timezoneSelect.value);
+        }
+        
+        const format = use24HourCheckbox.checked ? 'HH:mm' : 'hh:mm A';
+        return m.format(format);
+    }
+
+    async function loadTrackerData() {
+        try {
+            const response = await fetch('./player-tracker-data.json?t=' + Date.now());
+            if (!response.ok) throw new Error('Failed to load data');
+            trackerData = await response.json();
+            updateStatus(true, `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`);
+            updateChart();
+            updateStats();
+        } catch (error) {
+            console.error('Error loading tracker data:', error);
+            updateStatus(false, 'Error loading data - file may not exist yet');
+        }
+    }
+
+    function updateStatus(success, message) {
+        const dot = statusEl.querySelector('.status-dot');
+        if (success) {
+            statusEl.classList.add('active');
+            statusEl.classList.remove('error');
+            dot.classList.add('active');
+            dot.classList.remove('error');
+        } else {
+            statusEl.classList.add('error');
+            statusEl.classList.remove('active');
+            dot.classList.remove('active');
+            dot.classList.add('error');
+        }
+        statusText.textContent = message;
+    }
+
+    function updateStats() {
+        if (!trackerData || !trackerData.data || trackerData.data.length === 0) return;
+
+        const filtered = getFilteredData();
+        if (filtered.length === 0) return;
+
+        const players = filtered.map(d => d.players);
+        const current = players[players.length - 1];
+        const peak = Math.max(...players);
+        const avg = (players.reduce((a, b) => a + b, 0) / players.length).toFixed(0);
+
+        currentPlayersEl.textContent = current.toLocaleString();
+        peakPlayersEl.textContent = peak.toLocaleString();
+        avgPlayersEl.textContent = avg.toLocaleString();
+        dataPointsEl.textContent = `${filtered.length} data point${filtered.length !== 1 ? 's' : ''}`;
+        lastUpdateEl.textContent = `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`;
+    }
+
+    function getFilteredData() {
+        if (!trackerData || !trackerData.data) return [];
+        
+        const range = timeRangeSelect.value;
+        let filtered = range === 'all' ? trackerData.data : trackerData.data.filter(d => {
+            const hours = parseInt(range);
+            const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000);
+            return new Date(d.timestamp) > cutoffTime;
+        });
+
+        // Apply data density filtering
+        const density = dataDensitySelect.value;
+        if (density === 'standard') {
+            // Show approximately every 3rd point
+            filtered = filtered.filter((_, i) => i % 3 === 0);
+        } else if (density === 'minimal') {
+            // Show approximately every 6th point
+            filtered = filtered.filter((_, i) => i % 6 === 0);
+        }
+        // 'all' shows all points
+
+        return filtered;
+    }
+
+    function updateChart() {
+        const filtered = getFilteredData();
+        if (filtered.length === 0) {
+            if (chart) chart.destroy();
+            dateDisplay.style.display = 'none';
+            return;
+        }
+
+        // Get unique dates based on selected timezone
+        const uniqueDates = [];
+        let currentDate = null;
+        filtered.forEach(d => {
+            let m = moment(d.timestamp);
             
+            // Apply the selected timezone
             if (timezoneSelect.value !== 'local') {
                 m = m.tz(timezoneSelect.value);
             }
             
-            const format = use24HourCheckbox.checked ? 'HH:mm' : 'hh:mm A';
-            return m.format(format);
-        }
-
-        async function loadTrackerData() {
-            try {
-                const response = await fetch('./player-tracker-data.json?t=' + Date.now());
-                if (!response.ok) throw new Error('Failed to load data');
-                trackerData = await response.json();
-                updateStatus(true, `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`);
-                updateChart();
-                updateStats();
-            } catch (error) {
-                console.error('Error loading tracker data:', error);
-                updateStatus(false, 'Error loading data - file may not exist yet');
-            }
-        }
-
-        function updateStatus(success, message) {
-            const dot = statusEl.querySelector('.status-dot');
-            if (success) {
-                statusEl.classList.add('active');
-                statusEl.classList.remove('error');
-                dot.classList.add('active');
-                dot.classList.remove('error');
-            } else {
-                statusEl.classList.add('error');
-                statusEl.classList.remove('active');
-                dot.classList.remove('active');
-                dot.classList.add('error');
-            }
-            statusText.textContent = message;
-        }
-
-        function updateStats() {
-            if (!trackerData || !trackerData.data || trackerData.data.length === 0) return;
-
-            const filtered = getFilteredData();
-            if (filtered.length === 0) return;
-
-            const players = filtered.map(d => d.players);
-            const current = players[players.length - 1];
-            const peak = Math.max(...players);
-            const avg = (players.reduce((a, b) => a + b, 0) / players.length).toFixed(0);
-
-            currentPlayersEl.textContent = current.toLocaleString();
-            peakPlayersEl.textContent = peak.toLocaleString();
-            avgPlayersEl.textContent = avg.toLocaleString();
-            dataPointsEl.textContent = `${filtered.length} data point${filtered.length !== 1 ? 's' : ''}`;
-            lastUpdateEl.textContent = `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`;
-        }
-
-        function getFilteredData() {
-            if (!trackerData || !trackerData.data) return [];
+            // Format the date
+            const date = m.format('ddd, MMM D');
             
-            const range = timeRangeSelect.value;
-            let filtered = range === 'all' ? trackerData.data : trackerData.data.filter(d => {
-                const hours = parseInt(range);
-                const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000);
-                return new Date(d.timestamp) > cutoffTime;
-            });
-
-            // Apply data density filtering
-            const density = dataDensitySelect.value;
-            if (density === 'standard') {
-                // Show approximately every 3rd point
-                filtered = filtered.filter((_, i) => i % 3 === 0);
-            } else if (density === 'minimal') {
-                // Show approximately every 6th point
-                filtered = filtered.filter((_, i) => i % 6 === 0);
+            if (date !== currentDate) {
+                uniqueDates.push(date);
+                currentDate = date;
             }
-            // 'all' shows all points
+        });
 
-            return filtered;
+        // Display dates
+        if (uniqueDates.length > 0) {
+            dateDisplay.textContent = uniqueDates.join(' → ');
+            dateDisplay.style.display = 'block';
         }
 
-        function updateChart() {
-            const filtered = getFilteredData();
-            if (filtered.length === 0) {
-                if (chart) chart.destroy();
-                dateDisplay.style.display = 'none';
-                return;
-            }
+        const labels = filtered.map(d => formatTimestamp(d.timestamp));
+        const data = filtered.map(d => d.players);
 
-            // Get unique dates
-            const uniqueDates = [];
-            let currentDate = null;
-            filtered.forEach(d => {
-                const date = new Date(d.timestamp).toLocaleDateString('en-US', { 
-                    weekday: 'short', 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
-                if (date !== currentDate) {
-                    uniqueDates.push(date);
-                    currentDate = date;
-                }
-            });
+        let backgroundColor = 'rgba(14, 165, 233, 0.1)';
+        let borderColor = '#0ea5e9';
+        let tension = parseFloat(tensionSlider.value);
 
-            // Display dates
-            if (uniqueDates.length > 0) {
-                dateDisplay.textContent = uniqueDates.join(' → ');
-                dateDisplay.style.display = 'block';
-            }
+        const chartType = chartTypeSelect.value;
+        let fill = chartType !== 'bar';
+        if (chartType === 'bar') fill = false;
 
-            const labels = filtered.map(d => formatTimestamp(d.timestamp));
-            const data = filtered.map(d => d.players);
+        if (chart) chart.destroy();
 
-            let backgroundColor = 'rgba(14, 165, 233, 0.1)';
-            let borderColor = '#0ea5e9';
-            let tension = parseFloat(tensionSlider.value);
-
-            const chartType = chartTypeSelect.value;
-            let fill = chartType !== 'bar';
-            if (chartType === 'bar') fill = false;
-
-            if (chart) chart.destroy();
-
-            chart = new Chart(ctx, {
-                type: chartType,
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Players Online',
-                        data: data,
-                        borderColor: borderColor,
-                        backgroundColor: backgroundColor,
-                        borderWidth: 2,
-                        fill: fill,
-                        tension: tension,
-                        pointRadius: 4,
-                        pointBackgroundColor: borderColor,
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 1,
-                        pointHoverRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            borderColor: '#0ea5e9',
-                            borderWidth: 1,
-                            padding: 12,
-                            callbacks: {
-                                label: (context) => `Players: ${context.parsed.y.toLocaleString()}`
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { display: showGridCheckbox.checked, color: 'rgba(59, 63, 74, 0.2)' },
-                            ticks: { color: '#a0aec0', font: { size: 11 } }
-                        },
-                        y: {
-                            grid: { display: showGridCheckbox.checked, color: 'rgba(59, 63, 74, 0.2)' },
-                            ticks: { color: '#a0aec0', font: { size: 11 } },
-                            beginAtZero: true
+        chart = new Chart(ctx, {
+            type: chartType,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Players Online',
+                    data: data,
+                    borderColor: borderColor,
+                    backgroundColor: backgroundColor,
+                    borderWidth: 2,
+                    fill: fill,
+                    tension: tension,
+                    pointRadius: 4,
+                    pointBackgroundColor: borderColor,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: '#0ea5e9',
+                        borderWidth: 1,
+                        padding: 12,
+                        callbacks: {
+                            label: (context) => `Players: ${context.parsed.y.toLocaleString()}`
                         }
                     }
+                },
+                scales: {
+                    x: {
+                        grid: { display: showGridCheckbox.checked, color: 'rgba(59, 63, 74, 0.2)' },
+                        ticks: { color: '#a0aec0', font: { size: 11 } }
+                    },
+                    y: {
+                        grid: { display: showGridCheckbox.checked, color: 'rgba(59, 63, 74, 0.2)' },
+                        ticks: { color: '#a0aec0', font: { size: 11 } },
+                        beginAtZero: true
+                    }
                 }
+            }
+        });
+    }
+
+    tensionSlider.addEventListener('input', (e) => {
+        preferences.tension = parseFloat(e.target.value);
+        tensionValue.textContent = preferences.tension;
+        savePreferences();
+        updateChart();
+    });
+
+    chartTypeSelect.addEventListener('change', () => {
+        preferences.chartType = chartTypeSelect.value;
+        savePreferences();
+        updateChart();
+    });
+    
+    timeRangeSelect.addEventListener('change', () => {
+        preferences.timeRange = timeRangeSelect.value;
+        savePreferences();
+        updateChart();
+        updateStats();
+    });
+    
+    dataDensitySelect.addEventListener('change', () => {
+        preferences.dataDensity = dataDensitySelect.value;
+        savePreferences();
+        updateChart();
+        updateStats();
+    });
+    
+    showGridCheckbox.addEventListener('change', () => {
+        preferences.showGrid = showGridCheckbox.checked;
+        savePreferences();
+        updateChart();
+    });
+
+    timezoneSelect.addEventListener('change', () => {
+        preferences.timezone = timezoneSelect.value;
+        savePreferences();
+        updateChart();
+        updateStats();
+    });
+
+    use24HourCheckbox.addEventListener('change', () => {
+        preferences.use24Hour = use24HourCheckbox.checked;
+        savePreferences();
+        updateChart();
+        updateStats();
+    });
+
+    refreshBtn.addEventListener('click', loadTrackerData);
+
+    exportBtn.addEventListener('click', () => {
+        if (!trackerData || trackerData.data.length === 0) {
+            alert('No data to export');
+            return;
+        }
+        const csv = 'Timestamp,Players\n' + trackerData.data.map(d => `${d.timestamp},${d.players}`).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `player-tracker-${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+    });
+
+    exportImageBtn.addEventListener('click', async () => {
+        if (!chart) {
+            alert('Chart not available');
+            return;
+        }
+        
+        exportImageBtn.disabled = true;
+        exportImageBtn.textContent = '⏳ Exporting...';
+        
+        try {
+            // Export the entire main section including header, stats, date display, and chart
+            const canvas = await html2canvas(document.querySelector('.main'), {
+                backgroundColor: '#161a23',
+                scale: 4,
+                useCORS: true,
+                allowTaint: true,
+                logging: false
             });
-        }
-
-        tensionSlider.addEventListener('input', (e) => {
-            tensionValue.textContent = e.target.value;
-            updateChart();
-        });
-
-        chartTypeSelect.addEventListener('change', () => {
-            updateChart();
-        });
-        
-        timeRangeSelect.addEventListener('change', () => {
-            updateChart();
-            updateStats();
-        });
-        
-        dataDensitySelect.addEventListener('change', () => {
-            updateChart();
-            updateStats();
-        });
-        
-        showGridCheckbox.addEventListener('change', () => {
-            updateChart();
-        });
-
-        timezoneSelect.addEventListener('change', () => {
-            updateChart();
-            updateStats();
-        });
-
-        use24HourCheckbox.addEventListener('change', () => {
-            updateChart();
-            updateStats();
-        });
-
-        refreshBtn.addEventListener('click', loadTrackerData);
-
-        exportBtn.addEventListener('click', () => {
-            if (!trackerData || trackerData.data.length === 0) {
-                alert('No data to export');
-                return;
-            }
-            const csv = 'Timestamp,Players\n' + trackerData.data.map(d => `${d.timestamp},${d.players}`).join('\n');
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `player-tracker-${new Date().toISOString().split('T')[0]}.csv`;
-            a.click();
-        });
-
-        exportImageBtn.addEventListener('click', async () => {
-            if (!chart) {
-                alert('Chart not available');
-                return;
-            }
             
-            exportImageBtn.disabled = true;
-            exportImageBtn.textContent = '⏳ Exporting...';
-            
-            try {
-                // Export the entire main section including header, stats, date display, and chart
-                const canvas = await html2canvas(document.querySelector('.main'), {
-                    backgroundColor: '#161a23',
-                    scale: 4,
-                    useCORS: true,
-                    allowTaint: true,
-                    logging: false
-                });
-                
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
-                link.download = `player-tracker-${new Date().toISOString().split('T')[0]}.png`;
-                link.click();
-            } catch (error) {
-                console.error('Error exporting chart:', error);
-                alert('Failed to export chart');
-            } finally {
-                exportImageBtn.disabled = false;
-                exportImageBtn.textContent = '🖼️ Export PNG';
-            }
-        });
-
-        autoRefreshCheckbox.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                startAutoRefresh();
-            } else {
-                stopAutoRefresh();
-            }
-        });
-
-        function startAutoRefresh() {
-            if (refreshInterval) clearInterval(refreshInterval);
-            refreshInterval = setInterval(loadTrackerData, 90 * 1000);
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `player-tracker-${new Date().toISOString().split('T')[0]}.png`;
+            link.click();
+        } catch (error) {
+            console.error('Error exporting chart:', error);
+            alert('Failed to export chart');
+        } finally {
+            exportImageBtn.disabled = false;
+            exportImageBtn.textContent = '🖼️ Export PNG';
         }
+    });
 
-        function stopAutoRefresh() {
-            if (refreshInterval) clearInterval(refreshInterval);
-        }
-
-        loadTrackerData();
-        if (autoRefreshCheckbox.checked) {
+    autoRefreshCheckbox.addEventListener('change', (e) => {
+        preferences.autoRefresh = e.target.checked;
+        savePreferences();
+        if (e.target.checked) {
             startAutoRefresh();
+        } else {
+            stopAutoRefresh();
         }
-    </script>
-    <script type="module">
-    import { setRandomBackground } from './background.js';
-    setRandomBackground();
-  </script>
+    });
+
+    function startAutoRefresh() {
+        if (refreshInterval) clearInterval(refreshInterval);
+        refreshInterval = setInterval(loadTrackerData, 90 * 1000);
+    }
+
+    function stopAutoRefresh() {
+        if (refreshInterval) clearInterval(refreshInterval);
+    }
+
+    loadTrackerData();
+    if (preferences.autoRefresh) {
+        startAutoRefresh();
+    }
+</script>
+<script type="module">
+import { setRandomBackground } from './background.js';
+setRandomBackground();
+</script>
 </body>
 </html>

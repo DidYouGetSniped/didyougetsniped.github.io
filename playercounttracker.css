@@ -1,6 +1,10 @@
+/* Add this new rule for the HTML element */
+html {
+    overflow-x: hidden;
+}
+
 html, body {
-    height: auto;
-    overflow-y: auto;
+    height: 100%;
 }
 
 * {
@@ -29,7 +33,7 @@ body {
     padding: 20px;
     max-width: 1400px;
     margin: 0 auto;
-    overflow: hidden;
+    /* The overflow-x: hidden; rule was removed from here */
 }
 
 body::before {
@@ -37,8 +41,8 @@ body::before {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw; /* This can stay, as the html rule now controls the overflow */
+    height: 100vh;
     background-image: var(--background-image-url);
     background-size: cover;
     background-position: center;
@@ -86,7 +90,7 @@ body::before {
     color: #ffffff;
 }
 
-        .container {
+.container {
     display: grid;
     grid-template-columns: 250px 1fr;
     gap: 20px;
@@ -363,16 +367,255 @@ input[type="range"]::-moz-range-thumb {
     background: var(--accent-danger);
 }
 
+/* Tablet styles */
+@media (max-width: 1024px) {
+    .container {
+        grid-template-columns: 220px 1fr;
+        gap: 16px;
+    }
+    
+    .stat-box {
+        min-width: 130px;
+    }
+}
+
+/* Mobile styles */
 @media (max-width: 768px) {
+    body {
+        padding: 10px;
+        overflow-x: hidden;
+    }
+    
+    /* Inside @media (max-width: 768px) */
+.header {
+    flex-direction: column; /* Stack header items */
+    align-items: center;   /* Change this to center */
+    gap: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+    
+    .header h1 {
+        font-size: 20px;
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    
+    .back-link {
+        width: 100%;
+        max-width: 200px;
+        text-align: center;
+        padding: 10px 16px;
+    }
+    
     .container {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
-
+    
+    /* Make sidebar a collapsible accordion on mobile */
     .sidebar {
-        height: auto;
+        padding: 16px;
+        margin-bottom: 16px;
     }
-
+    
+    .sidebar h2 {
+        font-size: 15px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 12px;
+    }
+    
+    .setting-group {
+        margin-bottom: 16px;
+    }
+    
+    .setting-group select,
+    .setting-group input:not([type="checkbox"]):not([type="range"]) {
+        padding: 10px 12px;
+        font-size: 14px;
+        /* Touch-friendly height */
+        min-height: 44px;
+    }
+    
+    /* Make range slider touch-friendly */
+    input[type="range"] {
+        height: 8px;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+        width: 20px;
+        height: 20px;
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .button-group {
+        gap: 10px;
+    }
+    
+    .btn {
+        padding: 12px 16px;
+        font-size: 14px;
+        min-height: 44px;
+    }
+    
+    .main {
+        padding: 16px;
+        padding-bottom: 8px;
+    }
+    
+    .chart-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .chart-header h2 {
+        font-size: 18px;
+    }
+    
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        width: 100%;
+    }
+    
+    .stat-box {
+        min-width: unset;
+        padding: 10px 8px;
+        text-align: center;
+    }
+    
+    .stat-label {
+        font-size: 10px;
+        margin-bottom: 2px;
+    }
+    
+    .stat-value {
+        font-size: 18px;
+    }
+    
+    .date-display {
+        font-size: 11px;
+        padding: 6px;
+        margin-bottom: 10px;
+    }
+    
     .chart-container {
-        height: 350px;
+        height: 300px;
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .legend {
+        gap: 12px;
+        padding-top: 12px;
+        margin-top: 12px;
+    }
+    
+    .legend-item {
+        font-size: 11px;
+    }
+    
+    .status {
+        padding: 10px 12px;
+        font-size: 12px;
+        margin-top: 12px;
+    }
+}
+
+/* Small mobile styles */
+@media (max-width: 480px) {
+    body {
+        padding: 8px;
+    }
+    
+    .header {
+        padding: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .header h1 {
+        font-size: 18px;
+    }
+    
+    .sidebar {
+        padding: 12px;
+    }
+    
+    .main {
+        padding: 12px;
+    }
+    
+    .chart-header h2 {
+        font-size: 16px;
+        margin-bottom: 4px;
+    }
+    
+    .chart-header p {
+        font-size: 10px !important;
+    }
+    
+    .stat-box {
+        padding: 8px 6px;
+    }
+    
+    .stat-label {
+        font-size: 9px;
+        letter-spacing: 0.3px;
+    }
+    
+    .stat-value {
+        font-size: 16px;
+    }
+    
+    .chart-container {
+        height: 250px;
+        padding: 10px;
+    }
+    
+    .legend {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase touch targets */
+    .btn,
+    .setting-group select,
+    .setting-group input:not([type="checkbox"]):not([type="range"]) {
+        min-height: 44px;
+    }
+    
+    .checkbox-label {
+        padding: 8px 0;
+    }
+    
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* Landscape mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .chart-container {
+        height: 200px;
+    }
+    
+    .header {
+        padding: 12px 16px;
+    }
+    
+    .header h1 {
+        font-size: 18px;
     }
 }
