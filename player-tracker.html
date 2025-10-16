@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>War Brokers Player Count Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.45/moment-timezone-with-data.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -25,31 +28,30 @@
         }
 
         body {
-    position: relative;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    padding: 20px;
-    max-width: 1400px;
-    margin: 0 auto;
-    overflow: hidden; /* needed for pseudo-element */
-}
+            position: relative;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
 
-/* Background overlay with blur */
-body::before {
-    content: "";
-    position: fixed; /* so it stays behind scrolling content */
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: var(--background-image-url);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: blur(8px);
-    z-index: -1; /* behind all content */
-}
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: var(--background-image-url);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px);
+            z-index: -1;
+        }
 
         .header {
             display: flex;
@@ -278,6 +280,9 @@ body::before {
             position: relative;
             height: 500px;
             margin-bottom: 20px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            padding: 16px;
         }
 
         #playerChart {
@@ -359,7 +364,7 @@ body::before {
         }
     </style>
 </head>
- <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGNQRLJMGK"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -371,8 +376,6 @@ body::before {
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const style = document.createElement('style');
-  // Cursor hotspot at the center for a 64x64 image
-  // If your file name has a space, encode it or rename to avoid spaces.
   style.innerHTML = "* { cursor: url('wb kill.png') 16 16, auto !important; }";
   document.head.appendChild(style);
 });
@@ -392,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <label>Auto Refresh</label>
                 <label class="checkbox-label">
                     <input type="checkbox" id="autoRefresh" checked>
-                    Check every 5min
+                    Check every 90sec
                 </label>
             </div>
 
@@ -432,9 +435,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 </label>
             </div>
 
+            <div class="setting-group">
+                <label>Timezone</label>
+                <select id="timezone">
+                    <option value="local">Local Time</option>
+                    <option value="UTC">UTC</option>
+                    <option value="America/New_York">Eastern (ET)</option>
+                    <option value="America/Chicago">Central (CT)</option>
+                    <option value="America/Denver">Mountain (MT)</option>
+                    <option value="America/Los_Angeles">Pacific (PT)</option>
+                    <option value="Europe/London">London (GMT)</option>
+                    <option value="Europe/Paris">Paris (CET)</option>
+                    <option value="Asia/Tokyo">Tokyo (JST)</option>
+                    <option value="Asia/Shanghai">Shanghai (CST)</option>
+                    <option value="Australia/Sydney">Sydney (AEDT)</option>
+                    <option value="Asia/Dubai">Dubai (GST)</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label>Time Format</label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="use24Hour" checked>
+                    24-hour format
+                </label>
+            </div>
+
             <div class="button-group">
                 <button class="btn btn-primary" id="refreshBtn">↻ Refresh Now</button>
                 <button class="btn btn-success" id="exportBtn">📥 Export CSV</button>
+                <button class="btn btn-success" id="exportImageBtn">🖼️ Export PNG</button>
             </div>
 
             <div class="status" id="status">
@@ -447,7 +477,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="chart-header">
                 <div>
                     <h2 style="margin-bottom: 8px;">Player Count Over Time</h2>
-                    <p style="font-size: 12px; color: var(--text-secondary);">Auto-updated data ~every 15 minutes</p>
+                    <p style="font-size: 12px; color: var(--text-secondary);">Auto-updated data ~every 90 seconds</p>
                 </div>
                 <div class="stats">
                     <div class="stat-box">
@@ -465,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
 
-            <div class="chart-container">
+            <div class="chart-container" id="chartWrapper">
                 <canvas id="playerChart"></canvas>
             </div>
 
@@ -493,6 +523,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const showGridCheckbox = document.getElementById('showGrid');
         const refreshBtn = document.getElementById('refreshBtn');
         const exportBtn = document.getElementById('exportBtn');
+        const exportImageBtn = document.getElementById('exportImageBtn');
         const statusEl = document.getElementById('status');
         const statusText = document.getElementById('statusText');
         const currentPlayersEl = document.getElementById('currentPlayers');
@@ -500,13 +531,55 @@ document.addEventListener('DOMContentLoaded', function() {
         const avgPlayersEl = document.getElementById('avgPlayers');
         const dataPointsEl = document.getElementById('dataPoints');
         const lastUpdateEl = document.getElementById('lastUpdate');
+        const chartWrapper = document.getElementById('chartWrapper');
+        const timezoneSelect = document.getElementById('timezone');
+        const use24HourCheckbox = document.getElementById('use24Hour');
         const ctx = document.getElementById('playerChart').getContext('2d');
 
         let chart = null;
         let trackerData = null;
         let refreshInterval = null;
 
-        // Fetch data from JSON file
+        // Load preferences from storage
+        function loadPreferences() {
+            const prefs = JSON.parse(localStorage.getItem('playerTrackerPrefs')) || {};
+            
+            if (prefs.chartType) chartTypeSelect.value = prefs.chartType;
+            if (prefs.tension) tensionSlider.value = prefs.tension;
+            if (prefs.timeRange) timeRangeSelect.value = prefs.timeRange;
+            if (prefs.showGrid !== undefined) showGridCheckbox.checked = prefs.showGrid;
+            if (prefs.autoRefresh !== undefined) autoRefreshCheckbox.checked = prefs.autoRefresh;
+            if (prefs.timezone) timezoneSelect.value = prefs.timezone;
+            if (prefs.use24Hour !== undefined) use24HourCheckbox.checked = prefs.use24Hour;
+            
+            tensionValue.textContent = tensionSlider.value;
+        }
+
+        // Save preferences to storage
+        function savePreferences() {
+            const prefs = {
+                chartType: chartTypeSelect.value,
+                tension: tensionSlider.value,
+                timeRange: timeRangeSelect.value,
+                showGrid: showGridCheckbox.checked,
+                autoRefresh: autoRefreshCheckbox.checked,
+                timezone: timezoneSelect.value,
+                use24Hour: use24HourCheckbox.checked
+            };
+            localStorage.setItem('playerTrackerPrefs', JSON.stringify(prefs));
+        }
+
+        function formatTimestamp(timestamp) {
+            let m = moment(timestamp);
+            
+            if (timezoneSelect.value !== 'local') {
+                m = m.tz(timezoneSelect.value);
+            }
+            
+            const format = use24HourCheckbox.checked ? 'HH:mm' : 'hh:mm A';
+            return m.format(format);
+        }
+
         async function loadTrackerData() {
             try {
                 const response = await fetch('./player-tracker-data.json?t=' + Date.now());
@@ -521,7 +594,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Update tracking status
         function updateStatus(success, message) {
             const dot = statusEl.querySelector('.status-dot');
             if (success) {
@@ -538,7 +610,6 @@ document.addEventListener('DOMContentLoaded', function() {
             statusText.textContent = message;
         }
 
-        // Update stats
         function updateStats() {
             if (!trackerData || !trackerData.data || trackerData.data.length === 0) return;
 
@@ -557,7 +628,6 @@ document.addEventListener('DOMContentLoaded', function() {
             lastUpdateEl.textContent = `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`;
         }
 
-        // Get filtered data based on time range
         function getFilteredData() {
             if (!trackerData || !trackerData.data) return [];
             
@@ -569,7 +639,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return trackerData.data.filter(d => new Date(d.timestamp) > cutoffTime);
         }
 
-        // Update chart
         function updateChart() {
             const filtered = getFilteredData();
             if (filtered.length === 0) {
@@ -577,10 +646,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const labels = filtered.map(d => {
-                const date = new Date(d.timestamp);
-                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            });
+            const labels = filtered.map(d => formatTimestamp(d.timestamp));
 
             const data = filtered.map(d => d.players);
 
@@ -595,7 +661,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (chart) chart.destroy();
 
             chart = new Chart(ctx, {
-                type: chartType, // just use the selected type directly
+                type: chartType,
                 data: {
                     labels: labels,
                     datasets: [{
@@ -645,20 +711,42 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Event listeners
         tensionSlider.addEventListener('input', (e) => {
             tensionValue.textContent = e.target.value;
             updateChart();
+            savePreferences();
         });
 
-        chartTypeSelect.addEventListener('change', updateChart);
+        chartTypeSelect.addEventListener('change', () => {
+            updateChart();
+            savePreferences();
+        });
+        
         timeRangeSelect.addEventListener('change', () => {
             updateChart();
             updateStats();
+            savePreferences();
         });
-        showGridCheckbox.addEventListener('change', updateChart);
+        
+        showGridCheckbox.addEventListener('change', () => {
+            updateChart();
+            savePreferences();
+        });
+
+        timezoneSelect.addEventListener('change', () => {
+            updateChart();
+            updateStats();
+            savePreferences();
+        });
+
+        use24HourCheckbox.addEventListener('change', () => {
+            updateChart();
+            updateStats();
+            savePreferences();
+        });
 
         refreshBtn.addEventListener('click', loadTrackerData);
+
         exportBtn.addEventListener('click', () => {
             if (!trackerData || trackerData.data.length === 0) {
                 alert('No data to export');
@@ -673,24 +761,53 @@ document.addEventListener('DOMContentLoaded', function() {
             a.click();
         });
 
+        exportImageBtn.addEventListener('click', async () => {
+            if (!chart) {
+                alert('Chart not available');
+                return;
+            }
+            
+            exportImageBtn.disabled = true;
+            exportImageBtn.textContent = '⏳ Exporting...';
+            
+            try {
+                const canvas = await html2canvas(chartWrapper, {
+                    backgroundColor: '#161a23',
+                    scale: 2
+                });
+                
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = `player-tracker-${new Date().toISOString().split('T')[0]}.png`;
+                link.click();
+            } catch (error) {
+                console.error('Error exporting chart:', error);
+                alert('Failed to export chart');
+            } finally {
+                exportImageBtn.disabled = false;
+                exportImageBtn.textContent = '🖼️ Export PNG';
+            }
+        });
+
         autoRefreshCheckbox.addEventListener('change', (e) => {
             if (e.target.checked) {
                 startAutoRefresh();
             } else {
                 stopAutoRefresh();
             }
+            savePreferences();
         });
 
         function startAutoRefresh() {
             if (refreshInterval) clearInterval(refreshInterval);
-            refreshInterval = setInterval(loadTrackerData, 5 * 60 * 1000); // Check every 5 minutes
+            refreshInterval = setInterval(loadTrackerData, 90 * 1000);
         }
 
         function stopAutoRefresh() {
             if (refreshInterval) clearInterval(refreshInterval);
         }
 
-        // Initialize
+        loadPreferences();
         loadTrackerData();
         if (autoRefreshCheckbox.checked) {
             startAutoRefresh();
