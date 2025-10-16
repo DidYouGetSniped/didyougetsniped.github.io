@@ -74,12 +74,8 @@ async function run() {
       players: playerCount
     });
 
-    // Keep only the last 2880 data points (≈30 days if checked every 15 min)
-    const maxDataPoints = 2880;
-    if (dataArray.length > maxDataPoints) {
-      dataArray = dataArray.slice(-maxDataPoints);
-      console.log(`Trimmed data to last ${maxDataPoints} points (30 days)`);
-    }
+    // Keep all data points - no limit
+console.log(`Total data points: ${dataArray.length}`);
 
     // Prepare data object for saving
     const dataToSave = {
