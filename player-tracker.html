@@ -144,6 +144,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="stat-value" id="peakPlayers">-</div>
                     </div>
                     <div class="stat-box">
+                        <div class="stat-label">Minimum</div>
+                        <div class="stat-value" id="minPlayers">-</div>
+                    </div>
+                    <div class="stat-box">
                         <div class="stat-label">Average</div>
                         <div class="stat-value" id="avgPlayers">-</div>
                     </div>
@@ -186,6 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusText = document.getElementById('statusText');
     const currentPlayersEl = document.getElementById('currentPlayers');
     const peakPlayersEl = document.getElementById('peakPlayers');
+    const minPlayersEl = document.getElementById('minPlayers');
     const avgPlayersEl = document.getElementById('avgPlayers');
     const dataPointsEl = document.getElementById('dataPoints');
     const lastUpdateEl = document.getElementById('lastUpdate');
@@ -269,22 +274,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateStats() {
-        if (!trackerData || !trackerData.data || trackerData.data.length === 0) return;
+    if (!trackerData || !trackerData.data || trackerData.data.length === 0) return;
 
-        const filtered = getFilteredData();
-        if (filtered.length === 0) return;
+    const filtered = getFilteredData();
+    if (filtered.length === 0) return;
 
-        const players = filtered.map(d => d.players);
-        const current = players[players.length - 1];
-        const peak = Math.max(...players);
-        const avg = (players.reduce((a, b) => a + b, 0) / players.length).toFixed(0);
+    const players = filtered.map(d => d.players);
+    const current = players[players.length - 1];
+    const peak = Math.max(...players);
+    const min = Math.min(...players);
+    const avg = (players.reduce((a, b) => a + b, 0) / players.length).toFixed(0);
 
-        currentPlayersEl.textContent = current.toLocaleString();
-        peakPlayersEl.textContent = peak.toLocaleString();
-        avgPlayersEl.textContent = avg.toLocaleString();
-        dataPointsEl.textContent = `${filtered.length} data point${filtered.length !== 1 ? 's' : ''}`;
-        lastUpdateEl.textContent = `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`;
-    }
+    currentPlayersEl.textContent = current.toLocaleString();
+    peakPlayersEl.textContent = peak.toLocaleString();
+    minPlayersEl.textContent = min.toLocaleString();
+    avgPlayersEl.textContent = avg.toLocaleString();
+    dataPointsEl.textContent = `${filtered.length} data point${filtered.length !== 1 ? 's' : ''}`;
+    lastUpdateEl.textContent = `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`;
+}
 
     function getFilteredData() {
         if (!trackerData || !trackerData.data) return [];
@@ -382,16 +389,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        borderColor: '#0ea5e9',
-                        borderWidth: 1,
-                        padding: 12,
-                        callbacks: {
-                            label: (context) => `Players: ${context.parsed.y.toLocaleString()}`
-                        }
-                    }
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    titleColor: '#fff',
+    bodyColor: '#fff',
+    borderColor: '#0ea5e9',
+    borderWidth: 1,
+    padding: 12,
+    callbacks: {
+        title: (context) => {
+            // Get the timestamp for this data point
+            const index = context[0].dataIndex;
+            const timestamp = filtered[index].timestamp;
+            let m = moment(timestamp);
+            
+            // Apply the selected timezone
+            if (timezoneSelect.value !== 'local') {
+                m = m.tz(timezoneSelect.value);
+            }
+            
+            // Format with date and time
+            const format = use24HourCheckbox.checked 
+                ? 'ddd, MMM D, YYYY - HH:mm' 
+                : 'ddd, MMM D, YYYY - hh:mm A';
+            return m.format(format);
+        },
+        label: (context) => `Players: ${context.parsed.y.toLocaleString()}`
+    }
+}
                 },
                 scales: {
                     x: {
