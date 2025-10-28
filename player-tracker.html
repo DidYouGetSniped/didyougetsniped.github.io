@@ -317,42 +317,41 @@ document.addEventListener('DOMContentLoaded', function() {
         return filtered;
     }
 
-    function updateChart() {
-        const filtered = getFilteredData();
-        if (filtered.length === 0) {
-            if (chart) chart.destroy();
-            dateDisplay.style.display = 'none';
-            return;
+  function updateChart() {
+    const filtered = getFilteredData();
+    if (filtered.length === 0) {
+        if (chart) chart.destroy();
+        dateDisplay.style.display = 'none';
+        return;
+    }
+
+    // Get first and last dates based on selected timezone
+    let firstDate = null;
+    let lastDate = null;
+    
+    if (filtered.length > 0) {
+        let mFirst = moment(filtered[0].timestamp);
+        let mLast = moment(filtered[filtered.length - 1].timestamp);
+        
+        // Apply the selected timezone
+        if (timezoneSelect.value !== 'local') {
+            mFirst = mFirst.tz(timezoneSelect.value);
+            mLast = mLast.tz(timezoneSelect.value);
         }
+        
+        // Format the dates
+        firstDate = mFirst.format('ddd, MMM D, YYYY');
+        lastDate = mLast.format('ddd, MMM D, YYYY');
+    }
 
-        // Get unique dates based on selected timezone
-        const uniqueDates = [];
-        let currentDate = null;
-        filtered.forEach(d => {
-            let m = moment(d.timestamp);
-            
-            // Apply the selected timezone
-            if (timezoneSelect.value !== 'local') {
-                m = m.tz(timezoneSelect.value);
-            }
-            
-            // Format the date
-            const date = m.format('ddd, MMM D');
-            
-            if (date !== currentDate) {
-                uniqueDates.push(date);
-                currentDate = date;
-            }
-        });
+    // Display date range
+    if (firstDate && lastDate) {
+        dateDisplay.textContent = `${firstDate} → ${lastDate}`;
+        dateDisplay.style.display = 'block';
+    }
 
-        // Display dates
-        if (uniqueDates.length > 0) {
-            dateDisplay.textContent = uniqueDates.join(' → ');
-            dateDisplay.style.display = 'block';
-        }
-
-        const labels = filtered.map(d => formatTimestamp(d.timestamp));
-        const data = filtered.map(d => d.players);
+    const labels = filtered.map(d => formatTimestamp(d.timestamp));
+    const data = filtered.map(d => d.players);
 
         let backgroundColor = 'rgba(14, 165, 233, 0.1)';
         let borderColor = '#0ea5e9';
