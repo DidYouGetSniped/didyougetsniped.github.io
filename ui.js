@@ -285,15 +285,19 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const idDeaths = `pie_deaths_${uidKey}`, legDeaths = `legend_deaths_${uidKey}`, sortDeaths = `sort_deaths_${uidKey}`, resetDeaths = `reset_deaths_${uidKey}`;
     const idWins = `pie_wins_${uidKey}`, legWins = `legend_wins_${uidKey}`, sortWins = `sort_wins_${uidKey}`, resetWins = `reset_wins_${uidKey}`;
     const idLosses = `pie_losses_${uidKey}`, legLosses = `legend_losses_${uidKey}`, sortLosses = `sort_losses_${uidKey}`, resetLosses = `reset_losses_${uidKey}`;
+    const idDamageReceived = `pie_damage_received_${uidKey}`;
+    const legDamageReceived = `legend_damage_received_${uidKey}`;
+    const sortDamageReceived = `sort_damage_received_${uidKey}`;
+    const resetDamageReceived = `reset_damage_received_${uidKey}`;
 
     queuePieCharts([
-        { canvasId: idWeapon, legendId: legWeapon, sortId: sortWeapon, resetId: resetWeapon, data: consts.weaponKillsData },
-        { canvasId: idVehicle, legendId: legVehicle, sortId: sortVehicle, resetId: resetVehicle, data: data.kills_per_vehicle || {} },
-        { canvasId: idDeaths, legendId: legDeaths, sortId: sortDeaths, resetId: resetDeaths, data: data.deaths || {} },
-        { canvasId: idWins, legendId: legWins, sortId: sortWins, resetId: resetWins, data: data.wins || {} },
-        { canvasId: idLosses, legendId: legLosses, sortId: sortLosses, resetId: resetLosses, data: data.losses || {} }
-    ]);
-
+    { canvasId: idWeapon, legendId: legWeapon, sortId: sortWeapon, resetId: resetWeapon, data: consts.weaponKillsData },
+    { canvasId: idVehicle, legendId: legVehicle, sortId: sortVehicle, resetId: resetVehicle, data: data.kills_per_vehicle || {} },
+    { canvasId: idDeaths, legendId: legDeaths, sortId: sortDeaths, resetId: resetDeaths, data: data.deaths || {} },
+    { canvasId: idWins, legendId: legWins, sortId: sortWins, resetId: resetWins, data: data.wins || {} },
+    { canvasId: idLosses, legendId: legLosses, sortId: sortLosses, resetId: resetLosses, data: data.losses || {} },
+    { canvasId: idDamageReceived, legendId: legDamageReceived, sortId: sortDamageReceived, resetId: resetDamageReceived, data: consts.weaponDamageReceivedData } // ADD THIS LINE
+]);
     const chartCard = (title, canvasId, sortId, legendId, resetId) => `
         <div class="graph-card" style="padding:8px;">
             <h4 style="text-align:center;margin:0 0 8px 0;color:${TEXT_COLOR};">${title}</h4>
@@ -310,20 +314,21 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
         </div>
     `;
 
-    const graphsHTML = `
-        <div class="stat-card">
-            <h3>📈 Graphs</h3>
-            <div style="display:grid;grid-template-columns:1fr;gap:16px;">
-                ${chartCard('Kills per Weapon', idWeapon, sortWeapon, legWeapon, resetWeapon)}
-                ${chartCard('Kills per Vehicle', idVehicle, sortVehicle, legVehicle, resetVehicle)}
-                ${chartCard('Deaths by Cause', idDeaths, sortDeaths, legDeaths, resetDeaths)}
-                ${chartCard('Wins per Game Mode', idWins, sortWins, legWins, resetWins)}
-                ${chartCard('Losses per Game Mode', idLosses, sortLosses, legLosses, resetLosses)}
-            </div>
+    // Update the graphsHTML section around line 480:
+const graphsHTML = `
+    <div class="stat-card">
+        <h3>📈 Graphs</h3>
+        <div style="display:grid;grid-template-columns:1fr;gap:16px;">
+            ${chartCard('Kills per Weapon', idWeapon, sortWeapon, legWeapon, resetWeapon)}
+            ${chartCard('Damage Received per Weapon', idDamageReceived, sortDamageReceived, legDamageReceived, resetDamageReceived)}
+            ${chartCard('Kills per Vehicle', idVehicle, sortVehicle, legVehicle, resetVehicle)}
+            ${chartCard('Deaths by Cause', idDeaths, sortDeaths, legDeaths, resetDeaths)}
+            ${chartCard('Wins per Game Mode', idWins, sortWins, legWins, resetWins)}
+            ${chartCard('Losses per Game Mode', idLosses, sortLosses, legLosses, resetLosses)}
         </div>
-    `;
+    </div>
+`;
 
-    // --- Final Data for Rendering ---
     const isSteamUser = data.steam === true;
     const steamText = isSteamUser ? 'Yes' : 'No';
     const steamHighlightClass = isSteamUser ? 'success' : 'danger';
@@ -336,7 +341,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     let biographyHTML = '';
     if (data.biography) biographyHTML = `<div class="player-bio">${data.biography}</div>`;
 
-    // --- Return the Final HTML ---
     return `
         <div class="player-header">
             <div class="player-name-details">

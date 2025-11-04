@@ -101,6 +101,13 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
     const totalShotsHit = totalShotsHitUnzoomed + totalShotsHitZoomed;
     const numberOfJumps = rawData.number_of_jumps || 0;
     const scudsLaunched = rawData.scuds_launched || 0;
+    const weaponDamageReceivedData = {};
+for (const weaponName in data.weaponStats) {
+    const stat = data.weaponStats[weaponName];
+    if (stat.damageReceived > 0) {
+        weaponDamageReceivedData[weaponName] = stat.damageReceived;
+    }
+}
     const totalWins = Object.values(data.wins || {}).reduce((sum, val) => sum + val, 0);
     const totalLosses = Object.values(data.losses || {}).reduce((sum, val) => sum + val, 0);
     const totalGames = totalWins + totalLosses;
@@ -156,6 +163,6 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
     selfDestructsPerGame, damagePerGame, damageReceivedPerGame, killsPerGame, deathsPerGame, accUnzoomed, accZoomed, accBoth,
     shotsFiredPerGame, shotsHitPerGame, jumpsPerGame, jumpsPerDamage, headshotsPerGame, headshotsPerKill, missilesPerGame,
     missileLaunchGames, missilesPerMissileLaunchGame, topKillsPercent, topGamesPercent, topXpPercent, performanceScoreDisplay,
-    weaponKillsTotal, vehicleKillsTotal, weaponKillsPerVehicleKill // ADD THIS LINE
+    weaponKillsTotal, vehicleKillsTotal, weaponKillsPerVehicleKill,  weaponDamageReceivedData
     };
 }

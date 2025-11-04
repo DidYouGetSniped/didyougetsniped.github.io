@@ -100,6 +100,17 @@ async function fetchData(url, options = {}, errorValue = null) {
     }
 }
 
+ const filterIgnoredWeapons = (dataObject) => {
+        if (!dataObject) return {};
+        const filtered = {};
+        for (const code in dataObject) {
+            if (!IGNORED_WEAPON_CODES.includes(code)) {
+                filtered[code] = dataObject[code];
+            }
+        }
+        return filtered;
+    };
+
 function remapObjectKeys(dataObject, map) {
     if (!dataObject) return {};
     const remapped = {};
@@ -137,18 +148,10 @@ processed.vehicleKillsTotal = vehicleKillsTotal; // ADD THIS LINE
     processed.losses = remapObjectKeys(rawPlayerData.losses, GAMEMODE_NAMES);
     const filtered_raw_kills_per_vehicle = { ...raw_kills_per_vehicle };
     delete filtered_raw_kills_per_vehicle.v30;
+    const filtered_raw_damage_received = filterIgnoredWeapons(rawPlayerData.damage_received);
+    const damage_received = remapObjectKeys(filtered_raw_damage_received, WEAPON_NAMES);
     processed.kills_per_vehicle = remapObjectKeys(filtered_raw_kills_per_vehicle, VEHICLE_KILL_NAMES);
     processed.deaths = remapObjectKeys(raw_deaths, DEATH_CAUSE_NAMES);
-    const filterIgnoredWeapons = (dataObject) => {
-        if (!dataObject) return {};
-        const filtered = {};
-        for (const code in dataObject) {
-            if (!IGNORED_WEAPON_CODES.includes(code)) {
-                filtered[code] = dataObject[code];
-            }
-        }
-        return filtered;
-    };
     const filtered_raw_kills = filterIgnoredWeapons(raw_kills_per_weapon);
     const filtered_raw_headshots = filterIgnoredWeapons(rawPlayerData.headshots);
     const filtered_raw_damage = filterIgnoredWeapons(rawPlayerData.damage_dealt);
@@ -165,29 +168,33 @@ processed.vehicleKillsTotal = vehicleKillsTotal; // ADD THIS LINE
     const shots_hit_zoomed = remapObjectKeys(filtered_raw_hits_zoomed, WEAPON_NAMES);
     processed.weaponStats = {};
     const allWeaponNames = new Set(Object.keys(kills_per_weapon));
-    for (const weaponName of allWeaponNames) {
-        const kills = kills_per_weapon[weaponName] || 0;
-        const deathsByWeapon = processed.deaths[weaponName] || 0;
-        const totalHeadshots = headshots[weaponName] || 0;
-        const totalDamage = damage_dealt[weaponName] || 0;
-        const shotsFired = (shots_fired_unzoomed[weaponName] || 0) + (shots_fired_zoomed[weaponName] || 0);
-        const shotsHit = (shots_hit_unzoomed[weaponName] || 0) + (shots_hit_zoomed[weaponName] || 0);
-        const kdr = deathsByWeapon > 0 ? (kills / deathsByWeapon) : kills;
-        const accuracy = shotsFired > 0 ? (shotsHit / shotsFired) * 100 : 0;
-        const headshotRate = kills > 0 ? (totalHeadshots / kills) * 100 : 0;
-        const damagePerKill = kills > 0 ? (totalDamage / kills) : 0;
-        const damagePerHit = shotsHit > 0 ? (totalDamage / shotsHit) : 0;
-        processed.weaponStats[weaponName] = {
-            kills, deaths: deathsByWeapon, headshots: totalHeadshots,
-            damage: parseFloat(totalDamage.toFixed(0)),
-            kdr: kdr.toFixed(3),
-            accuracy: parseFloat(accuracy.toFixed(2)),
-            headshotRate: parseFloat(headshotRate.toFixed(2)),
-            damagePerKill: parseFloat(damagePerKill.toFixed(0)),
-            damagePerHit: parseFloat(damagePerHit.toFixed(2)),
-            shotsFired, shotsHit
-        };
-    }
+ for (const weaponName of allWeaponNames) {
+    const kills = kills_per_weapon[weaponName] || 0;
+    const deathsByWeapon = processed.deaths[weaponName] || 0;
+    const totalHeadshots = headshots[weaponName] || 0;
+    const totalDamage = damage_dealt[weaponName] || 0;
+    const totalDamageReceived = damage_received[weaponName] || 0; // ADD THIS LINE
+    const shotsFired = (shots_fired_unzoomed[weaponName] || 0) + (shots_fired_zoomed[weaponName] || 0);
+    const shotsHit = (shots_hit_unzoomed[weaponName] || 0) + (shots_hit_zoomed[weaponName] || 0);
+    
+    const kdr = deathsByWeapon > 0 ? (kills / deathsByWeapon) : kills;
+    const accuracy = shotsFired > 0 ? (shotsHit / shotsFired) * 100 : 0;
+    const headshotRate = kills > 0 ? (totalHeadshots / kills) * 100 : 0;
+    const damagePerKill = kills > 0 ? (totalDamage / kills) : 0;
+    const damagePerHit = shotsHit > 0 ? (totalDamage / shotsHit) : 0;
+    
+    processed.weaponStats[weaponName] = {
+        kills, deaths: deathsByWeapon, headshots: totalHeadshots,
+        damage: parseFloat(totalDamage.toFixed(0)),
+        damageReceived: parseFloat(totalDamageReceived.toFixed(0)), // ADD THIS LINE
+        kdr: kdr.toFixed(3),
+        accuracy: parseFloat(accuracy.toFixed(2)),
+        headshotRate: parseFloat(headshotRate.toFixed(2)),
+        damagePerKill: parseFloat(damagePerKill.toFixed(0)),
+        damagePerHit: parseFloat(damagePerHit.toFixed(2)),
+        shotsFired, shotsHit
+    };
+}
     if (SPECIAL_LINKS[rawPlayerData.uid]) {
         processed.socialLinks = SPECIAL_LINKS[rawPlayerData.uid];
     }
