@@ -98,48 +98,68 @@ function buildLegendForChart(chart, container, sortMode) {
     });
 }
 
-function renderPieWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn) {
+function renderChartWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn, chartTypeSelect) {
     const entries = Object.entries(dataObj || {}).filter(([, v]) => typeof v === 'number' && v > 0);
     if (!entries.length) {
         if (canvas && canvas.parentElement) canvas.parentElement.innerHTML = '<div class="text-gray-400">No data</div>';
         if (legendEl) legendEl.innerHTML = '';
         return;
     }
+
     entries.sort((a, b) => b[1] - a[1]);
     const labels = entries.map(e => e[0]);
-    a: {
-        const uniq = new Set();
-        for (let i = 0; i < labels.length; i++) {
-            let l = labels[i];
-            if (!uniq.has(l)) { uniq.add(l); continue; }
-            let k = 2;
-            while (uniq.has(`${l} (${k})`)) k++;
-            labels[i] = `${l} (${k})`;
-            uniq.add(labels[i]);
-        }
-    }
     const data = entries.map(e => e[1]);
     const colors = palette(labels.length);
     const ctx = canvas.getContext('2d');
-    const chart = new window.Chart(ctx, {
-        type: 'pie',
-        data: { labels, datasets: [{ data, backgroundColor: colors, borderColor: CHART_BORDER, borderWidth: 1 }] },
+    
+    const makeConfig = (type) => ({
+        type,
+        data: {
+            labels,
+            datasets: [{
+                data,
+                backgroundColor: colors,
+                borderColor: CHART_BORDER,
+                borderWidth: 1
+            }]
+        },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            indexAxis: type === 'bar' ? 'y' : 'x',
             plugins: {
                 legend: { display: false },
-                title: { display: false },
                 tooltip: {
                     bodyColor: TEXT_COLOR,
                     titleColor: TEXT_COLOR,
-                    callbacks: { label: c => { const v = c.parsed; const total = c.dataset.data.reduce((a, b) => a + b, 0); const pct = total ? (v / total * 100) : 0; return `${c.label}: ${v.toLocaleString()} (${pct.toFixed(2)}%)`; } }
+                    callbacks: {
+                        label: c => {
+                            const v = c.parsed;
+                            const total = c.dataset.data.reduce((a, b) => a + b, 0);
+                            const pct = total ? (v / total * 100) : 0;
+                            return `${c.label}: ${v.toLocaleString()} (${pct.toFixed(2)}%)`;
+                        }
+                    }
                 }
-            }
+            },
+            scales: type === 'bar' ? {
+                x: {
+                    ticks: { color: TEXT_COLOR },
+                    grid: { color: CHART_BORDER }
+                },
+                y: {
+                    ticks: { color: TEXT_COLOR },
+                    grid: { color: CHART_BORDER }
+                }
+            } : undefined
         }
     });
+
+    let chart = new window.Chart(ctx, makeConfig('pie')); // Default bar
+
     const renderLegend = () => buildLegendForChart(chart, legendEl, (sortSelect && sortSelect.value) || 'size');
     renderLegend();
+
     if (sortSelect) sortSelect.addEventListener('change', renderLegend);
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
@@ -147,6 +167,15 @@ function renderPieWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn) {
                 if (chart.getDataVisibility && !chart.getDataVisibility(i)) chart.toggleDataVisibility(i);
             }
             chart.update();
+            renderLegend();
+        });
+    }
+
+    if (chartTypeSelect) {
+        chartTypeSelect.addEventListener('change', () => {
+            const newType = chartTypeSelect.value;
+            chart.destroy();
+            chart = new window.Chart(ctx, makeConfig(newType));
             renderLegend();
         });
     }
@@ -166,13 +195,15 @@ function processChartsQueue() {
         const sortSelect = document.getElementById(spec.sortId);
         const resetBtn = document.getElementById(spec.resetId);
         if (!canvas || !legendEl || !sortSelect || !resetBtn) { pending.push(spec); continue; }
+        const chartTypeSelect = document.getElementById(spec.chartTypeId);
         if (!spec.data || Object.keys(spec.data).length === 0) {
             const p = canvas.parentElement;
             if (p) p.innerHTML = '<div class="text-gray-400">No data</div>';
             legendEl.innerHTML = '';
             continue;
         }
-        ensureChartJs().then(() => renderPieWithLegend(canvas, spec.data, legendEl, sortSelect, resetBtn));
+        ensureChartJs().then(() => renderChartWithLegend(canvas, spec.data, legendEl, sortSelect, resetBtn, chartTypeSelect));
+
     }
     w.__wbChartsQueue = pending;
     if (!w.__wbChartsQueue.length && w.__wbChartsInterval) { clearInterval(w.__wbChartsInterval); w.__wbChartsInterval = null; }
@@ -294,48 +325,52 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const sortDamageReceived = `sort_damage_received_${uidKey}`;
     const resetDamageReceived = `reset_damage_received_${uidKey}`;
     
-
     queuePieCharts([
-    { canvasId: idWeapon, legendId: legWeapon, sortId: sortWeapon, resetId: resetWeapon, data: consts.weaponKillsData },
-    { canvasId: idDamageDealt, legendId: legDamageDealt, sortId: sortDamageDealt, resetId: resetDamageDealt, data: consts.weaponDamageDealtData }, // ADD THIS LINE
-    { canvasId: idVehicle, legendId: legVehicle, sortId: sortVehicle, resetId: resetVehicle, data: data.kills_per_vehicle || {} },
-    { canvasId: idDeaths, legendId: legDeaths, sortId: sortDeaths, resetId: resetDeaths, data: data.deaths || {} },
-    { canvasId: idWins, legendId: legWins, sortId: sortWins, resetId: resetWins, data: data.wins || {} },
-    { canvasId: idLosses, legendId: legLosses, sortId: sortLosses, resetId: resetLosses, data: data.losses || {} },
-    { canvasId: idDamageReceived, legendId: legDamageReceived, sortId: sortDamageReceived, resetId: resetDamageReceived, data: consts.weaponDamageReceivedData }
+    { canvasId: idWeapon, legendId: legWeapon, sortId: sortWeapon, resetId: resetWeapon, chartTypeId: `chart_type_${idWeapon}`, data: consts.weaponKillsData },
+    { canvasId: idDamageDealt, legendId: legDamageDealt, sortId: sortDamageDealt, resetId: resetDamageDealt, chartTypeId: `chart_type_${idDamageDealt}`, data: consts.weaponDamageDealtData },
+    { canvasId: idDamageReceived, legendId: legDamageReceived, sortId: sortDamageReceived, resetId: resetDamageReceived, chartTypeId: `chart_type_${idDamageReceived}`, data: consts.weaponDamageReceivedData },
+    { canvasId: idVehicle, legendId: legVehicle, sortId: sortVehicle, resetId: resetVehicle, chartTypeId: `chart_type_${idVehicle}`, data: data.kills_per_vehicle || {} },
+    { canvasId: idDeaths, legendId: legDeaths, sortId: sortDeaths, resetId: resetDeaths, chartTypeId: `chart_type_${idDeaths}`, data: data.deaths || {} },
+    { canvasId: idWins, legendId: legWins, sortId: sortWins, resetId: resetWins, chartTypeId: `chart_type_${idWins}`, data: data.wins || {} },
+    { canvasId: idLosses, legendId: legLosses, sortId: sortLosses, resetId: resetLosses, chartTypeId: `chart_type_${idLosses}`, data: data.losses || {} }
 ]);
-    const chartCard = (title, canvasId, sortId, legendId, resetId) => `
-        <div class="graph-card" style="padding:8px;">
-            <h4 style="text-align:center;margin:0 0 8px 0;color:${TEXT_COLOR};">${title}</h4>
-            <div style="position:relative;height:360px;width:100%;"><canvas id="${canvasId}" style="width:100%;height:100%;"></canvas></div>
-            <div class="chart-controls" style="display:flex;align-items:center;gap:8px;justify-content:flex-end;margin:8px 0;">
-                <label style="font-size:.875rem;opacity:.85;color:${TEXT_COLOR};">Sort</label>
-                <select id="${sortId}" style="padding:4px 8px;border-radius:6px;border:1px solid ${CTRL_BORDER};background:${CTRL_BG};color:${TEXT_COLOR};">
-                    <option value="size" selected>By Size</option>
-                    <option value="alpha">Alphabetical</option>
-                </select>
-                <button id="${resetId}" class="btn btn-subtle" style="padding:4px 10px;border-radius:6px;border:1px solid ${CTRL_BORDER};background:${CTRL_BG_SUBTLE};color:${TEXT_COLOR};">Reset</button>
-            </div>
-            <div id="${legendId}" class="pie-legend" style="display:flex;flex-wrap:wrap;gap:8px;row-gap:6px;margin-top:4px;overflow:visible;"></div>
+
+    const chartCard = (title, canvasId, sortId, legendId, resetId, chartTypeId) => `
+    <div class="graph-card" style="padding:8px;">
+        <h4 style="text-align:center;margin:0 0 8px 0;color:${TEXT_COLOR};">${title}</h4>
+        <div style="position:relative;height:360px;width:100%;"><canvas id="${canvasId}" style="width:100%;height:100%;"></canvas></div>
+        <div class="chart-controls" style="display:flex;align-items:center;gap:8px;justify-content:flex-end;margin:8px 0;">
+            <label style="font-size:.875rem;opacity:.85;color:${TEXT_COLOR};">Chart</label>
+            <select id="${chartTypeId}" style="padding:4px 8px;border-radius:6px;border:1px solid ${CTRL_BORDER};background:${CTRL_BG};color:${TEXT_COLOR};">
+                <option value="pie" selected>Pie</option>
+                <option value="bar">Bar</option>
+            </select>
+            <label style="font-size:.875rem;opacity:.85;color:${TEXT_COLOR};">Sort</label>
+            <select id="${sortId}" style="padding:4px 8px;border-radius:6px;border:1px solid ${CTRL_BORDER};background:${CTRL_BG};color:${TEXT_COLOR};">
+                <option value="size" selected>By Size</option>
+                <option value="alpha">Alphabetical</option>
+            </select>
+            <button id="${resetId}" class="btn btn-subtle" style="padding:4px 10px;border-radius:6px;border:1px solid ${CTRL_BORDER};background:${CTRL_BG_SUBTLE};color:${TEXT_COLOR};">Reset</button>
         </div>
-    `;
+        <div id="${legendId}" class="pie-legend" style="display:flex;flex-wrap:wrap;gap:8px;row-gap:6px;margin-top:4px;overflow:visible;"></div>
+    </div>
+`;
 
     // Update the graphsHTML section around line 480:
 const graphsHTML = `
     <div class="stat-card">
         <h3>📈 Graphs</h3>
         <div style="display:grid;grid-template-columns:1fr;gap:16px;">
-            ${chartCard('Kills per Weapon', idWeapon, sortWeapon, legWeapon, resetWeapon)}
-            ${chartCard('Damage Dealt per Weapon', idDamageDealt, sortDamageDealt, legDamageDealt, resetDamageDealt)}
-            ${chartCard('Damage Received per Weapon', idDamageReceived, sortDamageReceived, legDamageReceived, resetDamageReceived)}
-            ${chartCard('Kills per Vehicle', idVehicle, sortVehicle, legVehicle, resetVehicle)}
-            ${chartCard('Deaths by Cause', idDeaths, sortDeaths, legDeaths, resetDeaths)}
-            ${chartCard('Wins per Game Mode', idWins, sortWins, legWins, resetWins)}
-            ${chartCard('Losses per Game Mode', idLosses, sortLosses, legLosses, resetLosses)}
+            ${chartCard('Kills per Weapon', idWeapon, sortWeapon, legWeapon, resetWeapon, `chart_type_${idWeapon}`)}
+            ${chartCard('Damage Dealt per Weapon', idDamageDealt, sortDamageDealt, legDamageDealt, resetDamageDealt, `chart_type_${idDamageDealt}`)}
+            ${chartCard('Damage Received per Weapon', idDamageReceived, sortDamageReceived, legDamageReceived, resetDamageReceived, `chart_type_${idDamageReceived}`)}
+            ${chartCard('Kills per Vehicle', idVehicle, sortVehicle, legVehicle, resetVehicle, `chart_type_${idVehicle}`)}
+            ${chartCard('Deaths by Cause', idDeaths, sortDeaths, legDeaths, resetDeaths, `chart_type_${idDeaths}`)}
+            ${chartCard('Wins per Game Mode', idWins, sortWins, legWins, resetWins, `chart_type_${idWins}`)}
+            ${chartCard('Losses per Game Mode', idLosses, sortLosses, legLosses, resetLosses, `chart_type_${idLosses}`)}
         </div>
     </div>
 `;
-
     const isSteamUser = data.steam === true;
     const steamText = isSteamUser ? 'Yes' : 'No';
     const steamHighlightClass = isSteamUser ? 'success' : 'danger';
