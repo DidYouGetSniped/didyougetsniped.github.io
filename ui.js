@@ -107,18 +107,18 @@ function renderChartWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn, 
     }
 
     entries.sort((a, b) => b[1] - a[1]);
-    const labels = entries.map(e => e[0]);
-    const data = entries.map(e => e[1]);
-    const colors = palette(labels.length);
+    const origLabels = entries.map(e => e[0]);
+    const origData = entries.map(e => e[1]);
+    const origColors = palette(origLabels.length);
     const ctx = canvas.getContext('2d');
     
     const makeConfig = (type) => ({
         type,
         data: {
-            labels,
+            labels: [], // Will be set dynamically
             datasets: [{
-                data,
-                backgroundColor: colors,
+                data: [],
+                backgroundColor: [],
                 borderColor: CHART_BORDER,
                 borderWidth: 1
             }]
@@ -134,16 +134,17 @@ function renderChartWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn, 
                     titleColor: TEXT_COLOR,
                     callbacks: {
                         label: c => {
-                        const v = c.raw;
-                        const total = c.dataset.data.reduce((a, b) => a + b, 0);
-                        const pct = total ? (v / total * 100) : 0;
-                        return `${c.label}: ${v.toLocaleString()} (${pct.toFixed(2)}%)`;
+                            const v = c.raw;
+                            const total = c.dataset.data.reduce((a, b) => a + b, 0);
+                            const pct = total ? (v / total * 100) : 0;
+                            return `${c.label}: ${v.toLocaleString()} (${pct.toFixed(2)}%)`;
+                        }
                     }
-                }
                 }
             },
             scales: type === 'bar' ? {
                 x: {
+                    beginAtZero: true,
                     ticks: { color: TEXT_COLOR },
                     grid: { color: CHART_BORDER }
                 },
@@ -155,19 +156,96 @@ function renderChartWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn, 
         }
     });
 
-    let chart = new window.Chart(ctx, makeConfig('pie')); // Default bar
+    let chart = new window.Chart(ctx, makeConfig('pie')); // Default pie
 
-    const renderLegend = () => buildLegendForChart(chart, legendEl, (sortSelect && sortSelect.value) || 'size');
-    renderLegend();
+    let visible = new Set([...Array(origLabels.length).keys()]);
 
-    if (sortSelect) sortSelect.addEventListener('change', renderLegend);
+    const getSortMode = () => sortSelect ? sortSelect.value : 'size';
+
+    const updateChart = (sortMode) => {
+        let visItems = Array.from(visible).map(i => ({
+            label: origLabels[i],
+            value: origData[i],
+            color: origColors[i],
+            idx: i
+        }));
+        if (sortMode === 'alpha') {
+            visItems.sort((a, b) => a.label.localeCompare(b.label));
+        } else {
+            visItems.sort((a, b) => b.value - a.value);
+        }
+
+        chart.data.labels = visItems.map(it => it.label);
+        chart.data.datasets[0].data = visItems.map(it => it.value);
+        chart.data.datasets[0].backgroundColor = visItems.map(it => it.color);
+
+        // Scale labels font for bar chart (no rotation)
+        if (chart.config.type === 'bar') {
+            const numVis = visItems.length;
+            const fontSize = Math.max(10, Math.min(18, Math.floor(300 / Math.max(1, numVis))));
+            const rotation = 0;
+            if (chart.options.scales?.y) {
+                chart.options.scales.y.ticks.font = { size: fontSize };
+                chart.options.scales.y.ticks.maxRotation = rotation;
+                chart.options.scales.y.ticks.minRotation = rotation;
+            }
+        }
+
+        chart.update();
+    };
+
+    const renderLegend = (sortMode) => {
+        const allItems = origLabels.map((label, i) => ({
+            label,
+            value: origData[i],
+            color: origColors[i],
+            i
+        }));
+        if (sortMode === 'alpha') {
+            allItems.sort((a, b) => a.label.localeCompare(b.label));
+        } else {
+            allItems.sort((a, b) => b.value - a.value);
+        }
+        const textColor = TEXT_COLOR;
+        legendEl.innerHTML = allItems.map(it => {
+            const isVis = visible.has(it.i);
+            const opacity = isVis ? 1 : 0.4;
+            const decoration = isVis ? 'none' : 'line-through';
+            return `
+                <button data-idx="${it.i}" class="legend-item" style="display:inline-flex;align-items:center;gap:8px;padding:4px 8px;border-radius:6px;border:1px solid rgba(0,0,0,.12);background:transparent;color:${textColor};-webkit-text-fill-color:${textColor};opacity:${opacity};cursor:pointer;overflow:visible;">
+                    <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${it.color};flex:0 0 auto;"></span>
+                    <span class="legend-text" style="white-space:nowrap;color:${textColor};-webkit-text-fill-color:${textColor};text-decoration:${decoration};">${it.label}</span>
+                </button>
+            `;
+        }).join('');
+        Array.from(legendEl.querySelectorAll('button.legend-item')).forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = Number(btn.getAttribute('data-idx'));
+                if (visible.has(idx)) {
+                    visible.delete(idx);
+                } else {
+                    visible.add(idx);
+                }
+                updateChartAndLegend();
+            });
+        });
+    };
+
+    const updateChartAndLegend = () => {
+        const sortMode = getSortMode();
+        updateChart(sortMode);
+        renderLegend(sortMode);
+    };
+
+    updateChartAndLegend(); // Initial render
+
+    if (sortSelect) {
+        sortSelect.addEventListener('change', updateChartAndLegend);
+    }
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
-            for (let i = 0; i < chart.data.labels.length; i++) {
-                if (chart.getDataVisibility && !chart.getDataVisibility(i)) chart.toggleDataVisibility(i);
-            }
-            chart.update();
-            renderLegend();
+            visible = new Set([...Array(origLabels.length).keys()]);
+            updateChartAndLegend();
         });
     }
 
@@ -176,7 +254,7 @@ function renderChartWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn, 
             const newType = chartTypeSelect.value;
             chart.destroy();
             chart = new window.Chart(ctx, makeConfig(newType));
-            renderLegend();
+            updateChartAndLegend();
         });
     }
 }
