@@ -134,12 +134,12 @@ function renderChartWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn, 
                     titleColor: TEXT_COLOR,
                     callbacks: {
                         label: c => {
-                            const v = c.parsed;
-                            const total = c.dataset.data.reduce((a, b) => a + b, 0);
-                            const pct = total ? (v / total * 100) : 0;
-                            return `${c.label}: ${v.toLocaleString()} (${pct.toFixed(2)}%)`;
-                        }
+                        const v = c.raw;
+                        const total = c.dataset.data.reduce((a, b) => a + b, 0);
+                        const pct = total ? (v / total * 100) : 0;
+                        return `${c.label}: ${v.toLocaleString()} (${pct.toFixed(2)}%)`;
                     }
+                }
                 }
             },
             scales: type === 'bar' ? {
