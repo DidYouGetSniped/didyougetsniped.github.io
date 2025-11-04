@@ -37,7 +37,7 @@ const VEHICLE_KILL_NAMES = {
     v16: 'Unknown Vehicle (v16)', v17: 'Unknown Vehicle (v17)', v18: 'Unknown Vehicle (v18)',
     v19: 'Unknown Vehicle (v19)', v20: 'Heli Lvl 1', v21: 'Heli Lvl 2',
     v22: 'Heli Lvl 3', v23: 'Heli (No Weapon)', v30: 'Player',
-    v40: 'Jet 1 Fin', v41: 'Jet 2 Fin', v50: 'Machine Gun Turret',
+    v40: 'Jet 1 Fin', v41: 'Jet 2 Fin', v50: 'MG Turret',
     v60: 'Unknown Vehicle (v60)', v110: 'Unknown Vehicle (v110)', v111: 'Unknown Vehicle (v111)',
     v112: 'Unknown Vehicle (v112)', v113: 'Unknown Vehicle (v113)'
 };

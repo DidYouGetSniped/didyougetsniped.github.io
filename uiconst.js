@@ -88,7 +88,6 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
     const deathStatsHTML = createStatsCardHTML('💀 Deaths by Cause', data.deaths, deaths, 'death-sort-toggle', 'death-stats-grid');
     const winsStatsHTML = createStatsCardHTML('🏆 Wins per Game Mode', data.wins, wins, 'wins-sort-toggle', 'wins-stats-grid', true);
     const lossesStatsHTML = createStatsCardHTML('👎 Losses per Game Mode', data.losses, losses, 'losses-sort-toggle', 'losses-stats-grid', true);
-
     const totalSelfDestructs = Object.values(rawData.self_destructs || {}).reduce((sum, val) => sum + val, 0);
     const totalDamageDealt = Object.values(rawData.damage_dealt || {}).reduce((sum, val) => sum + val, 0);
     const totalDamageReceived = Object.values(rawData.damage_received || {}).reduce((sum, val) => sum + val, 0);
@@ -102,12 +101,6 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
     const numberOfJumps = rawData.number_of_jumps || 0;
     const scudsLaunched = rawData.scuds_launched || 0;
     const weaponDamageReceivedData = {};
-for (const weaponName in data.weaponStats) {
-    const stat = data.weaponStats[weaponName];
-    if (stat.damageReceived > 0) {
-        weaponDamageReceivedData[weaponName] = stat.damageReceived;
-    }
-}
     const totalWins = Object.values(data.wins || {}).reduce((sum, val) => sum + val, 0);
     const totalLosses = Object.values(data.losses || {}).reduce((sum, val) => sum + val, 0);
     const totalGames = totalWins + totalLosses;
@@ -142,6 +135,19 @@ for (const weaponName in data.weaponStats) {
     const topGamesPercent = 100 - (percentiles.gamesPercentile || 0);
     const gamesEloRankDecimal = topGamesPercent / 100.0;
     const topXpPercent = 100 - (percentiles.xpPercentile || 0);
+        for (const weaponName in data.weaponStats) {
+    const stat = data.weaponStats[weaponName];
+    if (stat.damageReceived > 0) {
+        weaponDamageReceivedData[weaponName] = stat.damageReceived;
+    }
+}
+    const weaponDamageDealtData = {};
+for (const weaponName in data.weaponStats) {
+    const stat = data.weaponStats[weaponName];
+    if (stat.damage > 0) {
+        weaponDamageDealtData[weaponName] = stat.damage;
+    }
+}
     const performanceScore = calculatePerformanceScore(
         totalKills,
         totalDamageDealt,
@@ -163,6 +169,6 @@ for (const weaponName in data.weaponStats) {
     selfDestructsPerGame, damagePerGame, damageReceivedPerGame, killsPerGame, deathsPerGame, accUnzoomed, accZoomed, accBoth,
     shotsFiredPerGame, shotsHitPerGame, jumpsPerGame, jumpsPerDamage, headshotsPerGame, headshotsPerKill, missilesPerGame,
     missileLaunchGames, missilesPerMissileLaunchGame, topKillsPercent, topGamesPercent, topXpPercent, performanceScoreDisplay,
-    weaponKillsTotal, vehicleKillsTotal, weaponKillsPerVehicleKill,  weaponDamageReceivedData
+    weaponKillsTotal, vehicleKillsTotal, weaponKillsPerVehicleKill,  weaponDamageReceivedData, weaponDamageDealtData
     };
 }

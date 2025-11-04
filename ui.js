@@ -285,18 +285,24 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const idDeaths = `pie_deaths_${uidKey}`, legDeaths = `legend_deaths_${uidKey}`, sortDeaths = `sort_deaths_${uidKey}`, resetDeaths = `reset_deaths_${uidKey}`;
     const idWins = `pie_wins_${uidKey}`, legWins = `legend_wins_${uidKey}`, sortWins = `sort_wins_${uidKey}`, resetWins = `reset_wins_${uidKey}`;
     const idLosses = `pie_losses_${uidKey}`, legLosses = `legend_losses_${uidKey}`, sortLosses = `sort_losses_${uidKey}`, resetLosses = `reset_losses_${uidKey}`;
+    const idDamageDealt = `pie_damage_dealt_${uidKey}`;
+    const legDamageDealt = `legend_damage_dealt_${uidKey}`;
+    const sortDamageDealt = `sort_damage_dealt_${uidKey}`;
+    const resetDamageDealt = `reset_damage_dealt_${uidKey}`;
     const idDamageReceived = `pie_damage_received_${uidKey}`;
     const legDamageReceived = `legend_damage_received_${uidKey}`;
     const sortDamageReceived = `sort_damage_received_${uidKey}`;
     const resetDamageReceived = `reset_damage_received_${uidKey}`;
+    
 
     queuePieCharts([
     { canvasId: idWeapon, legendId: legWeapon, sortId: sortWeapon, resetId: resetWeapon, data: consts.weaponKillsData },
+    { canvasId: idDamageDealt, legendId: legDamageDealt, sortId: sortDamageDealt, resetId: resetDamageDealt, data: consts.weaponDamageDealtData }, // ADD THIS LINE
     { canvasId: idVehicle, legendId: legVehicle, sortId: sortVehicle, resetId: resetVehicle, data: data.kills_per_vehicle || {} },
     { canvasId: idDeaths, legendId: legDeaths, sortId: sortDeaths, resetId: resetDeaths, data: data.deaths || {} },
     { canvasId: idWins, legendId: legWins, sortId: sortWins, resetId: resetWins, data: data.wins || {} },
     { canvasId: idLosses, legendId: legLosses, sortId: sortLosses, resetId: resetLosses, data: data.losses || {} },
-    { canvasId: idDamageReceived, legendId: legDamageReceived, sortId: sortDamageReceived, resetId: resetDamageReceived, data: consts.weaponDamageReceivedData } // ADD THIS LINE
+    { canvasId: idDamageReceived, legendId: legDamageReceived, sortId: sortDamageReceived, resetId: resetDamageReceived, data: consts.weaponDamageReceivedData }
 ]);
     const chartCard = (title, canvasId, sortId, legendId, resetId) => `
         <div class="graph-card" style="padding:8px;">
@@ -320,6 +326,7 @@ const graphsHTML = `
         <h3>📈 Graphs</h3>
         <div style="display:grid;grid-template-columns:1fr;gap:16px;">
             ${chartCard('Kills per Weapon', idWeapon, sortWeapon, legWeapon, resetWeapon)}
+            ${chartCard('Damage Dealt per Weapon', idDamageDealt, sortDamageDealt, legDamageDealt, resetDamageDealt)}
             ${chartCard('Damage Received per Weapon', idDamageReceived, sortDamageReceived, legDamageReceived, resetDamageReceived)}
             ${chartCard('Kills per Vehicle', idVehicle, sortVehicle, legVehicle, resetVehicle)}
             ${chartCard('Deaths by Cause', idDeaths, sortDeaths, legDeaths, resetDeaths)}
