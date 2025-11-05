@@ -305,7 +305,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
         return `
             <div class="stat-card">
                 <h3>⛔ Access Restricted</h3>
-                <p>This player's statistics are not available for viewing.</p>
+                <p>This player's statistics are not available for viewing. Please join the support server to resolve the issue.</p>
             </div>
         `;
     }
@@ -599,4 +599,5 @@ export function resetMetaTags() {
     if (ogTitleTag) ogTitleTag.setAttribute('content', 'War Brokers Player Stats');
     const ogDescriptionTag = document.querySelector('meta[property="og:description"]');
     if (ogDescriptionTag) ogDescriptionTag.setAttribute('content', 'Check out your player statistics by name or UID!');
+
 }
