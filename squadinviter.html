@@ -32,7 +32,7 @@
       border-radius:24px; padding:44px 34px;
       box-shadow:0 16px 48px rgba(0,0,0,.45);
     }
-    h1{margin:0 0 18px; font-size:40px}
+    h1{margin:0 0 5px; font-size:40px}
     p{margin:0 0 28px; color:var(--muted); font-size:18px}
     label{display:block; font-weight:800; margin:16px 0 10px; font-size:20px}
     .row{display:grid; grid-template-columns:1fr; gap:18px}
@@ -57,12 +57,12 @@
     .hint{margin-top:14px; color:var(--muted); font-size:16px}
     .endpoint{margin-top:14px; font-size:16px; color:var(--muted)}
     code{background:rgba(255,255,255,.08); padding:4px 8px; border-radius:8px}
-    .notice{margin-top:14px; font-size:16px; color:#fca5a5}
+    .notice{margin-top:14px; font-size:18px; color:#fca5a5}
     .notice a{color:#93c5fd; text-decoration:none}
     .creator{margin-top:32px; text-align:center; font-size:15px; color:var(--muted)}
 
     /* New: section + steps styling */
-    h2{margin:32px 0 12px; font-size:28px}
+    h2{margin:0px 0 12px; font-size:28px}
     .section{margin-top:26px; padding-top:18px; border-top:1px solid rgba(255,255,255,.12)}
     .steps{margin:0; padding-left:22px; color:var(--muted); font-size:18px}
     .steps li{margin:0 0 10px}
@@ -108,11 +108,10 @@
 
   gtag('config', 'G-XGNQRLJMGK');
 </script>
-<body>
-  <nav>
+ <nav>
     <a href="/index.html" class="btn nav-btn">Home</a>
   </nav>
-
+<body>
   <div class="card">
     <h1>Manual Squad Inviter</h1>
     <p>Enter your game token and one UID, then Invite.</p>
@@ -148,7 +147,9 @@
         </li>
         <li>Copy the value that appears and paste it into the <strong>Game token</strong> field above.</li>
       </ol>
-      <p class="hint">Do this on the War Brokers tab, not on this page. Keep your token private — it grants access to your account.</p>
+      <p class="hint">Do this on the War Brokers tab, not on this page.</p>
+      <p class="notice"><strong>WARNING:</strong> Keep your token private — it grants access to your account.</p>
+      <p class="notice">After you're done inviting squad members, log out from your War Brokers account to reset your game token and ensure security.</p>
     </section>
 
     <div class="creator">Created by Did You Get Sniped?</div>
