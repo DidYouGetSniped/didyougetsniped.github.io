@@ -295,6 +295,21 @@ function queuePieCharts(specs) {
 }
 
 export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePrefs) {
+    // Blacklist check
+    const BLACKLISTED_UIDS = [
+        '6698bdf3d142af601f50256a',  // Add blacklisted UIDs here
+        // etc.
+    ];
+    
+    if (BLACKLISTED_UIDS.includes(String(data.uid))) {
+        return `
+            <div class="stat-card">
+                <h3>⛔ Access Restricted</h3>
+                <p>This player's statistics are not available for viewing.</p>
+            </div>
+        `;
+    }
+
     // This single call replaces the large block of calculation logic.
     const consts = calculateDisplayConstants(data, rawData, percentiles, sortStates);
 
