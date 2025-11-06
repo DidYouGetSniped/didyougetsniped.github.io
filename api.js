@@ -227,7 +227,7 @@ processed.vehicleKillsTotal = vehicleKillsTotal;
 export async function fetchFullPlayerData(uid) {
 
      if (isBlacklisted(uid)) {
-        throw new Error('Access to this player is restricted');
+        throw new Error('Access to this player is restricted. Join the Support Server.');
     }
     const playerUrl = `${API_BASE_URL}/getPlayer?uid=${uid}`;
     const killsPercentileUrl = `${API_BASE_URL}/percentile/killsElo?uid=${uid}`;
@@ -264,5 +264,6 @@ export async function searchPlayerByName(query) {
 
  return searchResults.filter(player => !isBlacklisted(player.uid));
 }
+
 
 
