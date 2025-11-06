@@ -148,8 +148,8 @@ function processPlayerData(rawPlayerData) {
         .filter(([key]) => key !== 'v30')
         .reduce((sum, [, value]) => sum + value, 0);
     processed.totalKills = weaponKillsTotal + vehicleKillsTotal;
-processed.weaponKillsTotal = weaponKillsTotal;  // ADD THIS LINE
-processed.vehicleKillsTotal = vehicleKillsTotal; // ADD THIS LINE
+processed.weaponKillsTotal = weaponKillsTotal;  
+processed.vehicleKillsTotal = vehicleKillsTotal; 
     const weaponDeathsTotal = Object.values(raw_deaths).reduce((sum, val) => sum + val, 0);
     const selfDestructDeathsTotal = Object.values(raw_self_destructs).reduce((sum, val) => sum + val, 0);
     processed.totalDeaths = weaponDeathsTotal + selfDestructDeathsTotal;
@@ -185,7 +185,7 @@ processed.vehicleKillsTotal = vehicleKillsTotal; // ADD THIS LINE
     const deathsByWeapon = processed.deaths[weaponName] || 0;
     const totalHeadshots = headshots[weaponName] || 0;
     const totalDamage = damage_dealt[weaponName] || 0;
-    const totalDamageReceived = damage_received[weaponName] || 0; // ADD THIS LINE
+    const totalDamageReceived = damage_received[weaponName] || 0; 
     const shotsFired = (shots_fired_unzoomed[weaponName] || 0) + (shots_fired_zoomed[weaponName] || 0);
     const shotsHit = (shots_hit_unzoomed[weaponName] || 0) + (shots_hit_zoomed[weaponName] || 0);
     
@@ -198,7 +198,7 @@ processed.vehicleKillsTotal = vehicleKillsTotal; // ADD THIS LINE
     processed.weaponStats[weaponName] = {
         kills, deaths: deathsByWeapon, headshots: totalHeadshots,
         damage: parseFloat(totalDamage.toFixed(0)),
-        damageReceived: parseFloat(totalDamageReceived.toFixed(0)), // ADD THIS LINE
+        damageReceived: parseFloat(totalDamageReceived.toFixed(0)), 
         kdr: kdr.toFixed(3),
         accuracy: parseFloat(accuracy.toFixed(2)),
         headshotRate: parseFloat(headshotRate.toFixed(2)),
@@ -240,7 +240,7 @@ export async function fetchFullPlayerData(uid) {
     }
 
     if (isBlacklisted(rawPlayerData.uid)) {
-        throw new Error('Access to this player is restricted');
+        throw new Error('Access to this player is restricted. Join the Support Server.');
     }
 
     const playerData = processPlayerData(rawPlayerData);
@@ -264,4 +264,5 @@ export async function searchPlayerByName(query) {
 
  return searchResults.filter(player => !isBlacklisted(player.uid));
 }
+
 
