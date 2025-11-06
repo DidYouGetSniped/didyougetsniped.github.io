@@ -5,6 +5,18 @@ export const RATE_LIMIT_CONFIG = {
     timeWindow: 60 * 1000 // 60 seconds in milliseconds
 };
 
+const BLACKLISTED_UIDS = [
+    '6698bdf3d142af601f50256a',
+];
+
+function isBlacklisted(uid) {
+    if (!uid) return true;
+    const normalized = String(uid).trim().toLowerCase();
+    return BLACKLISTED_UIDS.some(blocked => 
+        String(blocked).trim().toLowerCase() === normalized
+    );
+}
+
 const WEAPON_NAMES = {
     p09: 'Air Strike', p11: 'BGM', p52: 'Tank Lvl 1', p53: 'APC Lvl 1',
     p54: 'Heli Lvl 1', p55: 'Tank Lvl 2', p56: 'APC Lvl 2', p57: 'Heli Lvl 2',
@@ -213,6 +225,10 @@ processed.vehicleKillsTotal = vehicleKillsTotal; // ADD THIS LINE
 }
 
 export async function fetchFullPlayerData(uid) {
+
+     if (isBlacklisted(uid)) {
+        throw new Error('Access to this player is restricted');
+    }
     const playerUrl = `${API_BASE_URL}/getPlayer?uid=${uid}`;
     const killsPercentileUrl = `${API_BASE_URL}/percentile/killsElo?uid=${uid}`;
     const gamesPercentileUrl = `${API_BASE_URL}/percentile/gamesElo?uid=${uid}`;
@@ -221,6 +237,10 @@ export async function fetchFullPlayerData(uid) {
     const rawPlayerData = await fetchData(playerUrl);
     if (!rawPlayerData) {
         throw new Error('Player data not found or API error.');
+    }
+
+    if (isBlacklisted(rawPlayerData.uid)) {
+        throw new Error('Access to this player is restricted');
     }
 
     const playerData = processPlayerData(rawPlayerData);
@@ -241,7 +261,7 @@ export async function fetchFullPlayerData(uid) {
 export async function searchPlayerByName(query) {
     const searchUrl = `${API_BASE_URL}/searchByName?query=${encodeURIComponent(query)}`;
     const searchResults = await fetchData(searchUrl, {}, []);
-    return searchResults;
-}
 
+ return searchResults.filter(player => !isBlacklisted(player.uid));
+}
 
