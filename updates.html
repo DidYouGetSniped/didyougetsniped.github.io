@@ -6,7 +6,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Updates</title>
+  <title>Updates | Did You Get Sniped</title>
   <meta name="description" content="All site updates in reverse-chronological order." />
   <meta name="theme-color" content="#7c3aed" />
   <meta property="og:title" content="Did You Get Sniped?'s Website Changelog">
@@ -17,10 +17,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <!-- JetBrains Mono -->
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="homepage.css" />
+  <link rel="stylesheet" href="updates.css" />
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGNQRLJMGK"></script>
@@ -31,145 +31,227 @@
     gtag('config', 'G-XGNQRLJMGK');
   </script>
 </head>
+
 <body>
-  <header class="site-header">
-    <div class="container">
-      <h1>Updates</h1>
-      <p class="tagline">All changes, newest first</p>
-      <div class="header-accent" aria-hidden="true"></div>
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+    <div class="floating-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <span class="logo-icon">⚔️</span>
+        <span class="logo-text">DYGS's War Brokers Tools</span>
+      </a>
+      <div class="nav-links">
+        <a href="/index.html" class="nav-back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Back to Home</span>
+        </a>
+        <a href="https://discord.gg/NuST4n4sWt" class="nav-discord" target="_blank" rel="noopener noreferrer">
+          <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+          </svg>
+          <span>Discord</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-icon">📋</span>
+        <span>Changelog</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Updates</span>
+      </h1>
+      <p class="hero-subtitle">All changes to the site, newest first. Stay up to date with the latest features and improvements.</p>
+      <div class="update-stats">
+        <div class="stat-item">
+          <span class="stat-number" id="total-updates">14</span>
+          <span class="stat-label">Updates</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number" id="total-changes">35+</span>
+          <span class="stat-label">Changes</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">2025</span>
+          <span class="stat-label">Active</span>
+        </div>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <p><a class="updates-link" href="/index.html">← Back to home</a></p>
+  <main class="main-content">
+    <!-- Timeline Updates -->
+    <section class="updates-section" aria-labelledby="updates-title">
+      <h2 id="updates-title" class="sr-only">All Updates</h2>
+      
+      <!-- This list structure is parsed by index.html - DO NOT change the class name or basic structure -->
+      <ul class="updates-list">
+        <li>
+          <time class="update-time" datetime="2025-11-27">11/27/2025</time>
+          <ul class="changes-list">
+            <li>Updated homepage and updates page</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-11-5">11/5/2025</time>
+          <ul class="changes-list">
+            <li>Added Player Stat Blacklist</li>
+            <li>Updated Squad Inviter with Warning</li>
+            <li>Updated Footer</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-11-4">11/4/2025</time>
+          <ul class="changes-list">
+            <li>Added Damage Dealt per Weapon Graph</li>
+            <li>Updated Machine Gun Turret to MG Turret</li>
+            <li>Added Open Graph meta tags to Updates page</li>
+            <li>Added Bar Chart Graph option</li>
+            <li>Updated To-Do List</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-11-3">11/3/2025</time>
+          <ul class="changes-list">
+            <li>Added Damage Received per Weapon Graph</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-10-28">10/28/2025</time>
+          <ul class="changes-list">
+            <li>Added Open Graph meta tags to BPR page</li>
+            <li>Updated the date display logic</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-10-23">10/23/2025</time>
+          <ul class="changes-list">
+            <li>Added Minimum Stat for Player Count Tracker</li>
+            <li>Fixed Player Count Tracker Data Collection</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-10-16">10/16/2025</time>
+          <ul class="changes-list">
+            <li>Added a few things for Player Count Tracker</li>
+            <li>Made Player Count Tracker look better on mobile</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-10-15">10/15/2025</time>
+          <ul class="changes-list">
+            <li>Added Player Count Tracker</li>
+            <li>Changed name on homepage</li>
+            <li>Added custom cursor to a few pages</li>
+            <li>Added Google Analytics to player tracker</li>
+            <li>Updated how bot gets data from API for Player Count</li>
+            <li>Updates now opens in the same tab</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-10-13">10/13/2025</time>
+          <ul class="changes-list">
+            <li>Added Weapon Kills per Vehicle Kill</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-10-12">10/12/2025</time>
+          <ul class="changes-list">
+            <li>Added Total Weapon Kills</li>
+            <li>Added Total Vehicle Kills</li>
+            <li>Removed Missiles Launched Per Game</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-10-5">10/5/2025</time>
+          <ul class="changes-list">
+            <li>Updated adverts</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-09-13">9/13/2025</time>
+          <ul class="changes-list">
+            <li>Added more backgrounds and optimized background.js</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-09-11">9/11/2025</time>
+          <ul class="changes-list">
+            <li>Added squad inviter navigation bar</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-09-06">9/6/2025</time>
+          <ul class="changes-list">
+            <li>Added description to squad inviter</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-09-03">9/3/2025</time>
+          <ul class="changes-list">
+            <li>Updated home page</li>
+            <li>Updated nav bar</li>
+            <li>Added manual squad inviter to homepage</li>
+            <li>Added BPR to homepage</li>
+            <li>Updated how updates look</li>
+            <li>Changed name of manual squad inviter</li>
+            <li>Added alphabetical sort on squad count</li>
+            <li>Updated nav bar links</li>
+            <li>Added adverts</li>
+          </ul>
+        </li>
+        <li>
+          <time class="update-time" datetime="2025-09-02">9/2/2025</time>
+          <ul class="changes-list">
+            <li>Added updates to home page</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+  </main>
 
-  <!-- Edit the list below to add/update entries. Keep newest first. -->
-<ul class="updates-list">
-  <li>
-    <time class="update-time" datetime="2025-11-5">11/5/2025</time>
-    <ul class="changes-list">
-      <li>Added Player Stat Blacklist</li>
-      <li>Updated Squad Inviter with Warning</li>
-      <li>Updated Footer</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-11-4">11/4/2025</time>
-    <ul class="changes-list">
-      <li>Added Damage Dealt per Weapon Graph</li>
-      <li>Updated Machine Gun Turret to MG Turret</li>
-      <li>Added Open Graph meta tags to Updates page</li>
-      <li>Added Bar Chart Graph option</li>
-      <li>Updated To-Do List</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-11-3">11/3/2025</time>
-    <ul class="changes-list">
-      <li>Added Damage Received per Weapon Graph</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-10-28">10/28/2025</time>
-    <ul class="changes-list">
-      <li>Added Open Graph meta tags to BPR page</li>
-      <li>Updated the date display logic</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-10-23">10/23/2025</time>
-    <ul class="changes-list">
-      <li>Added Minimum Stat for Player Count Tracker</li>
-      <li>Fixed Player Count Tracker Data Collection</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-10-16">10/16/2025</time>
-    <ul class="changes-list">
-      <li>Added a few things for Player Count Tracker</li>
-      <li>Made Player Count Tracker look better on mobile</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-10-15">10/15/2025</time>
-    <ul class="changes-list">
-      <li>Added Player Count Tracker</li>
-      <li>Changed name on homepage</li>
-      <li>Added custom cursor to a few pages</li>
-      <li>Added Google Analytics to player tracker</li>
-      <li>Updated how bot gets data from API for Player Count</li>
-      <li>Updates now opens in the same tab</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-10-13">10/13/2025</time>
-    <ul class="changes-list">
-      <li>Added Weapon Kills per Vehicle Kill</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-10-12">10/12/2025</time>
-    <ul class="changes-list">
-      <li>Added Total Weapon Kills</li>
-      <li>Added Total Vehicle Kills</li>
-      <li>Removed Missiles Launched Per Game</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-10-5">10/5/2025</time>
-    <ul class="changes-list">
-      <li>Updated adverts</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-09-13">9/13/2025</time>
-    <ul class="changes-list">
-      <li>Added more backgrounds and optimized background.js</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-09-11">9/11/2025</time>
-    <ul class="changes-list">
-      <li>Added squad inviter navigation bar</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-09-06">9/6/2025</time>
-    <ul class="changes-list">
-      <li>Added description to squad inviter</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-09-03">9/3/2025</time>
-    <ul class="changes-list">
-      <li>Updated home page</li>
-      <li>Updated nav bar</li>
-      <li>Added manual squad inviter to homepage</li>
-      <li>Added BPR to homepage</li>
-      <li>Updated how updates look</li>
-      <li>Changed name of manual squad inviter</li>
-      <li>Added alphabetical sort on squad count</li>
-      <li>Updated nav bar links</li>
-      <li>Added adverts</li>
-    </ul>
-  </li>
-  <li>
-    <time class="update-time" datetime="2025-09-02">9/2/2025</time>
-    <ul class="changes-list">
-      <li>Added updates to home page</li>
-    </ul>
-  </li>
-</ul>
-    <!-- Discord Support Link -->
-    <div class="discord-support">
-      <a href="https://discord.gg/NuST4n4sWt" class="discord-link" target="_blank" rel="noopener noreferrer">
-        <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span>Created By: Did You Get Sniped</span>
+      </div>
+      <p class="footer-text">Made with ❤️ for the Warbrokers community</p>
+      <a href="https://discord.gg/NuST4n4sWt" class="footer-discord" target="_blank" rel="noopener noreferrer">
+        <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor">
           <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
         </svg>
-        Discord Support
+        Need Help? Join our Discord
       </a>
     </div>
-  </main>
-</body>
+  </footer>
 
+  <!-- Custom Cursor Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const style = document.createElement('style');
+      style.innerHTML = "* { cursor: url('wb kill.png') 16 16, auto !important; }";
+      document.head.appendChild(style);
+    });
+  </script>
+</body>
 </html>
