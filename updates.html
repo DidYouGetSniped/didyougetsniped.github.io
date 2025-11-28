@@ -253,5 +253,20 @@
       document.head.appendChild(style);
     });
   </script>
+ <!-- Dynamic Stats Counter -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const updateItems = document.querySelectorAll('.updates-list > li');
+      const totalUpdates = updateItems.length;
+      
+      const changeItems = document.querySelectorAll('.changes-list li');
+      const totalChanges = changeItems.length;
+      
+      document.getElementById('total-updates').textContent = totalUpdates;
+      document.getElementById('total-changes').textContent = totalChanges + '+';
+      
+      console.log(`Stats updated: ${totalUpdates} updates, ${totalChanges} changes`);
+    });
+  </script>
 </body>
 </html>
