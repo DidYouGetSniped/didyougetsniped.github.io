@@ -497,24 +497,17 @@ const graphsHTML = `
                 <div class="stat-row"><span class="stat-label">Coins:</span><span class="stat-value">${(data.coins || 0).toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Join Date:</span>
                     <div class="stat-value-container">
-                        <div class="date-with-ago" id="full-join-date-text">
-                            <span class="stat-value" id="join-date">${formatDateTime(joinTimestamp, timeZone, timeFormat)}</span>
-                            <span class="time-ago" id="join-date-ago">${timeAgo(joinTimestamp)}</span>
-                        </div>
-                        <button class="btn-copy-inline" data-copy="full-join-date-text">Copy</button>
+                        <span id="join-date-full"><span class="stat-value" id="join-date">${formatDateTime(joinTimestamp, timeZone, timeFormat)}</span> <span class="time-ago" id="join-date-ago">${timeAgo(joinTimestamp)}</span></span>
+                        <button class="btn-copy-inline" data-copy="join-date-full">Copy</button>
                     </div>
                 </div>
                 <div class="stat-row"><span class="stat-label">Last Played:</span>
                     <div class="stat-value-container">
-                        <div class="date-with-ago" id="full-last-played-text">
-                            <span class="stat-value" id="last-played">${formatDateTime(data.time, timeZone, timeFormat)}</span>
-                            <span class="time-ago" id="last-played-ago">${timeAgo(data.time)}</span>
-                        </div>
-                        <button class="btn-copy-inline" data-copy="full-last-played-text">Copy</button>
+                        <span id="last-played-full"><span class="stat-value" id="last-played">${formatDateTime(data.time, timeZone, timeFormat)}</span> <span class="time-ago" id="last-played-ago">${timeAgo(data.time)}</span></span>
+                        <button class="btn-copy-inline" data-copy="last-played-full">Copy</button>
                     </div>
                 </div>
-            </div>
-
+                </div>
             <div class="stat-card">
                 <h3>⭐ Broker Performance Rating (BPR) <a href="https://didyougetsniped.github.io/bpr" target="_blank" rel="noopener noreferrer" style="font-size: 0.8em; margin-left: 5px; color: #0d6efd;">(explanation)</a></h3>
                 <div class="stat-row" style="margin-bottom: 20px;">
