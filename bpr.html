@@ -519,6 +519,15 @@
     </main>
 
     <script>
+    // Custom cursor
+    document.addEventListener('DOMContentLoaded', function() {
+      const style = document.createElement('style');
+      style.innerHTML = "* { cursor: url('wb kill.png') 16 16, auto !important; }";
+      document.head.appendChild(style);
+    });
+    </script>
+
+    <script>
         function calculateScore() {
             const total_kills = parseInt(document.getElementById('total_kills').value.replace(/,/g, ''));
             const damage_dealt = parseFloat(document.getElementById('damage_dealt').value.replace(/,/g, ''));
