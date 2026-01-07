@@ -375,13 +375,14 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                     <div class="stat-row"><span class="stat-label">Damage Received:</span><span class="stat-value">${Math.round(consts.totalDamageReceived).toLocaleString()}</span></div>
                     <div class="stat-row"><span class="stat-label">Damage Dealt per Damage Received:</span><span class="stat-value">${consts.damageRatio}</span></div>
                     <div class="stat-row"><span class="stat-label">Damage Dealt per Kill:</span><span class="stat-value">${consts.damagePerKill}</span></div>
-                    <div class="stat-row"><span class="stat-label">Damage Received per Death:</span><span class="stat-value">${consts.damagePerDeath}</span></div>
                     <div class="stat-row"><span class="stat-label">Damage Dealt per Game:</span><span class="stat-value">${consts.damagePerGame}</span></div>
+                    <div class="stat-row"><span class="stat-label">Damage Dealt per Jump:</span><span class="stat-value">${consts.damagePerJump}</span></div>
+                    <div class="stat-row"><span class="stat-label">Damage Received per Death:</span><span class="stat-value">${consts.damagePerDeath}</span></div>
                     <div class="stat-row"><span class="stat-label">Damage Received per Game:</span><span class="stat-value">${consts.damageReceivedPerGame}</span></div>
                     <div class="stat-row"><span class="stat-label">Total Headshots:</span><span class="stat-value">${consts.totalHeadshots.toLocaleString()}</span></div>
-                    <div class="stat-row"><span class="stat-label">Headshots per Game:</span><span class="stat-value">${consts.headshotsPerGame}</span></div>
                 </div>
                 <div>
+                    <div class="stat-row"><span class="stat-label">Headshots per Game:</span><span class="stat-value">${consts.headshotsPerGame}</span></div>
                     <div class="stat-row"><span class="stat-label">Headshots per Kill:</span><span class="stat-value">${consts.headshotsPerKill}</span></div>
                     <div class="stat-row"><span class="stat-label">Shots Fired (Unzoomed):</span><span class="stat-value">${consts.totalShotsFiredUnzoomed.toLocaleString()}</span></div>
                     <div class="stat-row"><span class="stat-label">Shots Fired (Zoomed):</span><span class="stat-value">${consts.totalShotsFiredZoomed.toLocaleString()}</span></div>
@@ -394,7 +395,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                     <div class="stat-row"><span class="stat-label">Shots Hit per Game:</span><span class="stat-value">${consts.shotsHitPerGame}</span></div>
                     <div class="stat-row"><span class="stat-label">Total Jumps:</span><span class="stat-value">${consts.numberOfJumps.toLocaleString()}</span></div>
                     <div class="stat-row"><span class="stat-label">Jumps per Game:</span><span class="stat-value">${consts.jumpsPerGame}</span></div>
-                    <div class="stat-row"><span class="stat-label">Jumps per Damage Dealt:</span><span class="stat-value">${consts.jumpsPerDamage}</span></div>
                     <div class="stat-row"><span class="stat-label">Missiles Launched:</span><span class="stat-value">${consts.scudsLaunched.toLocaleString()}</span></div>
                     <div class="stat-row"><span class="stat-label">Missiles Launched per Missile Launch Game:</span><span class="stat-value">${consts.missilesPerMissileLaunchGame}</span></div>
                 </div>
@@ -594,3 +594,4 @@ export function resetMetaTags() {
     if (ogDescriptionTag) ogDescriptionTag.setAttribute('content', 'Check out your player statistics by name or UID!');
 
 }
+
