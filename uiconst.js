@@ -112,6 +112,7 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
     const weaponKillsPerVehicleKill = vehicleKillsTotal > 0 ? (weaponKillsTotal / vehicleKillsTotal).toFixed(2) : 'N/A';
     const damagePerKill = totalKills > 0 ? (totalDamageDealt / totalKills).toFixed(2) : 'N/A';
     const damagePerDeath = totalDeaths > 0 ? (totalDamageReceived / totalDeaths).toFixed(2) : 'N/A';
+    const damagePerJump = numberOfJumps > 0 ? (totalDamageDealt / numberOfJumps).toFixed(2) : 'N/A';
     const selfDestructPercentage = totalDeaths > 0 ? ((totalSelfDestructs / totalDeaths) * 100).toFixed(2) : '0.00';
     const selfDestructsPerGame = totalGames > 0 ? (totalSelfDestructs / totalGames).toFixed(2) : 'N/A';
     const damagePerGame = totalGames > 0 ? Math.round(totalDamageDealt / totalGames).toLocaleString() : 'N/A';
@@ -124,7 +125,6 @@ export function calculateDisplayConstants(data, rawData, percentiles, sortStates
     const shotsFiredPerGame = totalGames > 0 ? (totalShotsFired / totalGames).toFixed(2) : 'N/A';
     const shotsHitPerGame = totalGames > 0 ? (totalShotsHit / totalGames).toFixed(2) : 'N/A';
     const jumpsPerGame = totalGames > 0 ? (numberOfJumps / totalGames).toFixed(2) : 'N/A';
-    const jumpsPerDamage = totalDamageDealt > 0 ? (numberOfJumps / totalDamageDealt).toFixed(6) : 'N/A';
     const headshotsPerGame = totalGames > 0 ? (totalHeadshots / totalGames).toFixed(2) : 'N/A';
     const headshotsPerKill = totalKills > 0 ? (totalHeadshots / totalKills).toFixed(2) : 'N/A';
     const missilesPerGame = totalGames > 0 ? (scudsLaunched / totalGames).toFixed(2) : 'N/A';
@@ -165,10 +165,11 @@ for (const weaponName in data.weaponStats) {
     weaponKillsData, weaponStarsHTML, vehicleStarsHTML, weaponStatsHTML, vehicleKillsStatsHTML, deathStatsHTML, winsStatsHTML, lossesStatsHTML,
     totalSelfDestructs, totalDamageDealt, totalDamageReceived, totalHeadshots, totalShotsFiredUnzoomed, totalShotsFiredZoomed,
     totalShotsHitUnzoomed, totalShotsHitZoomed, totalShotsFired, totalShotsHit, numberOfJumps, scudsLaunched, totalWins,
-    totalLosses, totalGames, damageRatio, totalKills, totalDeaths, damagePerKill, damagePerDeath, selfDestructPercentage,
+    totalLosses, totalGames, damageRatio, totalKills, totalDeaths, damagePerKill, damagePerDeath, damagePerjump, selfDestructPercentage,
     selfDestructsPerGame, damagePerGame, damageReceivedPerGame, killsPerGame, deathsPerGame, accUnzoomed, accZoomed, accBoth,
-    shotsFiredPerGame, shotsHitPerGame, jumpsPerGame, jumpsPerDamage, headshotsPerGame, headshotsPerKill, missilesPerGame,
+    shotsFiredPerGame, shotsHitPerGame, jumpsPerGame, headshotsPerGame, headshotsPerKill, missilesPerGame,
     missileLaunchGames, missilesPerMissileLaunchGame, topKillsPercent, topGamesPercent, topXpPercent, performanceScoreDisplay,
     weaponKillsTotal, vehicleKillsTotal, weaponKillsPerVehicleKill,  weaponDamageReceivedData, weaponDamageDealtData
     };
+
 }
