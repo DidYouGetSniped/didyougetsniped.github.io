@@ -165,7 +165,7 @@ for (const weaponName in data.weaponStats) {
     weaponKillsData, weaponStarsHTML, vehicleStarsHTML, weaponStatsHTML, vehicleKillsStatsHTML, deathStatsHTML, winsStatsHTML, lossesStatsHTML,
     totalSelfDestructs, totalDamageDealt, totalDamageReceived, totalHeadshots, totalShotsFiredUnzoomed, totalShotsFiredZoomed,
     totalShotsHitUnzoomed, totalShotsHitZoomed, totalShotsFired, totalShotsHit, numberOfJumps, scudsLaunched, totalWins,
-    totalLosses, totalGames, damageRatio, totalKills, totalDeaths, damagePerKill, damagePerDeath, damagePerjump, selfDestructPercentage,
+    totalLosses, totalGames, damageRatio, totalKills, totalDeaths, damagePerKill, damagePerDeath, damagePerJump, selfDestructPercentage,
     selfDestructsPerGame, damagePerGame, damageReceivedPerGame, killsPerGame, deathsPerGame, accUnzoomed, accZoomed, accBoth,
     shotsFiredPerGame, shotsHitPerGame, jumpsPerGame, headshotsPerGame, headshotsPerKill, missilesPerGame,
     missileLaunchGames, missilesPerMissileLaunchGame, topKillsPercent, topGamesPercent, topXpPercent, performanceScoreDisplay,
@@ -173,3 +173,4 @@ for (const weaponName in data.weaponStats) {
     };
 
 }
+
