@@ -77,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="button-group">
       <button id="toggleSort" class="btn">Toggle Sort</button>
     </div>
-    <p id="status" class="loading">Initializing...</p>
 
     <ul id="squadList"></ul>
 
@@ -95,7 +94,6 @@ document.addEventListener('DOMContentLoaded', function() {
   <script>
     // --- MAIN APPLICATION SCRIPT ---
     const squadListEl = document.getElementById('squadList');
-    const statusEl = document.getElementById('status');
     const toggleSortBtn = document.getElementById('toggleSort');
     const statsGridEl = document.getElementById('stats-grid');
     const updateInfoEl = document.getElementById('update-info');
@@ -200,7 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function loadAndDisplayData() {
-      statusEl.textContent = 'Loading latest squad data...';
       try {
         const response = await fetch('squad-data.json?v=' + new Date().getTime()); // Cache-bust
         if (!response.ok) {
@@ -219,15 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderSquadList();
 
         const lastUpdatedDate = new Date(data.lastUpdated);
-        const dateString = lastUpdatedDate.toLocaleDateString(undefined, {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
         const timeAgoString = formatTimeAgo(lastUpdatedDate);
-
-        statusEl.textContent = `Last updated: ${dateString} (${timeAgoString})`;
-        statusEl.style.color = 'var(--success-color)';
 
         // Update the info message with fetch info if available
         if (data.fetchInfo) {
@@ -241,8 +230,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
       } catch (error) {
         console.error('Error loading squad data:', error);
-        statusEl.textContent = `Error: ${error.message}`;
-        statusEl.className = 'error';
         
         // Show error in stats grid
         statsGridEl.innerHTML = `
