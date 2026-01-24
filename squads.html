@@ -21,8 +21,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const style = document.createElement('style');
-  // Cursor hotspot at the center for a 64x64 image
-  // If your file name has a space, encode it or rename to avoid spaces.
   style.innerHTML = "* { cursor: url('wb kill.png') 16 16, auto !important; }";
   document.head.appendChild(style);
 });
@@ -30,10 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <body>
 <div class="container">
     <header class="header">
-        <div id="rate-limiter" class="rate-limiter">
-            Requests: <span id="request-count">5</span>/5
-            <span id="reset-info" style="display: none;"> (Reset in <span id="reset-timer">60</span>s)</span>
-        </div>
+        <!-- Rate limit display removed -->
         <img src="/WB LOGO.png" alt="War Brokers Logo" class="logo">
         <h1>War Brokers Squad Stats</h1>
         <h3>Created By: Did You Get Sniped?</h3>
@@ -116,4 +111,3 @@ document.addEventListener('DOMContentLoaded', function() {
 <script type="module" src="squads.js"></script>
 </body>
 </html>
-

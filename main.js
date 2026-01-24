@@ -36,8 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('loader');
     const messageContainer = document.getElementById('message-container');
     const playerInfoContainer = document.getElementById('player-info');
-    const requestsRemainingEl = document.getElementById('requests-remaining');
-    const countdownEl = document.getElementById('countdown');
+    // Rate limit UI elements removed - tracking still happens in background
 
     rateLimitChannel.onmessage = (event) => {
         if (event.data.type === 'update-rate-limit') {
@@ -49,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 localStorage.removeItem('rateLimitResetTime');
             }
-            updateRateLimitDisplay();
+            // UI update removed - rate limiting still enforced
         }
     };
 
@@ -99,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 type: 'update-rate-limit',
                 payload: { requests: RATE_LIMIT.requests, resetTime: RATE_LIMIT.resetTime }
             });
-            updateRateLimitDisplay();
+            // UI update removed
 
             const stateData = uid ? { uid } : { name: searchInput };
             const stateUrl = uid ? `?uid=${uid}` : `?name=${encodeURIComponent(searchInput)}`;
@@ -169,49 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (lastPlayedAgoEl) lastPlayedAgoEl.textContent = timeAgo(currentPlayerdata.time);
     }
 
-    const updateRateLimitDisplay = () => {
-        const now = Date.now();
-        RATE_LIMIT.requests = RATE_LIMIT.requests.filter(time => now - time < RATE_LIMIT.timeWindow);
-
-        if (RATE_LIMIT.requests.length > 0) {
-            RATE_LIMIT.resetTime = Math.min(...RATE_LIMIT.requests) + RATE_LIMIT.timeWindow;
-            localStorage.setItem('rateLimitResetTime', RATE_LIMIT.resetTime);
-        } else {
-            if (RATE_LIMIT.resetTime && now >= RATE_LIMIT.resetTime) {
-                RATE_LIMIT.requests = [];
-                RATE_LIMIT.resetTime = null;
-                localStorage.removeItem('rateLimitRequests');
-                localStorage.removeItem('rateLimitResetTime');
-                rateLimitChannel.postMessage({ type: 'update-rate-limit', payload: { requests: [], resetTime: null } });
-            }
-        }
-
-        const remaining = RATE_LIMIT.maxRequests - RATE_LIMIT.requests.length;
-        requestsRemainingEl.textContent = `Requests: ${remaining}/${RATE_LIMIT.maxRequests}`;
-
-        if (countdownInterval) clearInterval(countdownInterval);
-
-        if (RATE_LIMIT.resetTime) {
-            let timeUntilReset = Math.ceil((RATE_LIMIT.resetTime - now) / 1000);
-            countdownInterval = setInterval(() => {
-                if (timeUntilReset > 0) {
-                    countdownEl.textContent = `(Reset in ${timeUntilReset}s)`;
-                    timeUntilReset--;
-                } else {
-                    countdownEl.textContent = '';
-                    clearInterval(countdownInterval);
-                    RATE_LIMIT.requests = [];
-                    RATE_LIMIT.resetTime = null;
-                    localStorage.removeItem('rateLimitRequests');
-                    localStorage.removeItem('rateLimitResetTime');
-                    rateLimitChannel.postMessage({ type: 'update-rate-limit', payload: { requests: [], resetTime: null } });
-                    updateRateLimitDisplay();
-                }
-            }, 1000);
-        } else {
-            countdownEl.textContent = '';
-        }
-    };
+    // Rate limit display function removed - tracking still happens
 
     function setupEventListeners() {
         fetchBtn.addEventListener('click', () => fetchPlayerInfo());
@@ -253,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setRandomBackground();
         setupEventListeners();
         timezoneSelect.value = 'local';
-        updateRateLimitDisplay();
+        // Rate limit display initialization removed
 
         const urlParams = new URLSearchParams(window.location.search);
         const initialUID = urlParams.get('uid');
