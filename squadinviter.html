@@ -7,151 +7,601 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --bg:#0d1117; --card:#0f172a; --text:#e5e7eb;
-      --muted:#94a3b8; --accent:#22d3ee; --accent-2:#38bdf8; --ring:rgba(34,211,238,.35);
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0) }
+      10% { transform: translate(-5%, -10%) }
+      20% { transform: translate(-15%, 5%) }
+      30% { transform: translate(7%, -25%) }
+      40% { transform: translate(-5%, 25%) }
+      50% { transform: translate(-15%, 10%) }
+      60% { transform: translate(15%, 0%) }
+      70% { transform: translate(0%, 15%) }
+      80% { transform: translate(3%, 25%) }
+      90% { transform: translate(-10%, 10%) }
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0; min-height:100dvh;
-      display:grid; place-items:center; padding:40px;
-      color:var(--text);
-      font:24px/1.7 "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      background:
-        radial-gradient(1200px 800px at 10% -10%, #0a2230 0%, transparent 60%),
-        radial-gradient(1200px 800px at 110% 10%, #1f1140 0%, transparent 60%),
-        var(--bg);
-    }
-    .card{
-      width:100%; max-width:1000px;
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 30%), var(--card);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:24px; padding:44px 34px;
-      box-shadow:0 16px 48px rgba(0,0,0,.45);
-    }
-    h1{margin:0 0 5px; font-size:40px}
-    p{margin:0 0 28px; color:var(--muted); font-size:18px}
-    label{display:block; font-weight:800; margin:16px 0 10px; font-size:20px}
-    .row{display:grid; grid-template-columns:1fr; gap:18px}
-    @media(min-width:820px){ .row{grid-template-columns:1.2fr .8fr} }
-    input[type="text"]{
-      width:100%; padding:20px 22px; border-radius:18px;
-      border:1px solid rgba(255,255,255,.18); background:#0b1220; color:var(--text);
-      outline:none; transition:.15s border-color, .15s box-shadow; font-size:22px;
-    }
-    input::placeholder{color:#64748b}
-    input:focus{border-color:var(--accent); box-shadow:0 0 0 8px var(--ring)}
-    button{
-      margin-top:26px; width:100%;
-      appearance:none; border:0; border-radius:18px; padding:24px 26px; cursor:pointer;
-      font-weight:800; font-size:24px; color:#061018;
-      background:linear-gradient(to bottom right, var(--accent), var(--accent-2));
-      box-shadow:0 14px 28px rgba(34,211,238,.32);
-      transition: filter .15s ease-in-out, transform .05s ease-in-out;
-    }
-    button:hover{filter:brightness(1.06)}
-    button:active{transform:translateY(1px)}
-    .hint{margin-top:14px; color:var(--muted); font-size:16px}
-    .endpoint{margin-top:14px; font-size:16px; color:var(--muted)}
-    code{background:rgba(255,255,255,.08); padding:4px 8px; border-radius:8px}
-    .notice{margin-top:14px; font-size:18px; color:#fca5a5}
-    .notice a{color:#93c5fd; text-decoration:none}
-    .creator{margin-top:32px; text-align:center; font-size:15px; color:var(--muted)}
 
-    /* New: section + steps styling */
-    h2{margin:0px 0 12px; font-size:28px}
-    .section{margin-top:26px; padding-top:18px; border-top:1px solid rgba(255,255,255,.12)}
-    .steps{margin:0; padding-left:22px; color:var(--muted); font-size:18px}
-    .steps li{margin:0 0 10px}
-    kbd{
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.16);
-      border-radius:6px; padding:2px 6px; font-size:.8em
+    @keyframes glow-pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 82, 82, 0.3), 0 0 40px rgba(255, 82, 82, 0.1), inset 0 0 60px rgba(255, 82, 82, 0.05) }
+      50% { box-shadow: 0 0 30px rgba(255, 82, 82, 0.4), 0 0 60px rgba(255, 82, 82, 0.2), inset 0 0 80px rgba(255, 82, 82, 0.08) }
     }
-    
-    /* Added: Navigation */
+
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(30px) }
+      to { opacity: 1; transform: translateY(0) }
+    }
+
+    @keyframes slide-in-left {
+      from { opacity: 0; transform: translateX(-20px) }
+      to { opacity: 1; transform: translateX(0) }
+    }
+
+    @keyframes badge-float {
+      0%, 100% { transform: translateY(0px) rotate(-5deg) }
+      50% { transform: translateY(-8px) rotate(-5deg) }
+    }
+
+    :root {
+      --bg: #0a0a0f;
+      --card: #12121a;
+      --card-border: #1f1f2e;
+      --text: #f5f5f7;
+      --text-secondary: #a1a1aa;
+      --accent-primary: #ff5252;
+      --accent-secondary: #ff7b7b;
+      --accent-dark: #cc4141;
+      --input-bg: #1a1a24;
+      --input-border: #2a2a3a;
+      --input-focus: #ff5252;
+      --success: #10b981;
+      --warning: #fbbf24;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: var(--text);
+      font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 82, 82, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+        var(--bg);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px);
+      pointer-events: none;
+      animation: grain 8s steps(10) infinite;
+      z-index: 1;
+    }
+
     nav {
-      position: absolute;
-      top: 30px;
-      left: 40px;
-      z-index: 10;
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      z-index: 100;
+      animation: slide-in-left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
+
     .nav-btn {
-      display: inline-block;
-      padding: 10px 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
       border-radius: 12px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      color: var(--muted);
-      font-size: 16px;
+      background: rgba(18, 18, 26, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      color: var(--text-secondary);
+      font-size: 14px;
       font-weight: 600;
       text-decoration: none;
-      transition: all .15s ease-in-out;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      font-family: 'Space Mono', monospace;
+      letter-spacing: 0.5px;
     }
+
     .nav-btn:hover {
       color: var(--text);
-      border-color: var(--accent);
-      background: rgba(34,211,238,.1);
+      border-color: var(--accent-primary);
+      background: rgba(255, 82, 82, 0.1);
+      transform: translateX(-4px);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      position: relative;
+      z-index: 2;
+      animation: slide-up 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+      animation: glow-pulse 4s ease-in-out infinite;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--accent-primary) 30%, 
+        var(--accent-primary) 70%, 
+        transparent 100%);
+      opacity: 0.5;
+    }
+
+    .header {
+      margin-bottom: 48px;
+      position: relative;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      font-family: 'Space Mono', monospace;
+      animation: badge-float 3s ease-in-out infinite;
+      box-shadow: 0 4px 12px rgba(255, 82, 82, 0.3);
+    }
+
+    h1 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 56px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--text) 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: var(--text-secondary);
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .form-section {
+      margin-bottom: 40px;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .input-row {
+        grid-template-columns: 1.3fr 1fr;
+      }
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 12px;
+      color: var(--text);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-family: 'Space Mono', monospace;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 18px 20px;
+      border-radius: 14px;
+      border: 2px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 16px;
+      font-family: 'Space Mono', monospace;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    input[type="text"]::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--input-focus);
+      background: rgba(255, 82, 82, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 82, 82, 0.15);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 22px 32px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+      color: white;
+      font-size: 18px;
+      font-weight: 800;
+      font-family: 'Space Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 8px 24px rgba(255, 82, 82, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(255, 82, 82, 0.4);
+    }
+
+    .submit-btn:hover::before {
+      left: 100%;
+    }
+
+    .submit-btn:active {
       transform: translateY(-1px);
+    }
+
+    .hint-text {
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .endpoint {
+      margin-top: 20px;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-family: 'Space Mono', monospace;
+      word-break: break-all;
+    }
+
+    .endpoint strong {
+      color: var(--accent-primary);
+      font-weight: 700;
+    }
+
+    code {
+      background: rgba(255, 82, 82, 0.1);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.9em;
+      color: var(--accent-secondary);
+    }
+
+    .notice {
+      margin-top: 20px;
+      padding: 16px 20px;
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 12px;
+      color: var(--warning);
+      font-size: 14px;
+      font-family: 'Space Mono', monospace;
+      display: none;
+    }
+
+    .notice a {
+      color: var(--accent-secondary);
+      text-decoration: underline;
+      font-weight: 700;
+    }
+
+    .notice a:hover {
+      color: var(--accent-primary);
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--card-border), transparent);
+      margin: 48px 0;
+    }
+
+    .instructions {
+      margin-top: 48px;
+    }
+
+    h2 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 32px;
+      margin-bottom: 24px;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .steps {
+      list-style: none;
+      counter-reset: step-counter;
+      margin: 0;
+      padding: 0;
+    }
+
+    .steps li {
+      counter-increment: step-counter;
+      position: relative;
+      padding-left: 60px;
+      margin-bottom: 28px;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .steps li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-family: 'Space Mono', monospace;
+      font-size: 18px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(255, 82, 82, 0.3);
+    }
+
+    .steps li strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .steps li a {
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .steps li a:hover {
+      border-bottom-color: var(--accent-primary);
+    }
+
+    kbd {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 0.85em;
+      font-family: 'Space Mono', monospace;
+      color: var(--text);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .warning-box {
+      margin-top: 28px;
+      padding: 20px 24px;
+      background: rgba(255, 82, 82, 0.08);
+      border: 2px solid rgba(255, 82, 82, 0.3);
+      border-radius: 14px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .warning-box strong {
+      display: block;
+      color: var(--accent-primary);
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .warning-box p {
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .warning-box p:not(:last-child) {
+      margin-bottom: 12px;
+    }
+
+    .footer {
+      margin-top: 56px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-family: 'Space Mono', monospace;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
+
+      nav {
+        top: 16px;
+        left: 16px;
+      }
+
+      .card {
+        padding: 32px 24px;
+      }
+
+      h1 {
+        font-size: 40px;
+      }
+
+      h2 {
+        font-size: 26px;
+      }
+
+      .badge {
+        font-size: 10px;
+        padding: 5px 12px;
+      }
     }
   </style>
 </head>
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGNQRLJMGK"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-XGNQRLJMGK');
 </script>
- <nav>
-    <a href="/index.html" class="btn nav-btn">Home</a>
-  </nav>
+
 <body>
-  <div class="card">
-    <h1>Manual Squad Inviter</h1>
-    <p>Enter your game token and one UID, then Invite.</p>
+  <nav>
+    <a href="/index.html" class="nav-btn">← Home</a>
+  </nav>
 
-    <form id="inviteForm" novalidate>
-      <div class="row">
-        <div>
-          <label for="token">Game token</label>
-          <input id="token" name="token" type="text" placeholder="Paste your game token" required autocomplete="off" spellcheck="false" />
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <div class="badge">War Brokers Tool</div>
+        <h1>Squad Inviter</h1>
+        <p class="subtitle">Quickly invite players to your squad using their UID and game token</p>
+      </div>
+
+      <form id="inviteForm" class="form-section" novalidate>
+        <div class="input-row">
+          <div class="input-group">
+            <label for="token">Game Token</label>
+            <input 
+              id="token" 
+              name="token" 
+              type="text" 
+              placeholder="Paste your game token here" 
+              required 
+              autocomplete="off" 
+              spellcheck="false" 
+            />
+          </div>
+          <div class="input-group">
+            <label for="uid">Player UID</label>
+            <input 
+              id="uid" 
+              name="uid" 
+              type="text" 
+              placeholder="Enter UID to invite" 
+              required 
+              autocomplete="off" 
+              spellcheck="false" 
+            />
+          </div>
         </div>
-        <div>
-          <label for="uid">UID</label>
-          <input id="uid" name="uid" type="text" placeholder="Paste a UID" required autocomplete="off" spellcheck="false" />
+
+        <button type="submit" class="submit-btn">Send Invite →</button>
+
+        <p class="hint-text">⚠️ Make sure to allow pop-ups for this page</p>
+
+        <div class="endpoint">
+          <strong>Endpoint:</strong> <code>https://store1.warbrokers.io/303/invite_squad_member.php?token=…&uid=…</code>
+        </div>
+
+        <div id="notice" class="notice"></div>
+      </form>
+
+      <div class="divider"></div>
+
+      <div class="instructions">
+        <h2>How to Get Your Token</h2>
+        <ol class="steps">
+          <li>
+            Open <a href="https://warbrokers.io" target="_blank" rel="noopener noreferrer">warbrokers.io</a> and log in to your account.
+          </li>
+          <li>
+            Right-click anywhere on the page and select <strong>Inspect</strong> (or press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> on Windows/Linux, <kbd>Cmd</kbd>+<kbd>Option</kbd>+<kbd>I</kbd> on Mac).
+          </li>
+          <li>
+            Navigate to the <strong>Console</strong> tab in the developer tools.
+          </li>
+          <li>
+            Type <code>getCookie("game_token")</code> and press <kbd>Enter</kbd>.
+            <br/><em>Chrome tip: If pasting is blocked, type <code>allow pasting</code> first and press <kbd>Enter</kbd>, then try again.</em>
+          </li>
+          <li>
+            Copy the token value that appears and paste it into the <strong>Game Token</strong> field above.
+          </li>
+        </ol>
+
+        <div class="warning-box">
+          <strong>⚠️ Security Warning</strong>
+          <p>Keep your game token private — it grants full access to your War Brokers account.</p>
+          <p>After inviting squad members, log out from War Brokers to reset your token and ensure account security.</p>
         </div>
       </div>
-      <button type="submit">Invite ➜</button>
-      <div class="hint">Allow pop‑ups for this page.</div>
-      <div class="endpoint">
-        Endpoint: <code>https://store1.warbrokers.io/303/invite_squad_member.php?token=…&uid=…</code>
+
+      <div class="footer">
+        Created by Did You Get Sniped?
       </div>
-      <div id="notice" class="notice" style="display:none;"></div>
-    </form>
-
-    <!-- New: How to get your token -->
-    <section class="section" id="how-to-token">
-      <h2>How to get your game token</h2>
-      <ol class="steps">
-        <li>Open <a href="https://warbrokers.io" target="_blank" rel="noopener noreferrer">warbrokers.io</a> and log in.</li>
-        <li>Right‑click the page and choose <strong>Inspect</strong> (or press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> on Windows/Linux, <kbd>Cmd</kbd>+<kbd>Option</kbd>+<kbd>I</kbd> on Mac).</li>
-        <li>Go to the <strong>Console</strong> tab.</li>
-        <li>Type <code>getCookie("game_token")</code> and press <kbd>Enter</kbd>.
-          <br/>Chrome tip: if pasting is blocked, type <code>allow pasting</code> and press <kbd>Enter</kbd>, then paste again.
-        </li>
-        <li>Copy the value that appears and paste it into the <strong>Game token</strong> field above.</li>
-      </ol>
-      <p class="notice"><strong>WARNING:</strong> Keep your token private — it grants access to your account.</p>
-      <p class="notice">After you're done inviting squad members, log out from your War Brokers account to reset your game token and ensure security.</p>
-    </section>
-
-    <div class="creator">Created by Did You Get Sniped?</div>
+    </div>
   </div>
 
   <script>
@@ -161,9 +611,9 @@
     const notice = document.getElementById('notice');
 
     const INVITE_BASE = 'https://store1.warbrokers.io/303/invite_squad_member.php';
-    const INFO_BASE   = 'https://didyougetsniped.github.io/wbinfo?uid=';
+    const INFO_BASE = 'https://didyougetsniped.github.io/wbinfo?uid=';
 
-    function openViaAnchor(url){
+    function openViaAnchor(url) {
       const a = document.createElement('a');
       a.href = url;
       a.target = '_blank';
@@ -178,34 +628,39 @@
       if (!form.reportValidity()) return;
 
       const token = tokenEl.value.trim();
-      const uid   = uidEl.value.trim();
+      const uid = uidEl.value.trim();
 
       const inviteUrl = `${INVITE_BASE}?token=${encodeURIComponent(token)}&uid=${encodeURIComponent(uid)}`;
-      const infoUrl   = `${INFO_BASE}${encodeURIComponent(uid)}`;
+      const infoUrl = `${INFO_BASE}${encodeURIComponent(uid)}`;
 
-      // Strategy: pre-open two blank tabs (most reliable across browsers),
-      // then set their locations; fallback to anchor-click if blocked.
-      let w1 = window.open('', '_blank'); // for invite
-      let w2 = window.open('', '_blank'); // for info
+      let w1 = window.open('', '_blank');
+      let w2 = window.open('', '_blank');
 
-      if (w1) { w1.location.href = inviteUrl; } else { openViaAnchor(inviteUrl); }
-      if (w2) { w2.location.href = infoUrl;   } else { openViaAnchor(infoUrl); }
+      if (w1) {
+        w1.location.href = inviteUrl;
+      } else {
+        openViaAnchor(inviteUrl);
+      }
 
-      // If either was blocked, show a clickable notice
+      if (w2) {
+        w2.location.href = infoUrl;
+      } else {
+        openViaAnchor(infoUrl);
+      }
+
       const blocked = (!w1 && !w2) || (!w1 || !w2);
       if (blocked) {
         notice.style.display = 'block';
-        notice.innerHTML = `Popup blocked. Open manually:
-          <a href="${inviteUrl}" target="_blank" rel="noopener noreferrer">invite</a> ·
-          <a href="${infoUrl}" target="_blank" rel="noopener noreferrer">info</a>`;
+        notice.innerHTML = `Popup blocked. Open manually: <a href="${inviteUrl}" target="_blank" rel="noopener noreferrer">invite</a> · <a href="${infoUrl}" target="_blank" rel="noopener noreferrer">info</a>`;
       } else {
         notice.style.display = 'none';
       }
 
-      // Clear + refocus UID for next invite
-      setTimeout(() => { uidEl.value = ''; uidEl.focus(); }, 60);
+      setTimeout(() => {
+        uidEl.value = '';
+        uidEl.focus();
+      }, 60);
     });
   </script>
 </body>
-
 </html>

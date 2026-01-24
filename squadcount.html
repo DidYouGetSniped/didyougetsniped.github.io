@@ -24,8 +24,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const style = document.createElement('style');
-  // Cursor hotspot at the center for a 64x64 image
-  // If your file name has a space, encode it or rename to avoid spaces.
   style.innerHTML = "* { cursor: url('wb kill.png') 16 16, auto !important; }";
   document.head.appendChild(style);
 });
@@ -38,16 +36,51 @@ document.addEventListener('DOMContentLoaded', function() {
       <h1>Squad Member Count</h1>
       <h3>Created By: Did You Get Sniped?</h3>
       <h4>Join the <a href="https://discord.gg/Wb8eTc5HND" target="_blank">Support Server</a></h4>
-      <p class="update-info">The member count is updated every 8 hours.</p>
+      <p class="update-info" id="update-info">The member count is updated every 12 hours.</p>
       <div class="nav-buttons">
         <a href="/index.html" class="btn nav-btn">Home</a>
       </div>
-      <div class="button-group">
-        <button id="toggleSort" class="btn">Toggle Sort</button>
-      </div>
-      <p id="status" class="loading">Initializing...</p>
     </div>
+
+    <!-- Statistics Section -->
+    <div class="stats-section">
+      <div class="stats-grid" id="stats-grid">
+        <!-- Stats will be populated by JavaScript -->
+        <div class="stat-card loading primary">
+          <span class="stat-icon">📊</span>
+          <div class="stat-value"></div>
+          <div class="stat-label">Total Squads</div>
+        </div>
+        <div class="stat-card loading info">
+          <span class="stat-icon">👥</span>
+          <div class="stat-value"></div>
+          <div class="stat-label">Total Members</div>
+        </div>
+        <div class="stat-card loading">
+          <span class="stat-icon">📈</span>
+          <div class="stat-value"></div>
+          <div class="stat-label">Average Members</div>
+          <div class="stat-sublabel">per active squad</div>
+        </div>
+        <div class="stat-card loading warning">
+          <span class="stat-icon">💤</span>
+          <div class="stat-value"></div>
+          <div class="stat-label">Empty Squads</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider">
+      <span>All Squads</span>
+    </div>
+
+    <div class="button-group">
+      <button id="toggleSort" class="btn">Toggle Sort</button>
+    </div>
+    <p id="status" class="loading">Initializing...</p>
+
     <ul id="squadList"></ul>
+
     <footer>
       <p>Thanks to EpicFeathers for his contributions, Pomp for his API, and TheChillTankMain for his photos.</p>
       <p>Disclaimer: This is a third-party project and is not affiliated with, endorsed, or sponsored by War Brokers or its developers.</p>
@@ -59,11 +92,13 @@ document.addEventListener('DOMContentLoaded', function() {
     setRandomBackground();
   </script>
   
-    <script>
+  <script>
     // --- MAIN APPLICATION SCRIPT ---
     const squadListEl = document.getElementById('squadList');
     const statusEl = document.getElementById('status');
     const toggleSortBtn = document.getElementById('toggleSort');
+    const statsGridEl = document.getElementById('stats-grid');
+    const updateInfoEl = document.getElementById('update-info');
 
     let squadData = [];
     let sortMode = 'countDesc'; // New state: 'countDesc', 'countAsc', or 'alphaAsc'
@@ -95,6 +130,48 @@ document.addEventListener('DOMContentLoaded', function() {
       interval = seconds / 60;
       const minutes = Math.floor(interval);
       return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    }
+
+    function renderStatistics(stats) {
+      if (!stats) return;
+
+      const cards = [
+        {
+          icon: '📊',
+          value: stats.totalSquads || 0,
+          label: 'Total Squads',
+          class: 'primary'
+        },
+        {
+          icon: '💤',
+          value: stats.emptySquads || 0,
+          label: 'Empty Squads',
+          sublabel: stats.totalSquads ? `${((stats.emptySquads / stats.totalSquads) * 100).toFixed(1)}% of total` : '',
+          class: 'warning'
+        },
+        {
+          icon: '👥',
+          value: (stats.totalMembers || 0).toLocaleString(),
+          label: 'Total Members',
+          class: 'info'
+        },
+        {
+          icon: '📈',
+          value: stats.averageMembers ? stats.averageMembers.toFixed(2) : '0.00',
+          label: 'Average Members',
+          sublabel: 'per active squad',
+          class: ''
+        }
+      ];
+
+      statsGridEl.innerHTML = cards.map(card => `
+        <div class="stat-card ${card.class}">
+          <span class="stat-icon">${card.icon}</span>
+          <div class="stat-value">${card.value}</div>
+          <div class="stat-label">${card.label}</div>
+          ${card.sublabel ? `<div class="stat-sublabel">${card.sublabel}</div>` : ''}
+        </div>
+      `).join('');
     }
 
     function renderSquadList() {
@@ -133,6 +210,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = await response.json();
         squadData = data.squads;
 
+        // Render statistics if available
+        if (data.statistics) {
+          renderStatistics(data.statistics);
+        }
+
+        // Render squad list
         renderSquadList();
 
         const lastUpdatedDate = new Date(data.lastUpdated);
@@ -146,10 +229,29 @@ document.addEventListener('DOMContentLoaded', function() {
         statusEl.textContent = `Last updated: ${dateString} (${timeAgoString})`;
         statusEl.style.color = 'var(--success-color)';
 
+        // Update the info message with fetch info if available
+        if (data.fetchInfo) {
+          const fetchInfo = data.fetchInfo;
+          updateInfoEl.innerHTML = `
+            Last updated <strong>${timeAgoString}</strong>. 
+            Fetched ${fetchInfo.totalApiCalls || 'N/A'} squads in ${fetchInfo.duration || 'N/A'}
+            ${fetchInfo.cachedResults ? ` (${fetchInfo.cachedResults} from cache)` : ''}.
+          `;
+        }
+
       } catch (error) {
         console.error('Error loading squad data:', error);
         statusEl.textContent = `Error: ${error.message}`;
         statusEl.className = 'error';
+        
+        // Show error in stats grid
+        statsGridEl.innerHTML = `
+          <div class="stat-card" style="grid-column: 1 / -1;">
+            <span class="stat-icon">❌</span>
+            <div class="stat-label">Error loading data</div>
+            <div class="stat-sublabel">${error.message}</div>
+          </div>
+        `;
       }
     }
 
