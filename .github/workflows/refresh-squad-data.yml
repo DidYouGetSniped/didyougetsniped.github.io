@@ -4,17 +4,17 @@ name: Refresh Squad Data
 
 on:
   schedule:
-    - cron: '0 */8 * * *'
-  workflow_dispatch:
+    # Run every 12 hours instead of every 8 to reduce API load
+    # At 00:00 UTC and 12:00 UTC
+    - cron: '0 */12 * * *'
+  workflow_dispatch: # Allow manual triggers
 
 jobs:
   build:
     runs-on: ubuntu-latest
     
-    # ---- ADD THIS PERMISSIONS BLOCK ----
     permissions:
       contents: write # Grants the workflow permission to write to the repository
-    # ------------------------------------
 
     steps:
       - name: Checkout repo
@@ -25,11 +25,28 @@ jobs:
         with:
           node-version: '20'
 
+      # Use the advanced version with caching and retry logic
       - name: Run fetch script
         run: node fetch-data.js
+        timeout-minutes: 30 # Increased timeout for large squad lists
+
+      # Only commit if the file actually changed
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet squad-data.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Commit and push if changed
+        if: steps.check_changes.outputs.changed == 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: 'chore: Auto-update squad data'
+          commit_message: 'chore: Auto-update squad data [skip ci]'
           file_pattern: 'squad-data.json'
+
+      - name: No changes detected
+        if: steps.check_changes.outputs.changed == 'false'
+        run: echo "ℹ️ Squad data unchanged - skipping commit"
