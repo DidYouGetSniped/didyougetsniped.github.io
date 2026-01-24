@@ -1,9 +1,46 @@
 const API_BASE_URL = 'https://wbapi.wbpjs.com/players';
 
 export const RATE_LIMIT_CONFIG = {
-    maxRequests: 10,
+    maxRequests: 18, // Set to 18 to be safe (under the 20/min limit)
     timeWindow: 60 * 1000 // 60 seconds in milliseconds
 };
+
+// Simple in-memory cache with TTL
+const cache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function getCacheKey(url) {
+    return url;
+}
+
+function getFromCache(key) {
+    const cached = cache.get(key);
+    if (!cached) return null;
+    
+    if (Date.now() - cached.timestamp > CACHE_TTL) {
+        cache.delete(key);
+        return null;
+    }
+    
+    return cached.data;
+}
+
+function setCache(key, data) {
+    cache.set(key, {
+        data,
+        timestamp: Date.now()
+    });
+}
+
+// Clear old cache entries periodically
+setInterval(() => {
+    const now = Date.now();
+    for (const [key, value] of cache.entries()) {
+        if (now - value.timestamp > CACHE_TTL) {
+            cache.delete(key);
+        }
+    }
+}, CACHE_TTL);
 
 const BLACKLISTED_UIDS = [
     '6698bdf3d142af601f50256a',
@@ -95,6 +132,14 @@ const PLAYER_BIOGRAPHIES = {
 };
 
 async function fetchData(url, options = {}, errorValue = null) {
+    // Check cache first
+    const cacheKey = getCacheKey(url);
+    const cachedData = getFromCache(cacheKey);
+    if (cachedData !== null) {
+        console.log(`Cache hit for: ${url}`);
+        return cachedData;
+    }
+
     try {
         const response = await fetch(url, options);
         if (!response.ok) {
@@ -104,7 +149,12 @@ async function fetchData(url, options = {}, errorValue = null) {
             }
             throw new Error(`API request to ${url} failed with status ${response.status}`);
         }
-        return await response.json();
+        const data = await response.json();
+        
+        // Cache the successful response
+        setCache(cacheKey, data);
+        
+        return data;
     } catch (error) {
         console.error(`Error fetching from ${url}:`, error);
         if (errorValue !== null) return errorValue;
@@ -112,16 +162,16 @@ async function fetchData(url, options = {}, errorValue = null) {
     }
 }
 
- const filterIgnoredWeapons = (dataObject) => {
-        if (!dataObject) return {};
-        const filtered = {};
-        for (const code in dataObject) {
-            if (!IGNORED_WEAPON_CODES.includes(code)) {
-                filtered[code] = dataObject[code];
-            }
+const filterIgnoredWeapons = (dataObject) => {
+    if (!dataObject) return {};
+    const filtered = {};
+    for (const code in dataObject) {
+        if (!IGNORED_WEAPON_CODES.includes(code)) {
+            filtered[code] = dataObject[code];
         }
-        return filtered;
-    };
+    }
+    return filtered;
+};
 
 function remapObjectKeys(dataObject, map) {
     if (!dataObject) return {};
@@ -148,8 +198,8 @@ function processPlayerData(rawPlayerData) {
         .filter(([key]) => key !== 'v30')
         .reduce((sum, [, value]) => sum + value, 0);
     processed.totalKills = weaponKillsTotal + vehicleKillsTotal;
-processed.weaponKillsTotal = weaponKillsTotal;  
-processed.vehicleKillsTotal = vehicleKillsTotal; 
+    processed.weaponKillsTotal = weaponKillsTotal;  
+    processed.vehicleKillsTotal = vehicleKillsTotal; 
     const weaponDeathsTotal = Object.values(raw_deaths).reduce((sum, val) => sum + val, 0);
     const selfDestructDeathsTotal = Object.values(raw_self_destructs).reduce((sum, val) => sum + val, 0);
     processed.totalDeaths = weaponDeathsTotal + selfDestructDeathsTotal;
@@ -180,33 +230,33 @@ processed.vehicleKillsTotal = vehicleKillsTotal;
     const shots_hit_zoomed = remapObjectKeys(filtered_raw_hits_zoomed, WEAPON_NAMES);
     processed.weaponStats = {};
     const allWeaponNames = new Set(Object.keys(kills_per_weapon));
- for (const weaponName of allWeaponNames) {
-    const kills = kills_per_weapon[weaponName] || 0;
-    const deathsByWeapon = processed.deaths[weaponName] || 0;
-    const totalHeadshots = headshots[weaponName] || 0;
-    const totalDamage = damage_dealt[weaponName] || 0;
-    const totalDamageReceived = damage_received[weaponName] || 0; 
-    const shotsFired = (shots_fired_unzoomed[weaponName] || 0) + (shots_fired_zoomed[weaponName] || 0);
-    const shotsHit = (shots_hit_unzoomed[weaponName] || 0) + (shots_hit_zoomed[weaponName] || 0);
-    
-    const kdr = deathsByWeapon > 0 ? (kills / deathsByWeapon) : kills;
-    const accuracy = shotsFired > 0 ? (shotsHit / shotsFired) * 100 : 0;
-    const headshotRate = kills > 0 ? (totalHeadshots / kills) * 100 : 0;
-    const damagePerKill = kills > 0 ? (totalDamage / kills) : 0;
-    const damagePerHit = shotsHit > 0 ? (totalDamage / shotsHit) : 0;
-    
-    processed.weaponStats[weaponName] = {
-        kills, deaths: deathsByWeapon, headshots: totalHeadshots,
-        damage: parseFloat(totalDamage.toFixed(0)),
-        damageReceived: parseFloat(totalDamageReceived.toFixed(0)), 
-        kdr: kdr.toFixed(3),
-        accuracy: parseFloat(accuracy.toFixed(2)),
-        headshotRate: parseFloat(headshotRate.toFixed(2)),
-        damagePerKill: parseFloat(damagePerKill.toFixed(0)),
-        damagePerHit: parseFloat(damagePerHit.toFixed(2)),
-        shotsFired, shotsHit
-    };
-}
+    for (const weaponName of allWeaponNames) {
+        const kills = kills_per_weapon[weaponName] || 0;
+        const deathsByWeapon = processed.deaths[weaponName] || 0;
+        const totalHeadshots = headshots[weaponName] || 0;
+        const totalDamage = damage_dealt[weaponName] || 0;
+        const totalDamageReceived = damage_received[weaponName] || 0; 
+        const shotsFired = (shots_fired_unzoomed[weaponName] || 0) + (shots_fired_zoomed[weaponName] || 0);
+        const shotsHit = (shots_hit_unzoomed[weaponName] || 0) + (shots_hit_zoomed[weaponName] || 0);
+        
+        const kdr = deathsByWeapon > 0 ? (kills / deathsByWeapon) : kills;
+        const accuracy = shotsFired > 0 ? (shotsHit / shotsFired) * 100 : 0;
+        const headshotRate = kills > 0 ? (totalHeadshots / kills) * 100 : 0;
+        const damagePerKill = kills > 0 ? (totalDamage / kills) : 0;
+        const damagePerHit = shotsHit > 0 ? (totalDamage / shotsHit) : 0;
+        
+        processed.weaponStats[weaponName] = {
+            kills, deaths: deathsByWeapon, headshots: totalHeadshots,
+            damage: parseFloat(totalDamage.toFixed(0)),
+            damageReceived: parseFloat(totalDamageReceived.toFixed(0)), 
+            kdr: kdr.toFixed(3),
+            accuracy: parseFloat(accuracy.toFixed(2)),
+            headshotRate: parseFloat(headshotRate.toFixed(2)),
+            damagePerKill: parseFloat(damagePerKill.toFixed(0)),
+            damagePerHit: parseFloat(damagePerHit.toFixed(2)),
+            shotsFired, shotsHit
+        };
+    }
     if (SPECIAL_LINKS[rawPlayerData.uid]) {
         processed.socialLinks = SPECIAL_LINKS[rawPlayerData.uid];
     }
@@ -225,8 +275,7 @@ processed.vehicleKillsTotal = vehicleKillsTotal;
 }
 
 export async function fetchFullPlayerData(uid) {
-
-     if (isBlacklisted(uid)) {
+    if (isBlacklisted(uid)) {
         throw new Error('Access to this player is restricted. Join the Support Server.');
     }
     const playerUrl = `${API_BASE_URL}/getPlayer?uid=${uid}`;
@@ -245,7 +294,7 @@ export async function fetchFullPlayerData(uid) {
 
     const playerData = processPlayerData(rawPlayerData);
 
-     const [killsPercentile, gamesPercentile, xpPercentile] = await Promise.all([
+    const [killsPercentile, gamesPercentile, xpPercentile] = await Promise.all([
         fetchData(killsPercentileUrl, {}, 0),
         fetchData(gamesPercentileUrl, {}, 0),
         fetchData(xpPercentileUrl, {}, 0) 
@@ -262,8 +311,5 @@ export async function searchPlayerByName(query) {
     const searchUrl = `${API_BASE_URL}/searchByName?query=${encodeURIComponent(query)}`;
     const searchResults = await fetchData(searchUrl, {}, []);
 
- return searchResults.filter(player => !isBlacklisted(player.uid));
+    return searchResults.filter(player => !isBlacklisted(player.uid));
 }
-
-
-

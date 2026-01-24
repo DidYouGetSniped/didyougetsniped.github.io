@@ -39,48 +39,45 @@ document.addEventListener('DOMContentLoaded', () => {
         sortKey = null,
         sortDir = 'asc';
 
-    const RATE_LIMIT_COUNT = 5;
+    const RATE_LIMIT_COUNT = 18; // Updated to 18 to be safe
     const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+    const BATCH_SIZE = 3; // Process 3 requests at a time
+    const BATCH_DELAY = 500; // 500ms delay between batches
 
-    const requestCountEl = document.getElementById('request-count');
-    const resetInfoEl = document.getElementById('reset-info');
-    const resetTimerEl = document.getElementById('reset-timer');
+    // Simple cache for player data
+    const playerCache = new Map();
+    const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-    function updateRateLimiterUI() {
+    function getCachedPlayer(uid) {
+        const cached = playerCache.get(uid);
+        if (!cached) return null;
+        
+        if (Date.now() - cached.timestamp > CACHE_TTL) {
+            playerCache.delete(uid);
+            return null;
+        }
+        
+        return cached.data;
+    }
+
+    function setCachedPlayer(uid, data) {
+        playerCache.set(uid, {
+            data,
+            timestamp: Date.now()
+        });
+    }
+
+    // Cleanup old timestamps periodically
+    setInterval(() => {
         const now = Date.now();
-
-        // Check if the reset window has passed since the *first* request was made
         if (requestTimestamps.length > 0) {
             const oldestRequestTime = requestTimestamps[0];
             if (now - oldestRequestTime >= RATE_LIMIT_WINDOW_MS) {
-                // Timer is up. Reset all requests from the window at once.
                 requestTimestamps = [];
                 localStorage.setItem('squadRateLimitRequests', JSON.stringify(requestTimestamps));
             }
         }
-
-        // Now, update the UI based on the current state of requestTimestamps
-        const usedCount = requestTimestamps.length;
-        const remainingCount = RATE_LIMIT_COUNT - usedCount;
-        requestCountEl.textContent = remainingCount;
-
-        if (usedCount > 0) {
-            // Display the countdown timer based on the oldest request
-            const oldestRequestTime = requestTimestamps[0];
-            const timePassed = now - oldestRequestTime;
-            const timeLeft = Math.ceil((RATE_LIMIT_WINDOW_MS - timePassed) / 1000);
-
-            resetTimerEl.textContent = Math.max(0, timeLeft); // Ensure timer doesn't show a negative number
-            resetInfoEl.style.display = 'inline';
-        } else {
-            // No requests are in the queue, so hide the timer info
-            resetInfoEl.style.display = 'none';
-        }
-    }
-
-
-    setInterval(updateRateLimiterUI, 1000);
-    updateRateLimiterUI();
+    }, 1000);
 
     const diff = (s) => {
         if (s < 60) return s + 's';
@@ -201,23 +198,83 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.length) fillTable();
     };
 
-    async function fetchSquadData(squadName) {
-        updateRateLimiterUI();
-        if (requestTimestamps.length >= RATE_LIMIT_COUNT) {
-            const now = Date.now();
-            const oldestRequestTime = requestTimestamps[0];
-            const timePassed = now - oldestRequestTime;
-            const timeLeft = Math.ceil((RATE_LIMIT_WINDOW_MS - timePassed) / 1000);
-
-            alertTimer.textContent = timeLeft;
-            rateLimitAlert.style.display = 'block';
-
-            setTimeout(() => {
-                rateLimitAlert.style.display = 'none';
-            }, timeLeft * 1000 + 500);
-            return;
+    // Batched fetching with rate limiting
+    async function fetchPlayersBatched(members) {
+        const results = [];
+        
+        for (let i = 0; i < members.length; i += BATCH_SIZE) {
+            const batch = members.slice(i, i + BATCH_SIZE);
+            
+            // Check rate limit before each batch
+            if (requestTimestamps.length + batch.length > RATE_LIMIT_COUNT) {
+                const now = Date.now();
+                const oldestRequestTime = requestTimestamps[0];
+                const timePassed = now - oldestRequestTime;
+                const timeToWait = RATE_LIMIT_WINDOW_MS - timePassed;
+                
+                if (timeToWait > 0) {
+                    console.log(`Rate limit reached, waiting ${timeToWait}ms`);
+                    await new Promise(resolve => setTimeout(resolve, timeToWait + 100));
+                    // Clear old timestamps after waiting
+                    requestTimestamps = [];
+                    localStorage.setItem('squadRateLimitRequests', JSON.stringify(requestTimestamps));
+                }
+            }
+            
+            // Fetch batch with caching
+            const batchPromises = batch.map(async (member) => {
+                // Check cache first
+                const cached = getCachedPlayer(member.uid);
+                if (cached) {
+                    console.log(`Cache hit for ${member.nick}`);
+                    return cached;
+                }
+                
+                try {
+                    // Track request
+                    requestTimestamps.push(Date.now());
+                    localStorage.setItem('squadRateLimitRequests', JSON.stringify(requestTimestamps));
+                    rateLimitChannel.postMessage({
+                        type: 'update-rate-limit',
+                        payload: { requests: requestTimestamps }
+                    });
+                    // UI update removed
+                    
+                    const playerRes = await fetch(`https://wbapi.wbpjs.com/players/getPlayer?uid=${member.uid}`);
+                    if (playerRes.ok) {
+                        const playerData = await playerRes.json();
+                        setCachedPlayer(member.uid, playerData);
+                        return playerData;
+                    }
+                    return null;
+                } catch (err) {
+                    console.warn(`Failed to fetch details for UID ${member.uid}`, err);
+                    return null;
+                }
+            });
+            
+            const batchResults = await Promise.all(batchPromises);
+            results.push(...batchResults);
+            
+            // Update progress
+            progressBar.update(
+                results.length, 
+                members.length, 
+                members[Math.min(i + BATCH_SIZE - 1, members.length - 1)].nick || `UID: ${members[Math.min(i + BATCH_SIZE - 1, members.length - 1)].uid}`
+            );
+            
+            // Delay between batches (except for the last one)
+            if (i + BATCH_SIZE < members.length) {
+                await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
+            }
         }
+        
+        return results;
+    }
 
+    async function fetchSquadData(squadName) {
+        // Rate limit check happens in background
+        
         const squad = squadName.trim();
         if (!squad) {
             rateLimitAlert.style.display = 'none';
@@ -227,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         rateLimitAlert.style.display = 'none';
 
+        // Track the squad members request
         requestTimestamps.push(Date.now());
         localStorage.setItem('squadRateLimitRequests', JSON.stringify(requestTimestamps));
 
@@ -239,7 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        updateRateLimiterUI();
         const url = new URL(window.location);
         url.searchParams.set('squad', squad);
         history.pushState({}, '', url);
@@ -268,28 +325,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            let completedFetches = 0;
-            const totalMembers = members.length;
+            progressBar.update(0, members.length, 'Starting batch fetch...');
 
-            const promises = members.map(async (member) => {
-                try {
-                    const playerRes = await fetch(`https://wbapi.wbpjs.com/players/getPlayer?uid=${member.uid}`);
-                    if (playerRes.ok) {
-                        return await playerRes.json();
-                    }
-                    return null;
-                } catch (err) {
-                    console.warn(`Failed to fetch details for UID ${member.uid}`, err);
-                    return null;
-                } finally {
-                    completedFetches++;
-                    const userLabel = member.nick || `UID: ${member.uid}`;
-                    progressBar.update(completedFetches, totalMembers, userLabel);
-                }
-            });
-
-            const memberDetails = await Promise.all(promises);
-
+            // Use batched fetching
+            const memberDetails = await fetchPlayersBatched(members);
             data = memberDetails.filter(Boolean);
 
             if (!data.length) {
@@ -297,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            progressBar.update(totalMembers, totalMembers, 'Done!');
+            progressBar.update(members.length, members.length, 'Done!');
 
             squadNameDisplay.textContent = squad;
 
@@ -358,4 +397,3 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchSquadData(squadFromUrl);
     }
 });
-
