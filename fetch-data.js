@@ -1,5 +1,3 @@
-// fetch-data.js - Optimized version with proper rate limiting and comprehensive stats
-
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 
 // Configuration
@@ -347,7 +345,7 @@ async function run() {
     const squadList = await fetchJsonWithRetry('https://wbapi.wbpjs.com/squad/getSquadList');
     console.log(`   ✓ Found ${squadList.length} squads\n`);
     
-    // Prioritize previously failed squads
+    // Prioritize previously failed squads (only if they still exist)
     const prioritizedList = [];
     const remainingList = [];
     
@@ -361,8 +359,14 @@ async function run() {
     
     const orderedSquadList = [...prioritizedList, ...remainingList];
     
+    // Log info about failed squads cleanup
+    const deletedSquads = previouslyFailedSquads.filter(name => !squadList.includes(name));
+    if (deletedSquads.length > 0) {
+      console.log(`🗑️  Removed ${deletedSquads.length} deleted squad(s) from failed list: ${deletedSquads.slice(0, 5).join(', ')}${deletedSquads.length > 5 ? '...' : ''}\n`);
+    }
+    
     if (prioritizedList.length > 0) {
-      console.log(`🔄 Prioritizing ${prioritizedList.length} previously failed squads\n`);
+      console.log(`🔄 Prioritizing ${prioritizedList.length} previously failed squads that still exist\n`);
     }
     
     // Fetch member counts in batches
