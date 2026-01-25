@@ -110,6 +110,10 @@ document.addEventListener('DOMContentLoaded', function() {
       <div class="filter-info" id="filterInfo">
         Showing all players
       </div>
+      <div id="whoIsItContainer" style="display: none; margin-top: 15px; text-align: center;">
+        <button id="whoIsItBtn" class="btn" style="background: var(--accent-color); color: var(--bg-color);">Who is it?</button>
+        <div id="playerList" style="display: none; margin-top: 15px; text-align: left;"></div>
+      </div>
     </div>
 
     <div class="section-divider">
@@ -142,12 +146,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const levelInput = document.getElementById('levelInput');
     const filterMode = document.getElementById('filterMode');
     const filterInfo = document.getElementById('filterInfo');
+    const whoIsItContainer = document.getElementById('whoIsItContainer');
+    const whoIsItBtn = document.getElementById('whoIsItBtn');
+    const playerList = document.getElementById('playerList');
 
     let squadData = [];
     let fullSquadData = []; // Store original data
     let sortMode = 'countDesc'; // New state: 'countDesc', 'countAsc', or 'alphaAsc'
     let levelFilter = 3500; // Current level filter
     let currentFilterMode = 'max'; // 'max', 'min', or 'exact'
+    let filteredPlayers = []; // Store filtered players for "Who is it?" feature
 
     function formatTimeAgo(date) {
       const now = new Date();
@@ -176,6 +184,38 @@ document.addEventListener('DOMContentLoaded', function() {
       interval = seconds / 60;
       const minutes = Math.floor(interval);
       return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    }
+
+    function getFilteredPlayers(squads, levelValue, mode) {
+      const players = [];
+      
+      squads.forEach(squad => {
+        if (squad.members && Array.isArray(squad.members)) {
+          squad.members.forEach(member => {
+            const memberLevel = member.level || 0;
+            let shouldInclude = false;
+
+            // Determine if member should be included based on filter mode
+            if (mode === 'max') {
+              shouldInclude = memberLevel <= levelValue;
+            } else if (mode === 'min') {
+              shouldInclude = memberLevel >= levelValue;
+            } else if (mode === 'exact') {
+              shouldInclude = Math.abs(memberLevel - levelValue) <= 50;
+            }
+
+            if (shouldInclude) {
+              players.push({
+                uid: member.uid,
+                name: member.name || 'Unknown',
+                level: memberLevel
+              });
+            }
+          });
+        }
+      });
+      
+      return players;
     }
 
     function calculateFilteredStats(squads, levelValue, mode) {
@@ -355,16 +395,29 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Update filter info
       if (fullSquadData.length > 0) {
+        // Get filtered players for "Who is it?" feature
+        filteredPlayers = getFilteredPlayers(fullSquadData, levelFilter, currentFilterMode);
+        
         const filteredStats = calculateFilteredStats(fullSquadData, levelFilter, currentFilterMode);
         const originalStats = calculateFilteredStats(fullSquadData, 3500, 'max');
         
         if (currentFilterMode === 'max' && levelFilter >= 3500) {
           filterInfo.textContent = 'Showing all players';
+          whoIsItContainer.style.display = 'none';
         } else if (filteredStats.totalPlayers === 0) {
           filterInfo.textContent = 'No players match this filter';
+          whoIsItContainer.style.display = 'none';
         } else {
           const percentFiltered = ((filteredStats.totalPlayers / originalStats.totalPlayers) * 100).toFixed(1);
           filterInfo.textContent = `Showing ${filteredStats.totalPlayers.toLocaleString()} players (${percentFiltered}% of total)`;
+          
+          // Show "Who is it?" button if 15 or fewer players
+          if (filteredStats.totalPlayers <= 15 && filteredStats.totalPlayers > 0) {
+            whoIsItContainer.style.display = 'block';
+            playerList.style.display = 'none'; // Hide player list initially
+          } else {
+            whoIsItContainer.style.display = 'none';
+          }
         }
         
         // Recalculate and render statistics with new filter
@@ -373,6 +426,35 @@ document.addEventListener('DOMContentLoaded', function() {
           renderStatistics(originalData.statistics, filteredStats);
         }
       }
+    }
+
+    function showPlayerList() {
+      if (filteredPlayers.length === 0) {
+        playerList.innerHTML = '<p style="text-align: center; color: var(--secondary-text-color);">No players found</p>';
+      } else {
+        // Sort players by name
+        const sortedPlayers = [...filteredPlayers].sort((a, b) => a.name.localeCompare(b.name));
+        
+        playerList.innerHTML = `
+          <ul style="list-style: none; padding: 0;">
+            ${sortedPlayers.map(player => `
+              <li style="background: var(--surface-color); margin: 8px 0; padding: 12px 16px; border-radius: 8px; border-left: 3px solid var(--accent-color);">
+                <a href="https://didyougetsniped.github.io/wbinfo?uid=${player.uid}" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   style="color: var(--primary-text-color); text-decoration: none; font-weight: 600; transition: color 0.2s;">
+                  ${player.name}
+                </a>
+                <span style="color: var(--secondary-text-color); font-size: 0.9rem; margin-left: 8px;">
+                  (UID: ${player.uid}, Level: ${player.level})
+                </span>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+      }
+      
+      playerList.style.display = 'block';
     }
 
     async function loadAndDisplayData() {
@@ -442,6 +524,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Level input event listeners
     levelInput.addEventListener('input', updateFilter);
     filterMode.addEventListener('change', updateFilter);
+
+    // "Who is it?" button event listener
+    whoIsItBtn.addEventListener('click', () => {
+      if (playerList.style.display === 'none') {
+        showPlayerList();
+        whoIsItBtn.textContent = 'Hide Players';
+      } else {
+        playerList.style.display = 'none';
+        whoIsItBtn.textContent = 'Who is it?';
+      }
+    });
 
     loadAndDisplayData();
   </script>

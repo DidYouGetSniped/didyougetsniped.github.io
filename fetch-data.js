@@ -154,6 +154,8 @@ async function fetchSquadData(squadName, cache) {
     
     // Calculate member statistics if there are members
     let memberStats = null;
+    let memberList = [];
+    
     if (count > 0 && Array.isArray(members)) {
       let totalKillsELO = 0;
       let totalGamesELO = 0;
@@ -169,6 +171,13 @@ async function fetchSquadData(squadName, cache) {
           totalLevel += member.level || 0;
           // steam can be true, false, or null - only count if explicitly true
           if (member.steam === true) steamCount++;
+          
+          // Store member info for filtering (using 'nick' field from API)
+          memberList.push({
+            uid: member.uid || '',
+            name: member.nick || 'Unknown',
+            level: member.level || 0
+          });
         }
       });
       
@@ -186,7 +195,8 @@ async function fetchSquadData(squadName, cache) {
     return {
       name: squadName,
       count: count,
-      memberStats: memberStats
+      memberStats: memberStats,
+      members: memberList // Include member list for filtering
     };
   } catch (err) {
     console.error(`  ❌ Failed to fetch ${squadName}: ${err.message}`);
@@ -199,7 +209,7 @@ async function fetchSquadData(squadName, cache) {
       return cached;
     }
     
-    return { name: squadName, count: 0, memberStats: null };
+    return { name: squadName, count: 0, memberStats: null, members: [] };
   }
 }
 
