@@ -1,16 +1,16 @@
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 
-// Configuration
+// Configuration - OPTIMIZED for speed while respecting rate limits
 const CONFIG = {
-  rateLimit: 18,           // Safe limit under 20/min
+  rateLimit: 19,           // Increased to 19 (safe under 20/min limit)
   rateWindowMs: 60 * 1000, // 60 seconds
-  batchSize: 3,            // Process 3 squads at a time (reduced for safety)
-  batchDelayMs: 10000,     // 10 second delay = 3 calls per 10s = 18 calls/min ✅
-  maxRetries: 3,
-  retryDelayMs: 2000,
+  batchSize: 6,            // Increased to 6 squads at a time (19/60s = safe)
+  batchDelayMs: 20000,     // 20 second delay = 6 calls per 20s = 18 calls/min ✅
+  maxRetries: 2,           // Reduced retries to save time
+  retryDelayMs: 1500,      // Reduced retry delay
   cacheFile: 'squad-data.json',
   cacheDurationHours: 12,
-  failedSquadsFile: 'failed-squads.json' // Track failed squads for priority retry
+  failedSquadsFile: 'failed-squads.json'
 };
 
 // Track API calls
@@ -69,7 +69,7 @@ async function checkRateLimit() {
   // If we're at the limit, wait until the oldest request expires
   if (requestTimestamps.length >= CONFIG.rateLimit) {
     const oldestRequest = requestTimestamps[0];
-    const waitTime = CONFIG.rateWindowMs - (now - oldestRequest) + 1000; // Add 1s buffer
+    const waitTime = CONFIG.rateWindowMs - (now - oldestRequest) + 500; // Reduced buffer
     
     console.log(`⏳ Rate limit reached (${requestTimestamps.length}/${CONFIG.rateLimit}). Waiting ${Math.ceil(waitTime / 1000)}s...`);
     await new Promise(resolve => setTimeout(resolve, waitTime));
