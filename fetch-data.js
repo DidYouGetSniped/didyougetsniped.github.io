@@ -1,4 +1,4 @@
-// fetch-data.js - Advanced version with caching, retry, and better error handling
+// fetch-data.js - Optimized version with proper rate limiting
 
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 
@@ -6,18 +6,17 @@ import { writeFileSync, readFileSync, existsSync } from 'fs';
 const CONFIG = {
   rateLimit: 18,           // Safe limit under 20/min
   rateWindowMs: 60 * 1000, // 60 seconds
-  batchSize: 5,            // Process 5 squads at a time
-  batchDelayMs: 1000,      // 1 second delay between batches
-  maxRetries: 3,           // Retry failed requests up to 3 times
-  retryDelayMs: 2000,      // Wait 2 seconds before retry
-  cacheFile: 'squad-data.json', // Previous data file for caching
-  cacheDurationHours: 24   // How old data can be before forcing refresh
+  batchSize: 3,            // Process 3 squads at a time (reduced for safety)
+  batchDelayMs: 10000,     // 10 second delay = 3 calls per 10s = 18 calls/min ✅
+  maxRetries: 3,
+  retryDelayMs: 2000,
+  cacheFile: 'squad-data.json',
+  cacheDurationHours: 12
 };
 
 // Track API calls
 let requestTimestamps = [];
 let totalApiCalls = 0;
-let cachedCount = 0;
 let failedSquads = [];
 
 /**
@@ -35,13 +34,15 @@ async function checkRateLimit() {
   // If we're at the limit, wait until the oldest request expires
   if (requestTimestamps.length >= CONFIG.rateLimit) {
     const oldestRequest = requestTimestamps[0];
-    const waitTime = CONFIG.rateWindowMs - (now - oldestRequest) + 100; // Add 100ms buffer
+    const waitTime = CONFIG.rateWindowMs - (now - oldestRequest) + 1000; // Add 1s buffer
     
-    console.log(`⏳ Rate limit reached. Waiting ${Math.ceil(waitTime / 1000)}s...`);
+    console.log(`⏳ Rate limit reached (${requestTimestamps.length}/${CONFIG.rateLimit}). Waiting ${Math.ceil(waitTime / 1000)}s...`);
     await new Promise(resolve => setTimeout(resolve, waitTime));
     
     // Clear old timestamps after waiting
-    requestTimestamps = [];
+    requestTimestamps = requestTimestamps.filter(
+      timestamp => Date.now() - timestamp < CONFIG.rateWindowMs
+    );
   }
   
   // Record this request
@@ -51,9 +52,6 @@ async function checkRateLimit() {
 
 /**
  * Fetches JSON from a URL with retry logic
- * @param {string} url The URL to fetch
- * @param {number} attempt Current attempt number
- * @returns {Promise<any>} The JSON response
  */
 async function fetchJsonWithRetry(url, attempt = 1) {
   await checkRateLimit();
@@ -76,8 +74,7 @@ async function fetchJsonWithRetry(url, attempt = 1) {
 }
 
 /**
- * Load previous squad data for caching
- * @returns {Map<string, object>} Map of squad name to cached data
+ * Load previous squad data for fallback only
  */
 function loadPreviousData() {
   const cache = new Map();
@@ -94,14 +91,12 @@ function loadPreviousData() {
     
     console.log(`📁 Found previous data from ${lastUpdated.toLocaleString()}`);
     console.log(`   Age: ${ageHours.toFixed(1)} hours`);
+    console.log(`   Will fetch fresh data (cache only used as error fallback)\n`);
     
-    if (ageHours < CONFIG.cacheDurationHours && Array.isArray(previousData.squads)) {
+    if (Array.isArray(previousData.squads)) {
       previousData.squads.forEach(squad => {
         cache.set(squad.name, squad);
       });
-      console.log(`   ✓ Loaded ${cache.size} cached squad counts\n`);
-    } else {
-      console.log(`   ⚠️  Data too old (>${CONFIG.cacheDurationHours}h). Will fetch fresh.\n`);
     }
     
     return cache;
@@ -113,31 +108,25 @@ function loadPreviousData() {
 
 /**
  * Fetches the member count for a single squad
- * @param {string} squadName The name of the squad
- * @param {Map} cache Cache of previous data
- * @returns {Promise<object>} Squad data with name and count
  */
 async function fetchSquadData(squadName, cache) {
-  // Check cache first
-  const cached = cache.get(squadName);
-  if (cached && cached.count !== undefined) {
-    cachedCount++;
-    return cached;
-  }
-  
   try {
     const members = await fetchJsonWithRetry(
       `https://wbapi.wbpjs.com/squad/getSquadMembers?squadName=${encodeURIComponent(squadName)}`
     );
+    
+    const count = Array.isArray(members) ? members.length : 0;
+    
     return {
       name: squadName,
-      count: Array.isArray(members) ? members.length : 0
+      count: count
     };
   } catch (err) {
     console.error(`  ❌ Failed to fetch ${squadName}: ${err.message}`);
     failedSquads.push({ name: squadName, error: err.message });
     
     // Return cached data if available, otherwise return 0
+    const cached = cache.get(squadName);
     if (cached) {
       console.log(`  ℹ️  Using stale cached data for ${squadName}: ${cached.count} members`);
       return cached;
@@ -155,28 +144,49 @@ function sleep(ms) {
 }
 
 /**
+ * Estimate remaining time
+ */
+function estimateTimeRemaining(currentBatch, totalBatches, startTime) {
+  if (currentBatch === 0) return "calculating...";
+  
+  const elapsed = Date.now() - startTime;
+  const avgTimePerBatch = elapsed / currentBatch;
+  const remainingBatches = totalBatches - currentBatch;
+  const remainingMs = avgTimePerBatch * remainingBatches;
+  
+  const minutes = Math.floor(remainingMs / 60000);
+  const seconds = Math.floor((remainingMs % 60000) / 1000);
+  
+  return `~${minutes}m ${seconds}s`;
+}
+
+/**
  * Process squads in batches to respect rate limits
  */
 async function fetchSquadsInBatches(squadList, cache) {
   const results = [];
   const totalSquads = squadList.length;
+  const totalBatches = Math.ceil(squadList.length / CONFIG.batchSize);
+  const batchStartTime = Date.now();
   
   console.log("=".repeat(60));
   console.log(`Processing ${totalSquads} squads in batches of ${CONFIG.batchSize}`);
+  console.log(`Total batches: ${totalBatches}`);
+  console.log(`Estimated total time: ~${Math.ceil((totalBatches * CONFIG.batchDelayMs) / 60000)} minutes`);
   console.log("=".repeat(60));
   
   for (let i = 0; i < squadList.length; i += CONFIG.batchSize) {
     const batch = squadList.slice(i, i + CONFIG.batchSize);
     const batchNumber = Math.floor(i / CONFIG.batchSize) + 1;
-    const totalBatches = Math.ceil(squadList.length / CONFIG.batchSize);
     
-    console.log(`\n📦 Batch ${batchNumber}/${totalBatches} (Squads ${i + 1}-${Math.min(i + CONFIG.batchSize, totalSquads)})`);
+    const eta = estimateTimeRemaining(batchNumber - 1, totalBatches, batchStartTime);
+    
+    console.log(`\n📦 Batch ${batchNumber}/${totalBatches} (Squads ${i + 1}-${Math.min(i + CONFIG.batchSize, totalSquads)}) | ETA: ${eta}`);
     
     // Process batch in parallel
     const batchPromises = batch.map(async (name) => {
       const data = await fetchSquadData(name, cache);
-      const icon = cache.has(name) && data.count === cache.get(name).count ? '💾' : '🆕';
-      console.log(`  ${icon} ${name}: ${data.count} members`);
+      console.log(`  🆕 ${name}: ${data.count} members`);
       return data;
     });
     
@@ -184,11 +194,12 @@ async function fetchSquadsInBatches(squadList, cache) {
     results.push(...batchResults);
     
     // Progress indicator
-    const progress = ((i + CONFIG.batchSize) / totalSquads * 100).toFixed(1);
-    console.log(`  Progress: ${Math.min(i + CONFIG.batchSize, totalSquads)}/${totalSquads} (${progress}%)`);
+    const progress = Math.min(((i + CONFIG.batchSize) / totalSquads * 100), 100).toFixed(1);
+    console.log(`  📊 Progress: ${Math.min(i + CONFIG.batchSize, totalSquads)}/${totalSquads} (${progress}%) | API calls: ${totalApiCalls}`);
     
     // Wait between batches (except for the last one)
     if (i + CONFIG.batchSize < squadList.length) {
+      console.log(`  ⏸️  Waiting ${CONFIG.batchDelayMs / 1000}s before next batch...`);
       await sleep(CONFIG.batchDelayMs);
     }
   }
@@ -204,11 +215,14 @@ async function run() {
   console.log("🎯 SQUAD DATA FETCH - STARTING");
   console.log("=".repeat(60));
   console.log(`Started at: ${new Date().toLocaleString()}`);
+  console.log(`Rate limit: ${CONFIG.rateLimit} requests per ${CONFIG.rateWindowMs / 1000}s`);
+  console.log(`Batch size: ${CONFIG.batchSize} squads`);
+  console.log(`Batch delay: ${CONFIG.batchDelayMs / 1000}s`);
   
   const startTime = Date.now();
   
   try {
-    // Load previous data for caching
+    // Load previous data for fallback only
     const cache = loadPreviousData();
     
     // Fetch the list of all squads
@@ -219,14 +233,14 @@ async function run() {
     // Fetch member counts in batches
     const squads = await fetchSquadsInBatches(squadList, cache);
     
-    // Sort squads by member count (descending) for better readability
+    // Sort squads by member count (descending)
     squads.sort((a, b) => b.count - a.count);
     
     // Calculate statistics
     const totalMembers = squads.reduce((sum, s) => sum + s.count, 0);
     const activeSquads = squads.filter(s => s.count > 0).length;
     const emptySquads = squads.filter(s => s.count === 0).length;
-    const avgMembers = totalMembers / activeSquads;
+    const avgMembers = activeSquads > 0 ? totalMembers / activeSquads : 0;
     
     // Create the final data object
     const dataToSave = {
@@ -240,7 +254,6 @@ async function run() {
       },
       fetchInfo: {
         totalApiCalls: totalApiCalls,
-        cachedResults: cachedCount,
         failedFetches: failedSquads.length,
         duration: ((Date.now() - startTime) / 1000).toFixed(1) + 's'
       },
@@ -252,6 +265,8 @@ async function run() {
     
     const endTime = Date.now();
     const duration = ((endTime - startTime) / 1000).toFixed(1);
+    const minutes = Math.floor(duration / 60);
+    const seconds = (duration % 60).toFixed(1);
     
     // Final report
     console.log("\n" + "=".repeat(60));
@@ -264,15 +279,18 @@ async function run() {
     console.log(`   Total members: ${totalMembers.toLocaleString()}`);
     console.log(`   Average members: ${avgMembers.toFixed(2)}`);
     console.log(`\n⚡ Performance:`);
-    console.log(`   Total time: ${duration}s`);
+    console.log(`   Total time: ${minutes}m ${seconds}s`);
     console.log(`   API calls made: ${totalApiCalls}`);
-    console.log(`   Cached results: ${cachedCount} (${(cachedCount / squads.length * 100).toFixed(1)}%)`);
     console.log(`   Failed fetches: ${failedSquads.length}`);
     console.log(`   Avg time/squad: ${(parseFloat(duration) / squads.length).toFixed(2)}s`);
+    console.log(`   Avg requests/min: ${((totalApiCalls / parseFloat(duration)) * 60).toFixed(2)}`);
     
     if (failedSquads.length > 0) {
       console.log(`\n⚠️  Failed squads (${failedSquads.length}):`);
-      failedSquads.forEach(s => console.log(`   - ${s.name}: ${s.error}`));
+      failedSquads.slice(0, 10).forEach(s => console.log(`   - ${s.name}: ${s.error}`));
+      if (failedSquads.length > 10) {
+        console.log(`   ... and ${failedSquads.length - 10} more`);
+      }
     }
     
     console.log("=".repeat(60));
