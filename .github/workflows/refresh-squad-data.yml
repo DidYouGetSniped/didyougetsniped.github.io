@@ -27,7 +27,7 @@ jobs:
 
       - name: Run fetch script
         run: node fetch-data.js
-        timeout-minutes: 45 # Increased timeout - with 531 squads and rate limiting, this could take 30-40 minutes
+        timeout-minutes: 80
 
       # Only commit if the file actually changed
       - name: Check for changes
