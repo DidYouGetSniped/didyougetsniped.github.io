@@ -45,17 +45,17 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Pull latest changes with rebase to avoid conflicts
-          echo "Pulling latest changes..."
-          git pull --rebase origin main || {
-            echo "Rebase failed, attempting merge strategy..."
-            git rebase --abort
-            git pull origin main --no-rebase
-          }
-          
-          # Add and commit the changes
+          # Add and commit the changes first (before pulling)
           git add squad-data.json
           git commit -m "chore: Auto-update squad data [skip ci]"
+          
+          # Pull latest changes with rebase to avoid conflicts
+          echo "Pulling latest changes..."
+          if ! git pull --rebase origin main; then
+            echo "Rebase failed, attempting merge strategy..."
+            git rebase --abort 2>/dev/null || true
+            git pull origin main --no-rebase
+          fi
           
           # Push with retry logic
           max_attempts=3
@@ -68,7 +68,7 @@ jobs:
             else
               if [ $attempt -lt $max_attempts ]; then
                 echo "⚠️ Push failed, pulling and retrying..."
-                git pull --rebase origin main
+                git pull --rebase origin main 2>/dev/null || git pull origin main --no-rebase
                 sleep 5
               fi
             fi
