@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (mode === 'min') {
               shouldInclude = memberLevel >= levelValue;
             } else if (mode === 'exact') {
-              shouldInclude = Math.abs(memberLevel - levelValue) <= 50;
+              shouldInclude = memberLevel === levelValue;
             }
 
             if (shouldInclude) {
@@ -406,11 +406,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const filteredCount = filteredPlayers.length;
 
         // 3. Calculate Stats for the Cards (SQUAD BASED)
-        // We still use this for the cards (ELO, Avg Level) because those are squad metrics
         const filteredStats = calculateFilteredStats(fullSquadData, levelFilter, currentFilterMode);
         const originalStats = calculateFilteredStats(fullSquadData, 3500, 'max');
-
-        // --- UPDATE TEXT DISPLAY LOGIC ---
+        
+        // Use actual player count from the filtered list for accuracy
+        filteredStats.totalPlayers = filteredPlayers.length;
         if (currentFilterMode === 'max' && levelFilter >= 3500) {
           filterInfo.textContent = 'Showing all players';
           whoIsItContainer.style.display = 'none';
