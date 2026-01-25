@@ -377,6 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
       `).join('');
     }
 
+        // --- REPLACE YOUR updateFilter FUNCTION WITH THIS ---
     function updateFilter() {
       const inputValue = parseInt(levelInput.value);
       
@@ -395,24 +396,44 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Update filter info
       if (fullSquadData.length > 0) {
-        // Get filtered players for "Who is it?" feature
+        // 1. Get the specific players matching the criteria (INDIVIDUALS)
         filteredPlayers = getFilteredPlayers(fullSquadData, levelFilter, currentFilterMode);
         
+        // 2. Get total count of all players in the database for percentage calc
+        // We do this by getting 'max 3500' which grabs everyone
+        const allPlayers = getFilteredPlayers(fullSquadData, 3500, 'max'); 
+        const totalPlayerCount = allPlayers.length;
+        const filteredCount = filteredPlayers.length;
+
+        // 3. Calculate Stats for the Cards (SQUAD BASED)
+        // We still use this for the cards (ELO, Avg Level) because those are squad metrics
         const filteredStats = calculateFilteredStats(fullSquadData, levelFilter, currentFilterMode);
         const originalStats = calculateFilteredStats(fullSquadData, 3500, 'max');
-        
+
+        // --- UPDATE TEXT DISPLAY LOGIC ---
         if (currentFilterMode === 'max' && levelFilter >= 3500) {
           filterInfo.textContent = 'Showing all players';
           whoIsItContainer.style.display = 'none';
-        } else if (filteredStats.totalPlayers === 0) {
+        } else if (filteredCount === 0) {
           filterInfo.textContent = 'No players match this filter';
           whoIsItContainer.style.display = 'none';
         } else {
-          const percentFiltered = ((filteredStats.totalPlayers / originalStats.totalPlayers) * 100).toFixed(1);
-          filterInfo.textContent = `Showing ${filteredStats.totalPlayers.toLocaleString()} players (${percentFiltered}% of total)`;
+          // Calculate percentage based on INDIVIDUALS, not squad averages
+          let percent = (filteredCount / totalPlayerCount) * 100;
+          let percentString = percent.toFixed(1);
+
+          // Fix the "1 player (0.0%)" bug
+          if (filteredCount > 0 && percentString === "0.0") {
+            percentString = "< 0.1";
+          }
+
+          // Handle pluralization (player vs players)
+          const noun = filteredCount === 1 ? 'player' : 'players';
+
+          filterInfo.textContent = `Showing ${filteredCount.toLocaleString()} ${noun} (${percentString}% of total)`;
           
           // Show "Who is it?" button if 30 or fewer players
-          if (filteredStats.totalPlayers <= 30 && filteredStats.totalPlayers > 0) {
+          if (filteredCount <= 30 && filteredCount > 0) {
             whoIsItContainer.style.display = 'block';
             playerList.style.display = 'none'; // Hide player list initially
           } else {
@@ -420,7 +441,8 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         }
         
-        // Recalculate and render statistics with new filter
+        // Recalculate and render statistics cards
+        // Note: We use originalStats for the global context, but filteredStats for the specific averages
         const originalData = JSON.parse(localStorage.getItem('originalSquadData'));
         if (originalData && originalData.statistics) {
           renderStatistics(originalData.statistics, filteredStats);
