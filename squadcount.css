@@ -220,12 +220,26 @@ footer p {
       margin: 20px 0;
       padding: 0;
     }
-    
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 1rem;
+}
+
+/* Responsive for tablets */
+@media (max-width: 768px) {
   .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 1rem;
-    }
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Responsive for phones */
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
     
     .stat-card {
       background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);

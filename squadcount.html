@@ -42,9 +42,9 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </div>
 
-    <!-- Statistics Section -->
+    <!-- Statistics Section (4 columns) -->
     <div class="stats-section">
-      <div class="stats-grid" id="stats-grid">
+      <div class="stats-grid" id="stats-grid" style="grid-template-columns: repeat(4, 1fr) !important;">
         <!-- Stats will be populated by JavaScript -->
         <div class="stat-card loading primary">
           <span class="stat-icon">📊</span>
@@ -56,6 +56,16 @@ document.addEventListener('DOMContentLoaded', function() {
           <div class="stat-value"></div>
           <div class="stat-label">Total Members</div>
         </div>
+        <div class="stat-card loading success">
+          <span class="stat-icon">⚔️</span>
+          <div class="stat-value"></div>
+          <div class="stat-label">Avg Kills ELO</div>
+        </div>
+        <div class="stat-card loading success">
+          <span class="stat-icon">🎮</span>
+          <div class="stat-value"></div>
+          <div class="stat-label">Avg Games ELO</div>
+        </div>
         <div class="stat-card loading">
           <span class="stat-icon">📈</span>
           <div class="stat-value"></div>
@@ -66,6 +76,16 @@ document.addEventListener('DOMContentLoaded', function() {
           <span class="stat-icon">💤</span>
           <div class="stat-value"></div>
           <div class="stat-label">Empty Squads</div>
+        </div>
+        <div class="stat-card loading info">
+          <span class="stat-icon">⭐</span>
+          <div class="stat-value"></div>
+          <div class="stat-label">Avg Level</div>
+        </div>
+        <div class="stat-card loading primary">
+          <span class="stat-icon">🎮</span>
+          <div class="stat-value"></div>
+          <div class="stat-label">Steam Users</div>
         </div>
       </div>
     </div>
@@ -130,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
     }
 
-    function renderStatistics(stats) {
+    function renderStatistics(stats, overallStats) {
       if (!stats) return;
 
       const cards = [
@@ -141,17 +161,22 @@ document.addEventListener('DOMContentLoaded', function() {
           class: 'primary'
         },
         {
-          icon: '💤',
-          value: stats.emptySquads || 0,
-          label: 'Empty Squads',
-          sublabel: stats.totalSquads ? `${((stats.emptySquads / stats.totalSquads) * 100).toFixed(1)}% of total` : '',
-          class: 'warning'
-        },
-        {
           icon: '👥',
           value: (stats.totalMembers || 0).toLocaleString(),
           label: 'Total Members',
           class: 'info'
+        },
+        {
+          icon: '⚔️',
+          value: overallStats?.avgKillsELO ? overallStats.avgKillsELO.toFixed(2) : 'N/A',
+          label: 'Avg Kills ELO',
+          class: 'success'
+        },
+        {
+          icon: '🎮',
+          value: overallStats?.avgGamesELO ? overallStats.avgGamesELO.toFixed(2) : 'N/A',
+          label: 'Avg Games ELO',
+          class: 'success'
         },
         {
           icon: '📈',
@@ -159,6 +184,26 @@ document.addEventListener('DOMContentLoaded', function() {
           label: 'Average Members',
           sublabel: 'per active squad',
           class: ''
+        },
+        {
+          icon: '💤',
+          value: stats.emptySquads || 0,
+          label: 'Empty Squads',
+          sublabel: stats.totalSquads ? `${((stats.emptySquads / stats.totalSquads) * 100).toFixed(1)}% of total` : '',
+          class: 'warning'
+        },
+        {
+          icon: '⭐',
+          value: overallStats?.avgLevel ? overallStats.avgLevel.toFixed(2) : 'N/A',
+          label: 'Avg Level',
+          class: 'info'
+        },
+        {
+          icon: '🎮',
+          value: overallStats?.steamPercent !== undefined ? `${overallStats.steamPercent}%` : 'N/A',
+          label: 'Steam Users',
+          sublabel: overallStats?.totalPlayers ? `of ${overallStats.totalPlayers.toLocaleString()} players` : '',
+          class: 'primary'
         }
       ];
 
@@ -207,9 +252,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = await response.json();
         squadData = data.squads;
 
-        // Render statistics if available
+        // Render statistics with overall stats
         if (data.statistics) {
-          renderStatistics(data.statistics);
+          renderStatistics(data.statistics, data.overallStats);
         }
 
         // Render squad list
@@ -223,8 +268,8 @@ document.addEventListener('DOMContentLoaded', function() {
           const fetchInfo = data.fetchInfo;
           updateInfoEl.innerHTML = `
             Last updated <strong>${timeAgoString}</strong>. 
-            Fetched ${fetchInfo.totalApiCalls || 'N/A'} squads in ${fetchInfo.duration || 'N/A'}
-            ${fetchInfo.cachedResults ? ` (${fetchInfo.cachedResults} from cache)` : ''}.
+            Fetched ${fetchInfo.totalApiCalls || 'N/A'} API calls in ${fetchInfo.duration || 'N/A'}
+            ${fetchInfo.failedFetches ? ` (${fetchInfo.failedFetches} failed)` : ''}.
           `;
         }
 
