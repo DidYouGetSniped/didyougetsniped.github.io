@@ -1,4 +1,4 @@
-// fetch-data.js - Optimized version with proper rate limiting
+// fetch-data.js - Optimized version with proper rate limiting and comprehensive stats
 
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 
@@ -11,13 +11,50 @@ const CONFIG = {
   maxRetries: 3,
   retryDelayMs: 2000,
   cacheFile: 'squad-data.json',
-  cacheDurationHours: 12
+  cacheDurationHours: 12,
+  failedSquadsFile: 'failed-squads.json' // Track failed squads for priority retry
 };
 
 // Track API calls
 let requestTimestamps = [];
 let totalApiCalls = 0;
 let failedSquads = [];
+
+/**
+ * Load previously failed squads for priority processing
+ */
+function loadFailedSquads() {
+  if (!existsSync(CONFIG.failedSquadsFile)) {
+    return [];
+  }
+  
+  try {
+    const data = JSON.parse(readFileSync(CONFIG.failedSquadsFile, 'utf-8'));
+    const failedNames = data.failed || [];
+    console.log(`📋 Found ${failedNames.length} previously failed squads - will retry these first\n`);
+    return failedNames;
+  } catch (error) {
+    console.warn(`⚠️  Could not load failed squads list: ${error.message}\n`);
+    return [];
+  }
+}
+
+/**
+ * Save failed squads for next run
+ */
+function saveFailedSquads() {
+  try {
+    const failedNames = failedSquads.map(s => s.name);
+    writeFileSync(CONFIG.failedSquadsFile, JSON.stringify({ 
+      failed: failedNames,
+      lastUpdated: new Date().toISOString(),
+      count: failedNames.length
+    }, null, 2));
+    console.log(`💾 Saved ${failedNames.length} failed squads for priority retry next time\n`);
+  } catch (error) {
+    console.warn(`⚠️  Could not save failed squads list: ${error.message}\n`);
+  }
+}
 
 /**
  * Checks if we can make an API call without exceeding rate limit
@@ -107,7 +144,7 @@ function loadPreviousData() {
 }
 
 /**
- * Fetches the member count for a single squad
+ * Fetches the member count and stats for a single squad
  */
 async function fetchSquadData(squadName, cache) {
   try {
@@ -117,9 +154,41 @@ async function fetchSquadData(squadName, cache) {
     
     const count = Array.isArray(members) ? members.length : 0;
     
+    // Calculate member statistics if there are members
+    let memberStats = null;
+    if (count > 0 && Array.isArray(members)) {
+      let totalKillsELO = 0;
+      let totalGamesELO = 0;
+      let totalLevel = 0;
+      let steamCount = 0;
+      let validMembers = 0;
+      
+      members.forEach(member => {
+        if (member && typeof member === 'object') {
+          validMembers++;
+          totalKillsELO += member.killsELO || 0;
+          totalGamesELO += member.gamesELO || 0;
+          totalLevel += member.level || 0;
+          // steam can be true, false, or null - only count if explicitly true
+          if (member.steam === true) steamCount++;
+        }
+      });
+      
+      if (validMembers > 0) {
+        memberStats = {
+          avgKillsELO: totalKillsELO / validMembers,
+          avgGamesELO: totalGamesELO / validMembers,
+          avgLevel: totalLevel / validMembers,
+          steamCount: steamCount,
+          totalMembers: validMembers
+        };
+      }
+    }
+    
     return {
       name: squadName,
-      count: count
+      count: count,
+      memberStats: memberStats
     };
   } catch (err) {
     console.error(`  ❌ Failed to fetch ${squadName}: ${err.message}`);
@@ -132,7 +201,7 @@ async function fetchSquadData(squadName, cache) {
       return cached;
     }
     
-    return { name: squadName, count: 0 };
+    return { name: squadName, count: 0, memberStats: null };
   }
 }
 
@@ -208,6 +277,51 @@ async function fetchSquadsInBatches(squadList, cache) {
 }
 
 /**
+ * Calculate overall statistics across all squads
+ */
+function calculateOverallStats(squads) {
+  let totalKillsELO = 0;
+  let totalGamesELO = 0;
+  let totalLevel = 0;
+  let totalSteamCount = 0;
+  let totalPlayers = 0;
+  let squadsWithStats = 0;
+  
+  squads.forEach(squad => {
+    if (squad.memberStats && squad.memberStats.totalMembers > 0) {
+      // Weight by squad size
+      const memberCount = squad.memberStats.totalMembers;
+      totalKillsELO += squad.memberStats.avgKillsELO * memberCount;
+      totalGamesELO += squad.memberStats.avgGamesELO * memberCount;
+      totalLevel += squad.memberStats.avgLevel * memberCount;
+      totalSteamCount += squad.memberStats.steamCount;
+      totalPlayers += memberCount;
+      squadsWithStats++;
+    }
+  });
+  
+  if (totalPlayers === 0) {
+    return {
+      avgKillsELO: 0,
+      avgGamesELO: 0,
+      avgLevel: 0,
+      steamCount: 0,
+      steamPercent: 0,
+      totalPlayers: 0
+    };
+  }
+  
+  return {
+    avgKillsELO: totalKillsELO / totalPlayers,
+    avgGamesELO: totalGamesELO / totalPlayers,
+    avgLevel: totalLevel / totalPlayers,
+    steamCount: totalSteamCount,
+    steamPercent: parseFloat(((totalSteamCount / totalPlayers) * 100).toFixed(1)),
+    totalPlayers: totalPlayers
+  };
+}
+
+/**
  * Main function to run the data fetching process
  */
 async function run() {
@@ -225,22 +339,51 @@ async function run() {
     // Load previous data for fallback only
     const cache = loadPreviousData();
     
+    // Load previously failed squads
+    const previouslyFailedSquads = loadFailedSquads();
+    
     // Fetch the list of all squads
     console.log("📋 Fetching squad list...");
     const squadList = await fetchJsonWithRetry('https://wbapi.wbpjs.com/squad/getSquadList');
     console.log(`   ✓ Found ${squadList.length} squads\n`);
     
+    // Prioritize previously failed squads
+    const prioritizedList = [];
+    const remainingList = [];
+    
+    squadList.forEach(squadName => {
+      if (previouslyFailedSquads.includes(squadName)) {
+        prioritizedList.push(squadName);
+      } else {
+        remainingList.push(squadName);
+      }
+    });
+    
+    const orderedSquadList = [...prioritizedList, ...remainingList];
+    
+    if (prioritizedList.length > 0) {
+      console.log(`🔄 Prioritizing ${prioritizedList.length} previously failed squads\n`);
+    }
+    
     // Fetch member counts in batches
-    const squads = await fetchSquadsInBatches(squadList, cache);
+    const squads = await fetchSquadsInBatches(orderedSquadList, cache);
     
     // Sort squads by member count (descending)
     squads.sort((a, b) => b.count - a.count);
     
     // Calculate statistics
     const totalMembers = squads.reduce((sum, s) => sum + s.count, 0);
-    const activeSquads = squads.filter(s => s.count > 0).length;
-    const emptySquads = squads.filter(s => s.count === 0).length;
-    const avgMembers = activeSquads > 0 ? totalMembers / activeSquads : 0;
+    // Empty squads = squads with 0 or 1 members
+    const emptySquads = squads.filter(s => s.count <= 1).length;
+    // Active squads = squads with more than 1 member
+    const activeSquads = squads.filter(s => s.count > 1).length;
+    // Average members only counts active squads (more than 1 member)
+    const avgMembers = activeSquads > 0 
+      ? squads.filter(s => s.count > 1).reduce((sum, s) => sum + s.count, 0) / activeSquads 
+      : 0;
+    
+    // Calculate overall player statistics
+    const overallStats = calculateOverallStats(squads);
     
     // Create the final data object
     const dataToSave = {
@@ -251,6 +394,14 @@ async function run() {
         emptySquads: emptySquads,
         totalMembers: totalMembers,
         averageMembers: parseFloat(avgMembers.toFixed(2))
+      },
+      overallStats: {
+        avgKillsELO: parseFloat(overallStats.avgKillsELO.toFixed(2)),
+        avgGamesELO: parseFloat(overallStats.avgGamesELO.toFixed(2)),
+        avgLevel: parseFloat(overallStats.avgLevel.toFixed(2)),
+        steamCount: overallStats.steamCount,
+        steamPercent: overallStats.steamPercent,
+        totalPlayers: overallStats.totalPlayers
       },
       fetchInfo: {
         totalApiCalls: totalApiCalls,
@@ -263,6 +414,19 @@ async function run() {
     // Save the data
     writeFileSync(CONFIG.cacheFile, JSON.stringify(dataToSave, null, 2));
     
+    // Save failed squads for next run
+    if (failedSquads.length > 0) {
+      saveFailedSquads();
+    } else if (existsSync(CONFIG.failedSquadsFile)) {
+      // Clear the failed squads file if all succeeded
+      writeFileSync(CONFIG.failedSquadsFile, JSON.stringify({ 
+        failed: [],
+        lastUpdated: new Date().toISOString(),
+        count: 0
+      }, null, 2));
+      console.log(`✅ All squads fetched successfully - cleared failed squads list\n`);
+    }
+    
     const endTime = Date.now();
     const duration = ((endTime - startTime) / 1000).toFixed(1);
     const minutes = Math.floor(duration / 60);
@@ -272,12 +436,18 @@ async function run() {
     console.log("\n" + "=".repeat(60));
     console.log("✅ SQUAD DATA FETCH - COMPLETED");
     console.log("=".repeat(60));
-    console.log(`📊 Statistics:`);
+    console.log(`📊 Squad Statistics:`);
     console.log(`   Total squads: ${squads.length}`);
-    console.log(`   Active squads: ${activeSquads} (${(activeSquads / squads.length * 100).toFixed(1)}%)`);
-    console.log(`   Empty squads: ${emptySquads}`);
+    console.log(`   Active squads (>1 member): ${activeSquads} (${(activeSquads / squads.length * 100).toFixed(1)}%)`);
+    console.log(`   Empty squads (≤1 member): ${emptySquads} (${(emptySquads / squads.length * 100).toFixed(1)}%)`);
     console.log(`   Total members: ${totalMembers.toLocaleString()}`);
-    console.log(`   Average members: ${avgMembers.toFixed(2)}`);
+    console.log(`   Average members (active squads only): ${avgMembers.toFixed(2)}`);
+    console.log(`\n📊 Player Statistics:`);
+    console.log(`   Total players: ${overallStats.totalPlayers.toLocaleString()}`);
+    console.log(`   Average Kills ELO: ${overallStats.avgKillsELO.toFixed(2)}`);
+    console.log(`   Average Games ELO: ${overallStats.avgGamesELO.toFixed(2)}`);
+    console.log(`   Average Level: ${overallStats.avgLevel.toFixed(2)}`);
+    console.log(`   Steam users: ${overallStats.steamCount.toLocaleString()} (${overallStats.steamPercent}%)`);
     console.log(`\n⚡ Performance:`);
     console.log(`   Total time: ${minutes}m ${seconds}s`);
     console.log(`   API calls made: ${totalApiCalls}`);
@@ -286,7 +456,7 @@ async function run() {
     console.log(`   Avg requests/min: ${((totalApiCalls / parseFloat(duration)) * 60).toFixed(2)}`);
     
     if (failedSquads.length > 0) {
-      console.log(`\n⚠️  Failed squads (${failedSquads.length}):`);
+      console.log(`\n⚠️  Failed squads (${failedSquads.length}) - will retry first next time:`);
       failedSquads.slice(0, 10).forEach(s => console.log(`   - ${s.name}: ${s.error}`));
       if (failedSquads.length > 10) {
         console.log(`   ... and ${failedSquads.length - 10} more`);
