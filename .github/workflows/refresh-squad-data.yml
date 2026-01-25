@@ -4,7 +4,7 @@ name: Refresh Squad Data
 
 on:
   schedule:
-    # Run every 12 hours instead of every 8 to reduce API load
+    # Run every 12 hours
     # At 00:00 UTC and 12:00 UTC
     - cron: '0 */12 * * *'
   workflow_dispatch: # Allow manual triggers
@@ -23,12 +23,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20' # Use Node 20 which has native fetch support
 
-      # Use the advanced version with caching and retry logic
       - name: Run fetch script
         run: node fetch-data.js
-        timeout-minutes: 30 # Increased timeout for large squad lists
+        timeout-minutes: 45 # Increased timeout - with 531 squads and rate limiting, this could take 30-40 minutes
 
       # Only commit if the file actually changed
       - name: Check for changes
