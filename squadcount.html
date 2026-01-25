@@ -90,24 +90,22 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </div>
 
-    <!-- Level Filter Slider -->
+    <!-- Level Filter -->
     <div class="level-filter">
-      <h3>🔍 Filter by Maximum Level</h3>
-      <div class="slider-container">
-        <input type="range" min="0" max="3500" step="250" value="3500" class="level-slider" id="levelSlider">
-      </div>
-      <div class="slider-labels">
-        <span>0</span>
-        <span>500</span>
-        <span>1000</span>
-        <span>1500</span>
-        <span>2000</span>
-        <span>2500</span>
-        <span>3000</span>
-        <span>3500</span>
-      </div>
-      <div class="filter-value">
-        Max Level: <span id="levelValue">3500</span>
+      <h3>🔍 Filter by Level</h3>
+      <div class="filter-controls">
+        <div class="filter-mode">
+          <label for="filterMode">Filter Mode:</label>
+          <select id="filterMode" class="filter-select">
+            <option value="max">Maximum Level</option>
+            <option value="min">Minimum Level</option>
+            <option value="exact">Exact Level</option>
+          </select>
+        </div>
+        <div class="level-input-group">
+          <label for="levelInput">Level:</label>
+          <input type="number" id="levelInput" class="level-input" min="0" max="3500" value="3500" placeholder="Enter level">
+        </div>
       </div>
       <div class="filter-info" id="filterInfo">
         Showing all players
@@ -141,14 +139,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const toggleSortBtn = document.getElementById('toggleSort');
     const statsGridEl = document.getElementById('stats-grid');
     const updateInfoEl = document.getElementById('update-info');
-    const levelSlider = document.getElementById('levelSlider');
-    const levelValue = document.getElementById('levelValue');
+    const levelInput = document.getElementById('levelInput');
+    const filterMode = document.getElementById('filterMode');
     const filterInfo = document.getElementById('filterInfo');
 
     let squadData = [];
     let fullSquadData = []; // Store original data
     let sortMode = 'countDesc'; // New state: 'countDesc', 'countAsc', or 'alphaAsc'
-    let maxLevel = 3500; // Current level filter
+    let levelFilter = 3500; // Current level filter
+    let currentFilterMode = 'max'; // 'max', 'min', or 'exact'
 
     function formatTimeAgo(date) {
       const now = new Date();
@@ -179,44 +178,35 @@ document.addEventListener('DOMContentLoaded', function() {
       return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
     }
 
-    function calculateFilteredStats(squads, maxLevelFilter) {
+    function calculateFilteredStats(squads, levelValue, mode) {
       let totalKillsELO = 0;
       let totalGamesELO = 0;
       let totalLevel = 0;
       let totalSteamCount = 0;
       let totalPlayers = 0;
-      let filteredPlayerCount = 0;
 
       squads.forEach(squad => {
         if (squad.memberStats && squad.memberStats.totalMembers > 0) {
-          // We need to recalculate stats based on filtered members
-          // Since we don't have individual member data here, we'll use an approximation
-          // This assumes uniform distribution of levels
           const avgLevel = squad.memberStats.avgLevel;
-          
-          if (avgLevel <= maxLevelFilter) {
-            // If average is below filter, include all members
+          let shouldInclude = false;
+
+          // Determine if squad should be included based on filter mode
+          if (mode === 'max') {
+            shouldInclude = avgLevel <= levelValue;
+          } else if (mode === 'min') {
+            shouldInclude = avgLevel >= levelValue;
+          } else if (mode === 'exact') {
+            // For exact, include squads with average level within ±50 of target
+            shouldInclude = Math.abs(avgLevel - levelValue) <= 50;
+          }
+
+          if (shouldInclude) {
             const memberCount = squad.memberStats.totalMembers;
             totalKillsELO += squad.memberStats.avgKillsELO * memberCount;
             totalGamesELO += squad.memberStats.avgGamesELO * memberCount;
             totalLevel += squad.memberStats.avgLevel * memberCount;
             totalSteamCount += squad.memberStats.steamCount;
             totalPlayers += memberCount;
-            filteredPlayerCount += memberCount;
-          } else if (maxLevelFilter < 3500) {
-            // Partial inclusion - estimate based on distribution
-            // This is a simplified approximation
-            const inclusionRatio = Math.max(0, Math.min(1, maxLevelFilter / avgLevel));
-            const estimatedMembers = Math.floor(squad.memberStats.totalMembers * inclusionRatio);
-            
-            if (estimatedMembers > 0) {
-              totalKillsELO += squad.memberStats.avgKillsELO * estimatedMembers;
-              totalGamesELO += squad.memberStats.avgGamesELO * estimatedMembers;
-              totalLevel += (maxLevelFilter * 0.7) * estimatedMembers; // Estimate lower average
-              totalSteamCount += Math.floor(squad.memberStats.steamCount * inclusionRatio);
-              totalPlayers += estimatedMembers;
-              filteredPlayerCount += estimatedMembers;
-            }
           }
         }
       });
@@ -228,8 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
           avgLevel: 0,
           steamCount: 0,
           steamPercent: 0,
-          totalPlayers: 0,
-          filteredCount: 0
+          totalPlayers: 0
         };
       }
 
@@ -239,8 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         avgLevel: totalLevel / totalPlayers,
         steamCount: totalSteamCount,
         steamPercent: parseFloat(((totalSteamCount / totalPlayers) * 100).toFixed(1)),
-        totalPlayers: totalPlayers,
-        filteredCount: filteredPlayerCount
+        totalPlayers: totalPlayers
       };
     }
 
@@ -258,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
           icon: '👥',
           value: (overallStats.totalPlayers || 0).toLocaleString(),
           label: 'Filtered Players',
-          sublabel: maxLevel < 3500 ? `max level ${maxLevel}` : 'all players',
+          sublabel: getFilterDescription(),
           class: 'info'
         },
         {
@@ -312,6 +300,18 @@ document.addEventListener('DOMContentLoaded', function() {
       `).join('');
     }
 
+    function getFilterDescription() {
+      if (currentFilterMode === 'max' && levelFilter >= 3500) {
+        return 'all players';
+      } else if (currentFilterMode === 'max') {
+        return `max level ${levelFilter}`;
+      } else if (currentFilterMode === 'min') {
+        return `min level ${levelFilter}`;
+      } else {
+        return `level ~${levelFilter}`;
+      }
+    }
+
     function renderSquadList() {
       if (squadData.length === 0) return;
 
@@ -338,22 +338,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateFilter() {
-      maxLevel = parseInt(levelSlider.value);
-      levelValue.textContent = maxLevel;
+      const inputValue = parseInt(levelInput.value);
+      
+      // Validate input
+      if (isNaN(inputValue) || inputValue < 0) {
+        levelFilter = 0;
+        levelInput.value = 0;
+      } else if (inputValue > 3500) {
+        levelFilter = 3500;
+        levelInput.value = 3500;
+      } else {
+        levelFilter = inputValue;
+      }
+
+      currentFilterMode = filterMode.value;
       
       // Update filter info
-      if (maxLevel >= 3500) {
-        filterInfo.textContent = 'Showing all players';
-      } else {
-        const filteredStats = calculateFilteredStats(fullSquadData, maxLevel);
-        const originalStats = calculateFilteredStats(fullSquadData, 3500);
-        const percentFiltered = ((filteredStats.totalPlayers / originalStats.totalPlayers) * 100).toFixed(1);
-        filterInfo.textContent = `Showing ${filteredStats.totalPlayers.toLocaleString()} players (${percentFiltered}% of total)`;
-      }
-      
-      // Recalculate and render statistics with new filter
       if (fullSquadData.length > 0) {
-        const filteredStats = calculateFilteredStats(fullSquadData, maxLevel);
+        const filteredStats = calculateFilteredStats(fullSquadData, levelFilter, currentFilterMode);
+        const originalStats = calculateFilteredStats(fullSquadData, 3500, 'max');
+        
+        if (currentFilterMode === 'max' && levelFilter >= 3500) {
+          filterInfo.textContent = 'Showing all players';
+        } else if (filteredStats.totalPlayers === 0) {
+          filterInfo.textContent = 'No players match this filter';
+        } else {
+          const percentFiltered = ((filteredStats.totalPlayers / originalStats.totalPlayers) * 100).toFixed(1);
+          filterInfo.textContent = `Showing ${filteredStats.totalPlayers.toLocaleString()} players (${percentFiltered}% of total)`;
+        }
+        
+        // Recalculate and render statistics with new filter
         const originalData = JSON.parse(localStorage.getItem('originalSquadData'));
         if (originalData && originalData.statistics) {
           renderStatistics(originalData.statistics, filteredStats);
@@ -425,8 +439,9 @@ document.addEventListener('DOMContentLoaded', function() {
       renderSquadList();
     });
 
-    // Level slider event listener
-    levelSlider.addEventListener('input', updateFilter);
+    // Level input event listeners
+    levelInput.addEventListener('input', updateFilter);
+    filterMode.addEventListener('change', updateFilter);
 
     loadAndDisplayData();
   </script>
