@@ -411,8 +411,8 @@ document.addEventListener('DOMContentLoaded', function() {
           const percentFiltered = ((filteredStats.totalPlayers / originalStats.totalPlayers) * 100).toFixed(1);
           filterInfo.textContent = `Showing ${filteredStats.totalPlayers.toLocaleString()} players (${percentFiltered}% of total)`;
           
-          // Show "Who is it?" button if 15 or fewer players
-          if (filteredStats.totalPlayers <= 15 && filteredStats.totalPlayers > 0) {
+          // Show "Who is it?" button if 30 or fewer players
+          if (filteredStats.totalPlayers <= 30 && filteredStats.totalPlayers > 0) {
             whoIsItContainer.style.display = 'block';
             playerList.style.display = 'none'; // Hide player list initially
           } else {
