@@ -90,6 +90,30 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </div>
 
+    <!-- Level Filter Slider -->
+    <div class="level-filter">
+      <h3>🔍 Filter by Maximum Level</h3>
+      <div class="slider-container">
+        <input type="range" min="0" max="3500" step="250" value="3500" class="level-slider" id="levelSlider">
+      </div>
+      <div class="slider-labels">
+        <span>0</span>
+        <span>500</span>
+        <span>1000</span>
+        <span>1500</span>
+        <span>2000</span>
+        <span>2500</span>
+        <span>3000</span>
+        <span>3500</span>
+      </div>
+      <div class="filter-value">
+        Max Level: <span id="levelValue">3500</span>
+      </div>
+      <div class="filter-info" id="filterInfo">
+        Showing all players
+      </div>
+    </div>
+
     <div class="section-divider">
       <span>All Squads</span>
     </div>
@@ -117,9 +141,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const toggleSortBtn = document.getElementById('toggleSort');
     const statsGridEl = document.getElementById('stats-grid');
     const updateInfoEl = document.getElementById('update-info');
+    const levelSlider = document.getElementById('levelSlider');
+    const levelValue = document.getElementById('levelValue');
+    const filterInfo = document.getElementById('filterInfo');
 
     let squadData = [];
+    let fullSquadData = []; // Store original data
     let sortMode = 'countDesc'; // New state: 'countDesc', 'countAsc', or 'alphaAsc'
+    let maxLevel = 3500; // Current level filter
 
     function formatTimeAgo(date) {
       const now = new Date();
@@ -150,6 +179,71 @@ document.addEventListener('DOMContentLoaded', function() {
       return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
     }
 
+    function calculateFilteredStats(squads, maxLevelFilter) {
+      let totalKillsELO = 0;
+      let totalGamesELO = 0;
+      let totalLevel = 0;
+      let totalSteamCount = 0;
+      let totalPlayers = 0;
+      let filteredPlayerCount = 0;
+
+      squads.forEach(squad => {
+        if (squad.memberStats && squad.memberStats.totalMembers > 0) {
+          // We need to recalculate stats based on filtered members
+          // Since we don't have individual member data here, we'll use an approximation
+          // This assumes uniform distribution of levels
+          const avgLevel = squad.memberStats.avgLevel;
+          
+          if (avgLevel <= maxLevelFilter) {
+            // If average is below filter, include all members
+            const memberCount = squad.memberStats.totalMembers;
+            totalKillsELO += squad.memberStats.avgKillsELO * memberCount;
+            totalGamesELO += squad.memberStats.avgGamesELO * memberCount;
+            totalLevel += squad.memberStats.avgLevel * memberCount;
+            totalSteamCount += squad.memberStats.steamCount;
+            totalPlayers += memberCount;
+            filteredPlayerCount += memberCount;
+          } else if (maxLevelFilter < 3500) {
+            // Partial inclusion - estimate based on distribution
+            // This is a simplified approximation
+            const inclusionRatio = Math.max(0, Math.min(1, maxLevelFilter / avgLevel));
+            const estimatedMembers = Math.floor(squad.memberStats.totalMembers * inclusionRatio);
+            
+            if (estimatedMembers > 0) {
+              totalKillsELO += squad.memberStats.avgKillsELO * estimatedMembers;
+              totalGamesELO += squad.memberStats.avgGamesELO * estimatedMembers;
+              totalLevel += (maxLevelFilter * 0.7) * estimatedMembers; // Estimate lower average
+              totalSteamCount += Math.floor(squad.memberStats.steamCount * inclusionRatio);
+              totalPlayers += estimatedMembers;
+              filteredPlayerCount += estimatedMembers;
+            }
+          }
+        }
+      });
+
+      if (totalPlayers === 0) {
+        return {
+          avgKillsELO: 0,
+          avgGamesELO: 0,
+          avgLevel: 0,
+          steamCount: 0,
+          steamPercent: 0,
+          totalPlayers: 0,
+          filteredCount: 0
+        };
+      }
+
+      return {
+        avgKillsELO: totalKillsELO / totalPlayers,
+        avgGamesELO: totalGamesELO / totalPlayers,
+        avgLevel: totalLevel / totalPlayers,
+        steamCount: totalSteamCount,
+        steamPercent: parseFloat(((totalSteamCount / totalPlayers) * 100).toFixed(1)),
+        totalPlayers: totalPlayers,
+        filteredCount: filteredPlayerCount
+      };
+    }
+
     function renderStatistics(stats, overallStats) {
       if (!stats) return;
 
@@ -162,8 +256,9 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
           icon: '👥',
-          value: (stats.totalMembers || 0).toLocaleString(),
-          label: 'Total Members',
+          value: (overallStats.totalPlayers || 0).toLocaleString(),
+          label: 'Filtered Players',
+          sublabel: maxLevel < 3500 ? `max level ${maxLevel}` : 'all players',
           class: 'info'
         },
         {
@@ -242,6 +337,30 @@ document.addEventListener('DOMContentLoaded', function() {
       `).join('');
     }
 
+    function updateFilter() {
+      maxLevel = parseInt(levelSlider.value);
+      levelValue.textContent = maxLevel;
+      
+      // Update filter info
+      if (maxLevel >= 3500) {
+        filterInfo.textContent = 'Showing all players';
+      } else {
+        const filteredStats = calculateFilteredStats(fullSquadData, maxLevel);
+        const originalStats = calculateFilteredStats(fullSquadData, 3500);
+        const percentFiltered = ((filteredStats.totalPlayers / originalStats.totalPlayers) * 100).toFixed(1);
+        filterInfo.textContent = `Showing ${filteredStats.totalPlayers.toLocaleString()} players (${percentFiltered}% of total)`;
+      }
+      
+      // Recalculate and render statistics with new filter
+      if (fullSquadData.length > 0) {
+        const filteredStats = calculateFilteredStats(fullSquadData, maxLevel);
+        const originalData = JSON.parse(localStorage.getItem('originalSquadData'));
+        if (originalData && originalData.statistics) {
+          renderStatistics(originalData.statistics, filteredStats);
+        }
+      }
+    }
+
     async function loadAndDisplayData() {
       try {
         const response = await fetch('squad-data.json?v=' + new Date().getTime()); // Cache-bust
@@ -251,8 +370,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const data = await response.json();
         squadData = data.squads;
+        fullSquadData = data.squads; // Store original data
+        
+        // Store original data for filter calculations
+        localStorage.setItem('originalSquadData', JSON.stringify(data));
 
-        // Render statistics with overall stats
+        // Render statistics with overall stats (initial render with no filter)
         if (data.statistics) {
           renderStatistics(data.statistics, data.overallStats);
         }
@@ -272,6 +395,9 @@ document.addEventListener('DOMContentLoaded', function() {
             ${fetchInfo.failedFetches ? ` (${fetchInfo.failedFetches} failed)` : ''}.
           `;
         }
+
+        // Initialize filter info
+        updateFilter();
 
       } catch (error) {
         console.error('Error loading squad data:', error);
@@ -298,6 +424,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       renderSquadList();
     });
+
+    // Level slider event listener
+    levelSlider.addEventListener('input', updateFilter);
 
     loadAndDisplayData();
   </script>
