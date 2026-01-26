@@ -43,12 +43,19 @@ function loadFailedSquads() {
 function saveFailedSquads() {
   try {
     const failedNames = failedSquads.map(s => s.name);
-    writeFileSync(CONFIG.failedSquadsFile, JSON.stringify({ 
+    const data = { 
       failed: failedNames,
       lastUpdated: new Date().toISOString(),
       count: failedNames.length
-    }, null, 2));
-    console.log(`💾 Saved ${failedNames.length} failed squads for priority retry next time\n`);
+    };
+    
+    writeFileSync(CONFIG.failedSquadsFile, JSON.stringify(data, null, 2));
+    
+    if (failedNames.length > 0) {
+      console.log(`💾 Saved ${failedNames.length} failed squads for priority retry next time\n`);
+    } else {
+      console.log(`✅ All squads fetched successfully - cleared failed squads list\n`);
+    }
   } catch (error) {
     console.warn(`⚠️  Could not save failed squads list: ${error.message}\n`);
   }
@@ -200,6 +207,8 @@ async function fetchSquadData(squadName, cache) {
     };
   } catch (err) {
     console.error(`  ❌ Failed to fetch ${squadName}: ${err.message}`);
+    
+    // Add to failed squads array
     failedSquads.push({ name: squadName, error: err.message });
     
     // Return cached data if available, otherwise return 0
@@ -428,18 +437,8 @@ async function run() {
     // Save the data
     writeFileSync(CONFIG.cacheFile, JSON.stringify(dataToSave, null, 2));
     
-    // Save failed squads for next run
-    if (failedSquads.length > 0) {
-      saveFailedSquads();
-    } else if (existsSync(CONFIG.failedSquadsFile)) {
-      // Clear the failed squads file if all succeeded
-      writeFileSync(CONFIG.failedSquadsFile, JSON.stringify({ 
-        failed: [],
-        lastUpdated: new Date().toISOString(),
-        count: 0
-      }, null, 2));
-      console.log(`✅ All squads fetched successfully - cleared failed squads list\n`);
-    }
+    // ALWAYS save failed squads file (whether there are failures or not)
+    saveFailedSquads();
     
     const endTime = Date.now();
     const duration = ((endTime - startTime) / 1000).toFixed(1);
@@ -486,6 +485,10 @@ async function run() {
     console.error("=".repeat(60));
     console.error(error);
     console.error("=".repeat(60));
+    
+    // Save failed squads even on fatal error
+    saveFailedSquads();
+    
     process.exit(1);
   }
 }
