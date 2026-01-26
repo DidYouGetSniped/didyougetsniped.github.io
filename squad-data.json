@@ -1,33 +1,33 @@
 {
-  "lastUpdated": "2026-01-26T08:50:42.287Z",
+  "lastUpdated": "2026-01-26T16:51:22.452Z",
   "statistics": {
-    "totalSquads": 531,
+    "totalSquads": 532,
     "activeSquads": 255,
-    "emptySquads": 276,
-    "totalMembers": 2050,
+    "emptySquads": 277,
+    "totalMembers": 2051,
     "averageMembers": 6.96
   },
   "overallStats": {
-    "avgKillsELO": 1634.29,
-    "avgGamesELO": 1738.88,
-    "avgLevel": 159.04,
+    "avgKillsELO": 1634.25,
+    "avgGamesELO": 1738.7,
+    "avgLevel": 158.99,
     "steamCount": 547,
     "steamPercent": 26.7,
-    "totalPlayers": 2050
+    "totalPlayers": 2051
   },
   "fetchInfo": {
-    "totalApiCalls": 538,
-    "failedFetches": 2,
-    "duration": "1898.2s"
+    "totalApiCalls": 533,
+    "failedFetches": 0,
+    "duration": "1846.2s"
   },
   "squads": [
     {
       "name": "CAESAR",
       "count": 170,
       "memberStats": {
-        "avgKillsELO": 1625.915882352942,
-        "avgGamesELO": 1733.3854705882345,
-        "avgLevel": 195.08235294117648,
+        "avgKillsELO": 1625.95805882353,
+        "avgGamesELO": 1733.312411764705,
+        "avgLevel": 195.08823529411765,
         "steamCount": 46,
         "totalMembers": 170
       },
@@ -408,14 +408,14 @@
           "level": 65
         },
         {
+          "uid": "63c8fbcfd142aff929a28ea2",
+          "name": "Colonel Fires",
+          "level": 738
+        },
+        {
           "uid": "618da739bfea71916b4827f3",
           "name": "FortuneFaded",
           "level": 64
-        },
-        {
-          "uid": "63c8fbcfd142aff929a28ea2",
-          "name": "Colonel Fires",
-          "level": 737
         },
         {
           "uid": "62dc1fcdbfea71046ed93d00",
@@ -2512,8 +2512,8 @@
       "name": "APG",
       "count": 27,
       "memberStats": {
-        "avgKillsELO": 1668.7177777777777,
-        "avgGamesELO": 1730.397037037037,
+        "avgKillsELO": 1668.7233333333334,
+        "avgGamesELO": 1730.4514814814816,
         "avgLevel": 157.07407407407408,
         "steamCount": 8,
         "totalMembers": 27
@@ -3059,9 +3059,9 @@
       "name": "SOF",
       "count": 22,
       "memberStats": {
-        "avgKillsELO": 1645.9640909090908,
-        "avgGamesELO": 1526.677727272727,
-        "avgLevel": 100.72727272727273,
+        "avgKillsELO": 1647.433181818182,
+        "avgGamesELO": 1525.9131818181816,
+        "avgLevel": 100.81818181818181,
         "steamCount": 5,
         "totalMembers": 22
       },
@@ -3133,18 +3133,18 @@
         },
         {
           "uid": "693d5bc2d142af9c6bc061e6",
-          "name": "ENDO mame .jp",
+          "name": "ENDO-mame .jp",
           "level": 42
         },
         {
           "uid": "6728943bbfea71ab664bbf52",
-          "name": "磁力の父はソレノイド",
-          "level": 122
+          "name": "Raf coffee",
+          "level": 123
         },
         {
           "uid": "68ae76aebfea716606a52907",
           "name": "Tkg umai",
-          "level": 28
+          "level": 29
         },
         {
           "uid": "648960bbd142af583f1f7dad",
@@ -7644,9 +7644,9 @@
       "name": "BOT",
       "count": 5,
       "memberStats": {
-        "avgKillsELO": 1716.45,
-        "avgGamesELO": 2075.8839999999996,
-        "avgLevel": 509.2,
+        "avgKillsELO": 1716.6879999999996,
+        "avgGamesELO": 2076.1040000000003,
+        "avgLevel": 509.4,
         "steamCount": 5,
         "totalMembers": 5
       },
@@ -7654,7 +7654,7 @@
         {
           "uid": "5e57527efe3c7acc73342809",
           "name": "EncryptR_",
-          "level": 1517
+          "level": 1518
         },
         {
           "uid": "5ec4663ffe3c7a1624b60bd5",
@@ -15627,6 +15627,24 @@
       ]
     },
     {
+      "name": "SHO",
+      "count": 1,
+      "memberStats": {
+        "avgKillsELO": 1528.71,
+        "avgGamesELO": 1378.11,
+        "avgLevel": 53,
+        "steamCount": 0,
+        "totalMembers": 1
+      },
+      "members": [
+        {
+          "uid": "67bacdacbfea719744fdeb38",
+          "name": "sushi",
+          "level": 53
+        }
+      ]
+    },
+    {
       "name": "SICKOS",
       "count": 1,
       "memberStats": {
@@ -16836,9 +16854,9 @@
       "name": "ghosts_",
       "count": 1,
       "memberStats": {
-        "avgKillsELO": 1627.12,
-        "avgGamesELO": 1615.83,
-        "avgLevel": 74,
+        "avgKillsELO": 1623.02,
+        "avgGamesELO": 1633.44,
+        "avgLevel": 75,
         "steamCount": 1,
         "totalMembers": 1
       },
@@ -16846,7 +16864,7 @@
         {
           "uid": "63698731d142afac78890fa3",
           "name": "ghostrider1",
-          "level": 74
+          "level": 75
         }
       ]
     },
