@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-26T16:51:22.452Z",
+  "lastUpdated": "2026-01-27T02:41:33.693Z",
   "statistics": {
     "totalSquads": 532,
     "activeSquads": 255,
@@ -8,17 +8,17 @@
     "averageMembers": 6.96
   },
   "overallStats": {
-    "avgKillsELO": 1634.25,
-    "avgGamesELO": 1738.7,
-    "avgLevel": 158.99,
+    "avgKillsELO": 1634.24,
+    "avgGamesELO": 1738.65,
+    "avgLevel": 159,
     "steamCount": 547,
     "steamPercent": 26.7,
     "totalPlayers": 2051
   },
   "fetchInfo": {
-    "totalApiCalls": 533,
-    "failedFetches": 0,
-    "duration": "1846.2s"
+    "totalApiCalls": 553,
+    "failedFetches": 7,
+    "duration": "1914.4s"
   },
   "squads": [
     {
@@ -1141,9 +1141,9 @@
       "name": "UMS",
       "count": 43,
       "memberStats": {
-        "avgKillsELO": 1732.8418604651165,
-        "avgGamesELO": 1876.44976744186,
-        "avgLevel": 336.51162790697674,
+        "avgKillsELO": 1731.6862790697676,
+        "avgGamesELO": 1873.5709302325579,
+        "avgLevel": 336.6279069767442,
         "steamCount": 23,
         "totalMembers": 43
       },
@@ -1180,8 +1180,8 @@
         },
         {
           "uid": "66f43085bfea71191256594e",
-          "name": "EC.ARTIC",
-          "level": 129
+          "name": "Imagine.Living",
+          "level": 131
         },
         {
           "uid": "64a38565bfea71c1136a365f",
@@ -1251,12 +1251,7 @@
         {
           "uid": "63ece3a2d142afdc1e69d91a",
           "name": "Hoang-steel wall",
-          "level": 793
-        },
-        {
-          "uid": "5fb01822d142af763ceaf2a2",
-          "name": "GREEN COMMANDO",
-          "level": 545
+          "level": 794
         },
         {
           "uid": "672f5f5abfea71043a4bbf50",
@@ -1267,6 +1262,11 @@
           "uid": "61ae4009d142af1440124c4f",
           "name": "delta trooper",
           "level": 121
+        },
+        {
+          "uid": "5fb01822d142af763ceaf2a2",
+          "name": "GREEN COMMANDO",
+          "level": 546
         },
         {
           "uid": "5f767665d142afbb6510301e",
@@ -1341,7 +1341,7 @@
         {
           "uid": "649228fcbfea718124fe50c7",
           "name": "spiz",
-          "level": 398
+          "level": 399
         },
         {
           "uid": "61314465bfea711a3f11ef16",
@@ -2512,8 +2512,8 @@
       "name": "APG",
       "count": 27,
       "memberStats": {
-        "avgKillsELO": 1668.7233333333334,
-        "avgGamesELO": 1730.4514814814816,
+        "avgKillsELO": 1669.2018518518516,
+        "avgGamesELO": 1730.2740740740742,
         "avgLevel": 157.07407407407408,
         "steamCount": 8,
         "totalMembers": 27
@@ -2803,9 +2803,9 @@
       "name": "AI",
       "count": 24,
       "memberStats": {
-        "avgKillsELO": 1819.3937499999995,
-        "avgGamesELO": 2124.5916666666662,
-        "avgLevel": 595.5833333333334,
+        "avgKillsELO": 1819.6737499999997,
+        "avgGamesELO": 2126.0787499999997,
+        "avgLevel": 595.6666666666666,
         "steamCount": 22,
         "totalMembers": 24
       },
@@ -2852,8 +2852,8 @@
         },
         {
           "uid": "64a28cf4fd3c7a9637f86a85",
-          "name": "cement",
-          "level": 774
+          "name": "one peanut",
+          "level": 776
         },
         {
           "uid": "5edaa9c7bfea719d545fec92",
@@ -4954,8 +4954,8 @@
       "name": "RaB",
       "count": 13,
       "memberStats": {
-        "avgKillsELO": 1665.4030769230772,
-        "avgGamesELO": 1724.2969230769231,
+        "avgKillsELO": 1664.8953846153843,
+        "avgGamesELO": 1723.5046153846151,
         "avgLevel": 146.30769230769232,
         "steamCount": 1,
         "totalMembers": 13
@@ -16872,9 +16872,9 @@
       "name": "issam",
       "count": 1,
       "memberStats": {
-        "avgKillsELO": 1620.14,
-        "avgGamesELO": 1946.19,
-        "avgLevel": 329,
+        "avgKillsELO": 1629.68,
+        "avgGamesELO": 1936.48,
+        "avgLevel": 346,
         "steamCount": 0,
         "totalMembers": 1
       },
@@ -16882,7 +16882,7 @@
         {
           "uid": "6141a57dbfea716d1c5288b0",
           "name": "LORD WAR BROKERS",
-          "level": 329
+          "level": 346
         }
       ]
     },
