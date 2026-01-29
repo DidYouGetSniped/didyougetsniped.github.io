@@ -1,7 +1,7 @@
 # War Brokers Stats Website
 
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fdidyougetsniped.github.io)](https://didyougetsniped.github.io)
-[![Discord](https://img.shields.io/discord/1014162018992914433?color=7289da&label=Discord&logo=discord)](https://discord.gg/NuST4n4sWt)
+[![Discord](https://img.shields.io/badge/Discord-Join%20Server-7289da?logo=discord&logoColor=white)](https://discord.gg/NuST4n4sWt)
 
 A comprehensive statistics and tools website for [War Brokers](https://warbrokers.io), featuring player stats, squad analytics, performance ratings, and more.
 
@@ -238,7 +238,7 @@ See [updates.html](https://didyougetsniped.github.io/updates) for the changelog.
 
 This is a **third-party fan project** and is not affiliated with, endorsed, or sponsored by War Brokers or its developers.
 
-All game data is accessed through the Pomp's War Brokers API. This project is provided as-is for the community.
+All game data is accessed through Pomp's War Brokers API. This project is provided as-is for the community.
 
 ## 🔗 Links
 
