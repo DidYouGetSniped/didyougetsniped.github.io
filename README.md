@@ -213,40 +213,6 @@ See [updates.html](https://didyougetsniped.github.io/updates) for the changelog.
 - Avoid rapid consecutive lookups
 - Let cache work (wait 60s for repeated lookups)
 
-## 🔧 Development
-
-### Local Setup
-```bash
-# Clone the repository
-git clone https://github.com/DidYouGetSniped/didyougetsniped.github.io.git
-
-# Navigate to directory
-cd didyougetsniped.github.io
-
-# Serve locally (Python example)
-python -m http.server 8000
-
-# Or use any static file server
-npx serve
-```
-
-### Environment
-- **No build step required**: Pure HTML/CSS/JS
-- **ES6 Modules**: Must serve over HTTP (not file://)
-- **CORS**: API requests work from any origin
-
-### Data Collection Scripts
-```bash
-# Install dependencies
-npm install
-
-# Run squad data collection
-node fetch-data.js
-
-# Run player count collection
-node fetch-player-count.js
-```
-
 ## 📊 Data Collection
 
 ### Squad Data
