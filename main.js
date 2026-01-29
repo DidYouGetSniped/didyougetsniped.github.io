@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
         RATE_LIMIT.resetTime = null;
     }
 
-    let countdownInterval = null;
     let currentPlayerUID = null;
     let currentPlayerdata = null;
     let rawPlayerData = null;
@@ -36,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('loader');
     const messageContainer = document.getElementById('message-container');
     const playerInfoContainer = document.getElementById('player-info');
-    // Rate limit UI elements removed - tracking still happens in background
 
     rateLimitChannel.onmessage = (event) => {
         if (event.data.type === 'update-rate-limit') {
@@ -48,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 localStorage.removeItem('rateLimitResetTime');
             }
-            // UI update removed - rate limiting still enforced
         }
     };
 
@@ -76,12 +73,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const uid = extractUID(searchInput);
         const now = Date.now();
 
+        // Clean up old requests
         RATE_LIMIT.requests = RATE_LIMIT.requests.filter(time => now - time < RATE_LIMIT.timeWindow);
         localStorage.setItem('rateLimitRequests', JSON.stringify(RATE_LIMIT.requests));
 
+        // Check rate limit
         if (RATE_LIMIT.requests.length >= RATE_LIMIT.maxRequests) {
-            const seconds = Math.ceil((RATE_LIMIT.resetTime - now) / 1000);
-            displayMessage(messageContainer, `Rate limit exceeded. Please wait ${seconds} seconds.`, 'error');
+            const oldestRequest = Math.min(...RATE_LIMIT.requests);
+            const waitTime = Math.ceil((oldestRequest + RATE_LIMIT.timeWindow - now) / 1000);
+            displayMessage(messageContainer, `⚠️ Rate limit exceeded. Please wait ${waitTime} second${waitTime !== 1 ? 's' : ''}.`, 'error');
             return;
         }
 
@@ -90,22 +90,27 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchBtn.disabled = true;
 
         try {
-            RATE_LIMIT.requests.push(now);
-            RATE_LIMIT.resetTime = Math.min(...RATE_LIMIT.requests) + RATE_LIMIT.timeWindow;
-            localStorage.setItem('rateLimitRequests', JSON.stringify(RATE_LIMIT.requests));
-            localStorage.setItem('rateLimitResetTime', RATE_LIMIT.resetTime);
-            rateLimitChannel.postMessage({
-                type: 'update-rate-limit',
-                payload: { requests: RATE_LIMIT.requests, resetTime: RATE_LIMIT.resetTime }
-            });
-            // UI update removed
-
             const stateData = uid ? { uid } : { name: searchInput };
             const stateUrl = uid ? `?uid=${uid}` : `?name=${encodeURIComponent(searchInput)}`;
             if (pushState) history.pushState(stateData, '', stateUrl);
 
             if (uid) {
-                const { rawPlayerData: rawData, playerData, killsPercentile, gamesPercentile, xpPercentile } = await fetchFullPlayerData(uid);
+                const { rawPlayerData: rawData, playerData, killsPercentile, gamesPercentile, xpPercentile, fromCache } = await fetchFullPlayerData(uid);
+                
+                // Only count against rate limit if NOT from cache
+                if (!fromCache) {
+                    RATE_LIMIT.requests.push(now);
+                    RATE_LIMIT.resetTime = Math.min(...RATE_LIMIT.requests) + RATE_LIMIT.timeWindow;
+                    localStorage.setItem('rateLimitRequests', JSON.stringify(RATE_LIMIT.requests));
+                    localStorage.setItem('rateLimitResetTime', RATE_LIMIT.resetTime);
+                    rateLimitChannel.postMessage({
+                        type: 'update-rate-limit',
+                        payload: { requests: RATE_LIMIT.requests, resetTime: RATE_LIMIT.resetTime }
+                    });
+                } else {
+                    console.log('Data loaded from cache - not counted against rate limit');
+                }
+                
                 currentPlayerUID = uid;
                 currentPlayerdata = playerData;
                 rawPlayerData = rawData;
@@ -113,7 +118,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateMetaTags(playerData);
                 displayFullPlayerInfo();
             } else {
-                const searchResults = await searchPlayerByName(searchInput);
+                const { results: searchResults, fromCache } = await searchPlayerByName(searchInput);
+                
+                // Only count against rate limit if NOT from cache
+                if (!fromCache) {
+                    RATE_LIMIT.requests.push(now);
+                    RATE_LIMIT.resetTime = Math.min(...RATE_LIMIT.requests) + RATE_LIMIT.timeWindow;
+                    localStorage.setItem('rateLimitRequests', JSON.stringify(RATE_LIMIT.requests));
+                    localStorage.setItem('rateLimitResetTime', RATE_LIMIT.resetTime);
+                    rateLimitChannel.postMessage({
+                        type: 'update-rate-limit',
+                        payload: { requests: RATE_LIMIT.requests, resetTime: RATE_LIMIT.resetTime }
+                    });
+                } else {
+                    console.log('Search results loaded from cache - not counted against rate limit');
+                }
+                
                 if (searchResults.length === 0) {
                     displayMessage(messageContainer, `No players found with the name "${searchInput}".`, 'info');
                 } else if (searchResults.length === 1) {
@@ -168,8 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (lastPlayedAgoEl) lastPlayedAgoEl.textContent = timeAgo(currentPlayerdata.time);
     }
 
-    // Rate limit display function removed - tracking still happens
-
     function setupEventListeners() {
         fetchBtn.addEventListener('click', () => fetchPlayerInfo());
         uidInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') fetchPlayerInfo(); });
@@ -183,9 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 uidInput.value = target.closest('.search-result-item').dataset.uid;
                 fetchPlayerInfo();
             } else if (target.matches('[data-copy]')) {
-                const text = target.dataset.copy === 'raw'
-                    ? document.getElementById('raw-json-content').textContent
-                    : document.getElementById(target.dataset.copy).textContent;
+                const text = document.getElementById(target.dataset.copy).textContent;
                 copyToClipboard(text, target);
             } else if (target.id === 'weapon-sort-toggle') { sortByKills = target.checked; displayFullPlayerInfo(); }
             else if (target.id === 'death-sort-toggle') { sortByDeaths = target.checked; displayFullPlayerInfo(); }
@@ -210,7 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setRandomBackground();
         setupEventListeners();
         timezoneSelect.value = 'local';
-        // Rate limit display initialization removed
 
         const urlParams = new URLSearchParams(window.location.search);
         const initialUID = urlParams.get('uid');

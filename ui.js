@@ -3,7 +3,7 @@
 import { formatDateTime, timeAgo, getJoinDateFromUID } from '/utils.js';
 import { generateWeaponStarsHTML } from '/weaponlogic.js';
 import { generateVehicleStarsHTML } from '/vehiclelogic.js';
-import { calculateDisplayConstants } from './uiconst.js'; // <-- Added this import
+import { calculateDisplayConstants } from './uiconst.js';
 
 // Dark-only: force classes immediately and remove any light mode class
 (() => {
@@ -115,7 +115,7 @@ function renderChartWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn, 
     const makeConfig = (type) => ({
         type,
         data: {
-            labels: [], // Will be set dynamically
+            labels: [],
             datasets: [{
                 data: [],
                 backgroundColor: [],
@@ -156,7 +156,7 @@ function renderChartWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn, 
         }
     });
 
-    let chart = new window.Chart(ctx, makeConfig('pie')); // Default pie
+    let chart = new window.Chart(ctx, makeConfig('pie'));
 
     let visible = new Set([...Array(origLabels.length).keys()]);
 
@@ -179,7 +179,6 @@ function renderChartWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn, 
         chart.data.datasets[0].data = visItems.map(it => it.value);
         chart.data.datasets[0].backgroundColor = visItems.map(it => it.color);
 
-        // Scale labels font for bar chart (no rotation)
         if (chart.config.type === 'bar') {
             const numVis = visItems.length;
             const fontSize = Math.max(10, Math.min(18, Math.floor(300 / Math.max(1, numVis))));
@@ -237,7 +236,7 @@ function renderChartWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn, 
         renderLegend(sortMode);
     };
 
-    updateChartAndLegend(); // Initial render
+    updateChartAndLegend();
 
     if (sortSelect) {
         sortSelect.addEventListener('change', updateChartAndLegend);
@@ -295,21 +294,6 @@ function queuePieCharts(specs) {
 }
 
 export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePrefs) {
-    // Blacklist check
-    const BLACKLISTED_UIDS = [
-        '6698bdf3d142af601f50256a',  // Add blacklisted UIDs here
-        // etc.
-    ];
-    
-    if (BLACKLISTED_UIDS.includes(String(data.uid))) {
-        return `
-            <div class="stat-card">
-                <h3>⛔ Access Restricted</h3>
-                <p>This player's statistics are not available for viewing. Please join the support server to resolve the issue.</p>
-            </div>
-        `;
-    }
-
     // This single call replaces the large block of calculation logic.
     const consts = calculateDisplayConstants(data, rawData, percentiles, sortStates);
 
@@ -449,8 +433,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     </div>
 `;
 
-    // Update the graphsHTML section around line 480:
-const graphsHTML = `
+    const graphsHTML = `
     <div class="stat-card">
         <h3>📈 Graphs</h3>
         <div style="display:grid;grid-template-columns:1fr;gap:16px;">
@@ -544,11 +527,6 @@ const graphsHTML = `
 
         ${miscStatsHTML}
         ${graphsHTML}
-
-        <div class="raw-json">
-            <div class="json-header"><h3>📋 Raw JSON Data</h3><button class="btn btn-copy" data-copy="raw">Copy JSON</button></div>
-            <pre id="raw-json-content">${JSON.stringify(rawData, null, 2)}</pre>
-        </div>
     `;
 }
 
@@ -594,4 +572,3 @@ export function resetMetaTags() {
     if (ogDescriptionTag) ogDescriptionTag.setAttribute('content', 'Check out your player statistics by name or UID!');
 
 }
-

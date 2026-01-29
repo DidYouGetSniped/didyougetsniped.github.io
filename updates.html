@@ -106,6 +106,18 @@
       <!-- This list structure is parsed by index.html - DO NOT change the class name or basic structure -->
       <ul class="updates-list">
         <li>
+          <time class="update-time" datetime="2026-1-29">1/29/2026</time>
+          <ul class="changes-list">
+            <li>Consolidated rate limiting to a single system with 19 requests per minute limit</li>
+            <li>Implemented intelligent caching that excludes cached requests from rate limit counting</li>
+            <li>Cache duration set to 60 seconds - repeated lookups of the same player within this window won't count against your rate limit</li>
+            <li>Added clear error messages showing exact wait time when rate limit is exceeded</li>
+            <li>Removed redundant rate limit UI elements for cleaner interface</li>
+            <li>Removed the blacklisted player UI check</li>
+            <li>Removed the raw JSON data display</li>
+          </ul>
+        </li>
+        <li>
           <time class="update-time" datetime="2026-1-25">1/25/2026</time>
           <ul class="changes-list">
             <li>Added level selector to Squad Count</li>

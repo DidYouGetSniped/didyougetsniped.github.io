@@ -1,13 +1,13 @@
 const API_BASE_URL = 'https://wbapi.wbpjs.com/players';
 
 export const RATE_LIMIT_CONFIG = {
-    maxRequests: 18, // Set to 18 to be safe (under the 20/min limit)
+    maxRequests: 19, // Set to 19 to be safe (under the 20/min limit)
     timeWindow: 60 * 1000 // 60 seconds in milliseconds
 };
 
 // Simple in-memory cache with TTL
 const cache = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 60 * 1000; // 60 seconds
 
 function getCacheKey(url) {
     return url;
@@ -137,7 +137,7 @@ async function fetchData(url, options = {}, errorValue = null) {
     const cachedData = getFromCache(cacheKey);
     if (cachedData !== null) {
         console.log(`Cache hit for: ${url}`);
-        return cachedData;
+        return { data: cachedData, fromCache: true };
     }
 
     try {
@@ -145,7 +145,7 @@ async function fetchData(url, options = {}, errorValue = null) {
         if (!response.ok) {
             if (errorValue !== null) {
                 console.warn(`API request to ${url} failed with status ${response.status}. Returning default value.`);
-                return errorValue;
+                return { data: errorValue, fromCache: false };
             }
             throw new Error(`API request to ${url} failed with status ${response.status}`);
         }
@@ -154,10 +154,10 @@ async function fetchData(url, options = {}, errorValue = null) {
         // Cache the successful response
         setCache(cacheKey, data);
         
-        return data;
+        return { data, fromCache: false };
     } catch (error) {
         console.error(`Error fetching from ${url}:`, error);
-        if (errorValue !== null) return errorValue;
+        if (errorValue !== null) return { data: errorValue, fromCache: false };
         throw error;
     }
 }
@@ -283,33 +283,46 @@ export async function fetchFullPlayerData(uid) {
     const gamesPercentileUrl = `${API_BASE_URL}/percentile/gamesElo?uid=${uid}`;
     const xpPercentileUrl = `${API_BASE_URL}/percentile/xp?uid=${uid}`;
 
-    const rawPlayerData = await fetchData(playerUrl);
-    if (!rawPlayerData) {
+    const playerResult = await fetchData(playerUrl);
+    if (!playerResult.data) {
         throw new Error('Player data not found or API error.');
     }
 
-    if (isBlacklisted(rawPlayerData.uid)) {
+    if (isBlacklisted(playerResult.data.uid)) {
         throw new Error('Access to this player is restricted. Join the Support Server.');
     }
 
-    const playerData = processPlayerData(rawPlayerData);
+    const playerData = processPlayerData(playerResult.data);
 
-    const [killsPercentile, gamesPercentile, xpPercentile] = await Promise.all([
+    const [killsResult, gamesResult, xpResult] = await Promise.all([
         fetchData(killsPercentileUrl, {}, 0),
         fetchData(gamesPercentileUrl, {}, 0),
         fetchData(xpPercentileUrl, {}, 0) 
     ]);
 
-    if (killsPercentile === 0 || gamesPercentile === 0) {
+    if (killsResult.data === 0 || gamesResult.data === 0) {
         console.warn('Could not fetch all percentile data. Some values may be defaulted to 0.');
     }
 
-    return { rawPlayerData, playerData, killsPercentile, gamesPercentile, xpPercentile };
+    // Return whether all data came from cache
+    const allFromCache = playerResult.fromCache && killsResult.fromCache && gamesResult.fromCache && xpResult.fromCache;
+
+    return { 
+        rawPlayerData: playerResult.data, 
+        playerData, 
+        killsPercentile: killsResult.data, 
+        gamesPercentile: gamesResult.data, 
+        xpPercentile: xpResult.data,
+        fromCache: allFromCache
+    };
 }
 
 export async function searchPlayerByName(query) {
     const searchUrl = `${API_BASE_URL}/searchByName?query=${encodeURIComponent(query)}`;
-    const searchResults = await fetchData(searchUrl, {}, []);
+    const searchResult = await fetchData(searchUrl, {}, []);
 
-    return searchResults.filter(player => !isBlacklisted(player.uid));
+    return { 
+        results: searchResult.data.filter(player => !isBlacklisted(player.uid)),
+        fromCache: searchResult.fromCache
+    };
 }
