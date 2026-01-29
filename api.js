@@ -44,6 +44,7 @@ setInterval(() => {
 
 const BLACKLISTED_UIDS = [
     '6698bdf3d142af601f50256a',
+    '63d04d93d142afb3369576af',
 ];
 
 function isBlacklisted(uid) {
@@ -325,4 +326,5 @@ export async function searchPlayerByName(query) {
         results: searchResult.data.filter(player => !isBlacklisted(player.uid)),
         fromCache: searchResult.fromCache
     };
+
 }
