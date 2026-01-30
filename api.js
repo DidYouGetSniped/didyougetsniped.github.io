@@ -43,8 +43,9 @@ setInterval(() => {
 }, CACHE_TTL);
 
 const BLACKLISTED_UIDS = [
-    '6698bdf3d142af601f50256a',
-    '63d04d93d142afb3369576af',
+    '6698bdf3d142af601f50256a', // WUD
+    '63d04d93d142afb3369576af', // Ry
+    '62b0b3c6bfea717857157e37', // Pie
 ];
 
 function isBlacklisted(uid) {
@@ -328,3 +329,4 @@ export async function searchPlayerByName(query) {
     };
 
 }
+
