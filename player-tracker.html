@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>War Brokers Player Count Tracker</title>
     <link rel="stylesheet" href="playercounttracker.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
@@ -29,24 +32,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <body>
     <div class="header">
-        <h1>📊 War Brokers Player Count Tracker</h1>
-        <a href="./" class="back-link">← Back to Home</a>
+        <div class="header-content">
+            <h1>WAR BROKERS</h1>
+            <div class="header-subtitle">PLAYER COUNT ANALYTICS</div>
+        </div>
+        <a href="./" class="back-link">← BACK TO HOME</a>
     </div>
 
     <div class="container">
         <div class="sidebar">
-            <h2>⚙️ Settings</h2>
+            <div class="sidebar-header">
+                <h2>⚙ CONTROLS</h2>
+            </div>
 
             <div class="setting-group">
-                <label>Auto Refresh</label>
+                <label>AUTO REFRESH</label>
                 <label class="checkbox-label">
                     <input type="checkbox" id="autoRefresh" checked>
-                    Check every 90sec
+                    <span>Check every 90sec</span>
                 </label>
             </div>
 
             <div class="setting-group">
-                <label>Chart Type</label>
+                <label>CHART TYPE</label>
                 <select id="chartType">
                     <option value="line">Line Chart</option>
                     <option value="bar">Bar Chart</option>
@@ -54,44 +62,48 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
 
             <div class="setting-group">
-                <label>Tension</label>
-                <div class="slider-container">
-                    <input type="range" id="tension" min="0" max="1" step="0.1" value="0.4">
-                    <div class="slider-value"><span id="tensionValue">0.4</span></div>
-                </div>
-            </div>
-
-            <div class="setting-group">
-                <label>Time Range</label>
+                <label>TIME RANGE</label>
                 <select id="timeRange">
                     <option value="12">Last 12 Hours</option>
                     <option value="24">Last 24 Hours</option>
                     <option value="48">Last 48 Hours</option>
                     <option value="168">Last 7 Days</option>
                     <option value="720">Last 30 Days</option>
-                    <option value="all">All Data</option> 
+                    <option value="all">All Data</option>
+                    <option value="custom">Custom Range</option>
                 </select>
             </div>
 
+            <div class="setting-group" id="customRangeGroup" style="display: none;">
+                <label>START DATE & TIME</label>
+                <input type="datetime-local" id="customStartDate">
+                
+                <label style="margin-top: 12px;">DURATION (HOURS)</label>
+                <input type="number" id="customDuration" min="1" max="8760" value="48" placeholder="Hours">
+            </div>
+
             <div class="setting-group">
-                <label>Data Density</label>
+                <label>DATA POINTS</label>
                 <select id="dataDensity">
+                    <option value="auto">Smart (Auto)</option>
                     <option value="all">All Points</option>
-                    <option value="standard">Standard</option>
-                    <option value="minimal">Minimal</option>
+                    <option value="hourly">Hourly</option>
+                    <option value="every3">Every 3 Hours</option>
+                    <option value="every6">Every 6 Hours</option>
+                    <option value="daily">Daily</option>
                 </select>
             </div>
 
             <div class="setting-group">
-                <label>Show Grid</label>
+                <label>GRID LINES</label>
                 <label class="checkbox-label">
                     <input type="checkbox" id="showGrid" checked>
-                    Show grid lines
+                    <span>Show grid</span>
                 </label>
             </div>
 
             <div class="setting-group">
-                <label>Timezone</label>
+                <label>TIMEZONE</label>
                 <select id="timezone">
                     <option value="local">Local Time</option>
                     <option value="UTC">UTC</option>
@@ -109,17 +121,26 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
 
             <div class="setting-group">
-                <label>Time Format</label>
+                <label>TIME FORMAT</label>
                 <label class="checkbox-label">
                     <input type="checkbox" id="use24Hour" checked>
-                    24-hour format
+                    <span>24-hour format</span>
                 </label>
             </div>
 
             <div class="button-group">
-                <button class="btn btn-primary" id="refreshBtn">↻ Refresh Now</button>
-                <button class="btn btn-success" id="exportBtn">📥 Export CSV</button>
-                <button class="btn btn-success" id="exportImageBtn">🖼️ Export PNG</button>
+                <button class="btn btn-primary" id="refreshBtn">
+                    <span class="btn-icon">↻</span>
+                    <span>REFRESH NOW</span>
+                </button>
+                <button class="btn btn-success" id="exportBtn">
+                    <span class="btn-icon">📥</span>
+                    <span>EXPORT CSV</span>
+                </button>
+                <button class="btn btn-success" id="exportImageBtn">
+                    <span class="btn-icon">🖼️</span>
+                    <span>EXPORT PNG</span>
+                </button>
             </div>
 
             <div class="status" id="status">
@@ -129,26 +150,32 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
 
         <div class="main">
-            <div class="chart-header">
-                <div>
-                    <h2 style="margin-bottom: 8px;">Player Count Over Time</h2>
-                    <p style="font-size: 12px; color: var(--text-secondary);">Data Retrieved ~every 30 minutes</p>
-                </div>
-                <div class="stats">
-                    <div class="stat-box">
-                        <div class="stat-label">Current</div>
+            <div class="stats-grid">
+                <div class="stat-box stat-current">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <div class="stat-label">CURRENT</div>
                         <div class="stat-value" id="currentPlayers">-</div>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Peak</div>
+                </div>
+                <div class="stat-box stat-peak">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-content">
+                        <div class="stat-label">PEAK</div>
                         <div class="stat-value" id="peakPlayers">-</div>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Minimum</div>
+                </div>
+                <div class="stat-box stat-min">
+                    <div class="stat-icon">📉</div>
+                    <div class="stat-content">
+                        <div class="stat-label">MINIMUM</div>
                         <div class="stat-value" id="minPlayers">-</div>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Average</div>
+                </div>
+                <div class="stat-box stat-avg">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <div class="stat-label">AVERAGE</div>
                         <div class="stat-value" id="avgPlayers">-</div>
                     </div>
                 </div>
@@ -162,12 +189,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <div class="legend">
                 <div class="legend-item">
-                    <div class="legend-color" style="background: #0ea5e9;"></div>
-                    <span>Player Count</span>
+                    <div class="legend-color"></div>
+                    <span>PLAYER COUNT</span>
                 </div>
+                <div class="legend-divider">|</div>
                 <div class="legend-item">
                     <span id="dataPoints">0 data points</span>
                 </div>
+                <div class="legend-divider">|</div>
                 <div class="legend-item">
                     <span id="lastUpdate">Last updated: Never</span>
                 </div>
@@ -178,11 +207,12 @@ document.addEventListener('DOMContentLoaded', function() {
     <script>
     const autoRefreshCheckbox = document.getElementById('autoRefresh');
     const chartTypeSelect = document.getElementById('chartType');
-    const tensionSlider = document.getElementById('tension');
-    const tensionValue = document.getElementById('tensionValue');
     const timeRangeSelect = document.getElementById('timeRange');
     const dataDensitySelect = document.getElementById('dataDensity');
     const showGridCheckbox = document.getElementById('showGrid');
+    const customRangeGroup = document.getElementById('customRangeGroup');
+    const customStartDate = document.getElementById('customStartDate');
+    const customDuration = document.getElementById('customDuration');
     const refreshBtn = document.getElementById('refreshBtn');
     const exportBtn = document.getElementById('exportBtn');
     const exportImageBtn = document.getElementById('exportImageBtn');
@@ -208,25 +238,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const savedPrefs = localStorage.getItem('playerTrackerPrefs');
     const preferences = savedPrefs ? JSON.parse(savedPrefs) : {
         chartType: 'line',
-        tension: 0.4,
-        timeRange: '12',
-        dataDensity: 'all',
+        timeRange: '24',
+        dataDensity: 'auto',
         showGrid: true,
         autoRefresh: true,
         timezone: 'local',
-        use24Hour: true
+        use24Hour: true,
+        customStartDate: '',
+        customDuration: 48
     };
 
     // Apply loaded prefs to UI elements
     chartTypeSelect.value = preferences.chartType;
-    tensionSlider.value = preferences.tension;
-    tensionValue.textContent = preferences.tension;
     timeRangeSelect.value = preferences.timeRange;
-    dataDensitySelect.value = preferences.dataDensity || 'all';
+    dataDensitySelect.value = preferences.dataDensity || 'auto';
     showGridCheckbox.checked = preferences.showGrid;
     autoRefreshCheckbox.checked = preferences.autoRefresh;
     timezoneSelect.value = preferences.timezone;
     use24HourCheckbox.checked = preferences.use24Hour;
+    customStartDate.value = preferences.customStartDate || '';
+    customDuration.value = preferences.customDuration || 48;
+    
+    // Show custom range group if custom is selected
+    if (preferences.timeRange === 'custom') {
+        customRangeGroup.style.display = 'block';
+    }
 
     function savePreferences() {
         localStorage.setItem('playerTrackerPrefs', JSON.stringify(preferences));
@@ -274,88 +310,130 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateStats() {
-    if (!trackerData || !trackerData.data || trackerData.data.length === 0) return;
+        if (!trackerData || !trackerData.data || trackerData.data.length === 0) return;
 
-    const filtered = getFilteredData();
-    if (filtered.length === 0) return;
+        const filtered = getFilteredData();
+        if (filtered.length === 0) return;
 
-    const players = filtered.map(d => d.players);
-    const current = players[players.length - 1];
-    const peak = Math.max(...players);
-    const min = Math.min(...players);
-    const avg = (players.reduce((a, b) => a + b, 0) / players.length).toFixed(0);
+        const players = filtered.map(d => d.players);
+        const current = players[players.length - 1];
+        const peak = Math.max(...players);
+        const min = Math.min(...players);
+        const avg = (players.reduce((a, b) => a + b, 0) / players.length).toFixed(0);
 
-    currentPlayersEl.textContent = current.toLocaleString();
-    peakPlayersEl.textContent = peak.toLocaleString();
-    minPlayersEl.textContent = min.toLocaleString();
-    avgPlayersEl.textContent = avg.toLocaleString();
-    dataPointsEl.textContent = `${filtered.length} data point${filtered.length !== 1 ? 's' : ''}`;
-    lastUpdateEl.textContent = `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`;
-}
+        currentPlayersEl.textContent = current.toLocaleString();
+        peakPlayersEl.textContent = peak.toLocaleString();
+        minPlayersEl.textContent = min.toLocaleString();
+        avgPlayersEl.textContent = avg.toLocaleString();
+        dataPointsEl.textContent = `${filtered.length} data point${filtered.length !== 1 ? 's' : ''}`;
+        lastUpdateEl.textContent = `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`;
+    }
 
     function getFilteredData() {
         if (!trackerData || !trackerData.data) return [];
         
         const range = timeRangeSelect.value;
-        let filtered = range === 'all' ? trackerData.data : trackerData.data.filter(d => {
+        let filtered;
+        
+        if (range === 'custom') {
+            // Custom date range logic
+            const startDateValue = customStartDate.value;
+            const duration = parseInt(customDuration.value) || 48;
+            
+            if (!startDateValue) {
+                // If no start date specified, default to current time - duration
+                const cutoffTime = new Date(Date.now() - duration * 60 * 60 * 1000);
+                filtered = trackerData.data.filter(d => new Date(d.timestamp) > cutoffTime);
+            } else {
+                // Parse the start date and calculate end date
+                const startTime = new Date(startDateValue);
+                const endTime = new Date(startTime.getTime() + duration * 60 * 60 * 1000);
+                
+                filtered = trackerData.data.filter(d => {
+                    const dataTime = new Date(d.timestamp);
+                    return dataTime >= startTime && dataTime <= endTime;
+                });
+            }
+        } else if (range === 'all') {
+            filtered = trackerData.data;
+        } else {
+            // Standard time ranges from current time
             const hours = parseInt(range);
             const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000);
-            return new Date(d.timestamp) > cutoffTime;
-        });
+            filtered = trackerData.data.filter(d => new Date(d.timestamp) > cutoffTime);
+        }
 
-        // Apply data density filtering
+        // Apply smart data density filtering
         const density = dataDensitySelect.value;
-        if (density === 'standard') {
-            // Show approximately every 3rd point
-            filtered = filtered.filter((_, i) => i % 3 === 0);
-        } else if (density === 'minimal') {
-            // Show approximately every 6th point
+        
+        if (density === 'auto') {
+            // Smart algorithm: adjust based on total points and time range
+            const totalPoints = filtered.length;
+            if (totalPoints > 200) {
+                // For large datasets, show every 6th point
+                filtered = filtered.filter((_, i) => i % 6 === 0);
+            } else if (totalPoints > 100) {
+                // For medium datasets, show every 3rd point
+                filtered = filtered.filter((_, i) => i % 3 === 0);
+            }
+            // For small datasets (< 100 points), show all
+        } else if (density === 'hourly') {
+            // Show ~1 point per hour (2 data points per hour at 30min intervals)
+            filtered = filtered.filter((_, i) => i % 2 === 0);
+        } else if (density === 'every3') {
+            // Show ~1 point every 3 hours (6 data points)
             filtered = filtered.filter((_, i) => i % 6 === 0);
+        } else if (density === 'every6') {
+            // Show ~1 point every 6 hours (12 data points)
+            filtered = filtered.filter((_, i) => i % 12 === 0);
+        } else if (density === 'daily') {
+            // Show ~1 point per day (48 data points)
+            filtered = filtered.filter((_, i) => i % 48 === 0);
         }
         // 'all' shows all points
 
         return filtered;
     }
 
-  function updateChart() {
-    const filtered = getFilteredData();
-    if (filtered.length === 0) {
-        if (chart) chart.destroy();
-        dateDisplay.style.display = 'none';
-        return;
-    }
-
-    // Get first and last dates based on selected timezone
-    let firstDate = null;
-    let lastDate = null;
-    
-    if (filtered.length > 0) {
-        let mFirst = moment(filtered[0].timestamp);
-        let mLast = moment(filtered[filtered.length - 1].timestamp);
-        
-        // Apply the selected timezone
-        if (timezoneSelect.value !== 'local') {
-            mFirst = mFirst.tz(timezoneSelect.value);
-            mLast = mLast.tz(timezoneSelect.value);
+    function updateChart() {
+        const filtered = getFilteredData();
+        if (filtered.length === 0) {
+            if (chart) chart.destroy();
+            dateDisplay.style.display = 'none';
+            return;
         }
+
+        // Get first and last dates based on selected timezone
+        let firstDate = null;
+        let lastDate = null;
         
-        // Format the dates
-        firstDate = mFirst.format('ddd, MMM D, YYYY');
-        lastDate = mLast.format('ddd, MMM D, YYYY');
-    }
+        if (filtered.length > 0) {
+            let mFirst = moment(filtered[0].timestamp);
+            let mLast = moment(filtered[filtered.length - 1].timestamp);
+            
+            // Apply the selected timezone
+            if (timezoneSelect.value !== 'local') {
+                mFirst = mFirst.tz(timezoneSelect.value);
+                mLast = mLast.tz(timezoneSelect.value);
+            }
+            
+            // Format the dates
+            firstDate = mFirst.format('ddd, MMM D, YYYY');
+            lastDate = mLast.format('ddd, MMM D, YYYY');
+        }
 
-    // Display date range
-    if (firstDate && lastDate) {
-        dateDisplay.textContent = `${firstDate} → ${lastDate}`;
-        dateDisplay.style.display = 'block';
-    }
+        // Display date range
+        if (firstDate && lastDate) {
+            dateDisplay.textContent = `${firstDate} → ${lastDate}`;
+            dateDisplay.style.display = 'block';
+        }
 
-    const labels = filtered.map(d => formatTimestamp(d.timestamp));
-    const data = filtered.map(d => d.players);
+        const labels = filtered.map(d => formatTimestamp(d.timestamp));
+        const data = filtered.map(d => d.players);
 
-        let backgroundColor = 'rgba(14, 165, 233, 0.1)';
-        let borderColor = '#0ea5e9';
-        let tension = parseFloat(tensionSlider.value);
+        let backgroundColor = 'rgba(0, 255, 157, 0.1)';
+        let borderColor = '#00ff9d';
+        let tension = 0.4;
 
         const chartType = chartTypeSelect.value;
         let fill = chartType !== 'bar';
@@ -375,11 +453,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     borderWidth: 2,
                     fill: fill,
                     tension: tension,
-                    pointRadius: 4,
+                    pointRadius: 3,
                     pointBackgroundColor: borderColor,
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 1,
-                    pointHoverRadius: 6
+                    pointBorderColor: '#0a0e1a',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#00ff9d',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2
                 }]
             },
             options: {
@@ -388,55 +469,66 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    titleColor: '#fff',
-    bodyColor: '#fff',
-    borderColor: '#0ea5e9',
-    borderWidth: 1,
-    padding: 12,
-    callbacks: {
-        title: (context) => {
-            // Get the timestamp for this data point
-            const index = context[0].dataIndex;
-            const timestamp = filtered[index].timestamp;
-            let m = moment(timestamp);
-            
-            // Apply the selected timezone
-            if (timezoneSelect.value !== 'local') {
-                m = m.tz(timezoneSelect.value);
-            }
-            
-            // Format with date and time
-            const format = use24HourCheckbox.checked 
-                ? 'ddd, MMM D, YYYY - HH:mm' 
-                : 'ddd, MMM D, YYYY - hh:mm A';
-            return m.format(format);
-        },
-        label: (context) => `Players: ${context.parsed.y.toLocaleString()}`
-    }
-}
+                        backgroundColor: 'rgba(10, 14, 26, 0.95)',
+                        titleColor: '#00ff9d',
+                        bodyColor: '#fff',
+                        borderColor: '#00ff9d',
+                        borderWidth: 1,
+                        padding: 12,
+                        titleFont: {
+                            size: 13,
+                            weight: 'bold',
+                            family: 'Rajdhani'
+                        },
+                        bodyFont: {
+                            size: 12,
+                            family: 'Rajdhani'
+                        },
+                        callbacks: {
+                            title: (context) => {
+                                const index = context[0].dataIndex;
+                                const timestamp = filtered[index].timestamp;
+                                let m = moment(timestamp);
+                                
+                                if (timezoneSelect.value !== 'local') {
+                                    m = m.tz(timezoneSelect.value);
+                                }
+                                
+                                const format = use24HourCheckbox.checked 
+                                    ? 'ddd, MMM D, YYYY - HH:mm' 
+                                    : 'ddd, MMM D, YYYY - hh:mm A';
+                                return m.format(format);
+                            },
+                            label: (context) => `Players: ${context.parsed.y.toLocaleString()}`
+                        }
+                    }
                 },
                 scales: {
                     x: {
-                        grid: { display: showGridCheckbox.checked, color: 'rgba(59, 63, 74, 0.2)' },
-                        ticks: { color: '#a0aec0', font: { size: 11 } }
+                        grid: { 
+                            display: showGridCheckbox.checked, 
+                            color: 'rgba(0, 255, 157, 0.1)' 
+                        },
+                        ticks: { 
+                            color: '#00ff9d', 
+                            font: { size: 11, family: 'Rajdhani', weight: '500' } 
+                        }
                     },
                     y: {
-                        grid: { display: showGridCheckbox.checked, color: 'rgba(59, 63, 74, 0.2)' },
-                        ticks: { color: '#a0aec0', font: { size: 11 } },
+                        grid: { 
+                            display: showGridCheckbox.checked, 
+                            color: 'rgba(0, 255, 157, 0.1)' 
+                        },
+                        ticks: { 
+                            color: '#00ff9d', 
+                            font: { size: 11, family: 'Rajdhani', weight: '500' } 
+                        },
                         beginAtZero: true
                     }
                 }
             }
         });
     }
-
-    tensionSlider.addEventListener('input', (e) => {
-        preferences.tension = parseFloat(e.target.value);
-        tensionValue.textContent = preferences.tension;
-        savePreferences();
-        updateChart();
-    });
 
     chartTypeSelect.addEventListener('change', () => {
         preferences.chartType = chartTypeSelect.value;
@@ -446,6 +538,28 @@ document.addEventListener('DOMContentLoaded', function() {
     
     timeRangeSelect.addEventListener('change', () => {
         preferences.timeRange = timeRangeSelect.value;
+        savePreferences();
+        
+        // Show/hide custom range inputs
+        if (timeRangeSelect.value === 'custom') {
+            customRangeGroup.style.display = 'block';
+        } else {
+            customRangeGroup.style.display = 'none';
+        }
+        
+        updateChart();
+        updateStats();
+    });
+    
+    customStartDate.addEventListener('change', () => {
+        preferences.customStartDate = customStartDate.value;
+        savePreferences();
+        updateChart();
+        updateStats();
+    });
+    
+    customDuration.addEventListener('change', () => {
+        preferences.customDuration = parseInt(customDuration.value) || 48;
         savePreferences();
         updateChart();
         updateStats();
@@ -501,12 +615,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         exportImageBtn.disabled = true;
-        exportImageBtn.textContent = '⏳ Exporting...';
+        exportImageBtn.innerHTML = '<span class="btn-icon">⏳</span><span>EXPORTING...</span>';
         
         try {
-            // Export the entire main section including header, stats, date display, and chart
             const canvas = await html2canvas(document.querySelector('.main'), {
-                backgroundColor: '#161a23',
+                backgroundColor: '#0a0e1a',
                 scale: 4,
                 useCORS: true,
                 allowTaint: true,
@@ -522,7 +635,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Failed to export chart');
         } finally {
             exportImageBtn.disabled = false;
-            exportImageBtn.textContent = '🖼️ Export PNG';
+            exportImageBtn.innerHTML = '<span class="btn-icon">🖼️</span><span>EXPORT PNG</span>';
         }
     });
 
