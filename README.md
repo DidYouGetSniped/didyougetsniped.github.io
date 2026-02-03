@@ -178,7 +178,7 @@ Factor B (Game Impact & Resilience):
 Overall BPR = (Core Performance + XP Bonus) × 100
 ```
 
-[Full BPR Documentation](https://didyougetsniped.github.io/bpr)
+[Full BPR Documentation](https://files.catbox.moe/oqwzj1.pdf)
 
 ## 🤝 Credits & Acknowledgments
 

@@ -492,7 +492,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 </div>
                 </div>
             <div class="stat-card">
-                <h3>⭐ Broker Performance Rating (BPR) <a href="https://didyougetsniped.github.io/bpr" target="_blank" rel="noopener noreferrer" style="font-size: 0.8em; margin-left: 5px; color: #0d6efd;">(explanation)</a></h3>
+                <h3>⭐ Broker Performance Rating (BPR) <a href="https://files.catbox.moe/oqwzj1.pdf" target="_blank" rel="noopener noreferrer" style="font-size: 0.8em; margin-left: 5px; color: #0d6efd;">(explanation)</a></h3>
                 <div class="stat-row" style="margin-bottom: 20px;">
                     <div><span class="stat-label">Score:</span></div>
                     <span class="stat-value highlight">${consts.performanceScoreDisplay}</span>
