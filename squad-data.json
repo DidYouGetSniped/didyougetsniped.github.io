@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-05T03:00:40.646Z",
+  "lastUpdated": "2026-02-05T13:42:23.930Z",
   "statistics": {
     "totalSquads": 533,
     "activeSquads": 255,
@@ -9,7 +9,7 @@
   },
   "overallStats": {
     "avgKillsELO": 1635.01,
-    "avgGamesELO": 1738.49,
+    "avgGamesELO": 1738.48,
     "avgLevel": 159.58,
     "steamCount": 547,
     "steamPercent": 26.7,
@@ -18,7 +18,7 @@
   "fetchInfo": {
     "totalApiCalls": 534,
     "failedFetches": 0,
-    "duration": "1840.8s"
+    "duration": "1839.3s"
   },
   "squads": [
     {
@@ -1131,7 +1131,7 @@
       "name": "UMS",
       "count": 43,
       "memberStats": {
-        "avgKillsELO": 1735.4744186046514,
+        "avgKillsELO": 1735.4625581395348,
         "avgGamesELO": 1868.9879069767442,
         "avgLevel": 338.09302325581393,
         "steamCount": 23,
@@ -3049,13 +3049,18 @@
       "name": "SOF",
       "count": 22,
       "memberStats": {
-        "avgKillsELO": 1653.0872727272724,
-        "avgGamesELO": 1528.732727272727,
-        "avgLevel": 102.4090909090909,
+        "avgKillsELO": 1653.2359090909088,
+        "avgGamesELO": 1528.5854545454545,
+        "avgLevel": 102.45454545454545,
         "steamCount": 5,
         "totalMembers": 22
       },
       "members": [
+        {
+          "uid": "68d68cbebfea71d32ed0dc45",
+          "name": "september jp",
+          "level": 78
+        },
         {
           "uid": "67c1549ed142af304d7b3f7d",
           "name": "へ野　もへ次郎",
@@ -3090,11 +3095,6 @@
           "uid": "648960bbd142af583f1f7dad",
           "name": "koukiYouTutbe登録よろしく！",
           "level": 211
-        },
-        {
-          "uid": "68d68cbebfea71d32ed0dc45",
-          "name": "september jp",
-          "level": 77
         },
         {
           "uid": "67fb3282bfea71ec1bca8bd1",
@@ -4534,13 +4534,18 @@
       "name": "Best",
       "count": 14,
       "memberStats": {
-        "avgKillsELO": 1657.3157142857144,
-        "avgGamesELO": 1728.5928571428574,
+        "avgKillsELO": 1657.06,
+        "avgGamesELO": 1727.685714285714,
         "avgLevel": 105.14285714285714,
         "steamCount": 2,
         "totalMembers": 14
       },
       "members": [
+        {
+          "uid": "677d1f28bfea71a8755eca02",
+          "name": "(team)corn sssoop",
+          "level": 129
+        },
         {
           "uid": "652fe93abfea717754b98d1b",
           "name": "ThaBestofthaBest",
@@ -4565,11 +4570,6 @@
           "uid": "68eaf5ccbfea71af5d0da850",
           "name": "Death Trooper",
           "level": 37
-        },
-        {
-          "uid": "677d1f28bfea71a8755eca02",
-          "name": "(team)corn sssoop",
-          "level": 129
         },
         {
           "uid": "620c9709bfea717b74413c79",
@@ -6456,7 +6456,7 @@
       "name": "SSR",
       "count": 8,
       "memberStats": {
-        "avgKillsELO": 1636.65125,
+        "avgKillsELO": 1636.4050000000002,
         "avgGamesELO": 1752.06,
         "avgLevel": 97.375,
         "steamCount": 4,
