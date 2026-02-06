@@ -1,7 +1,3 @@
-/**
- * A definitive list of vehicles to track for achievements.
- * This list is automatically sorted alphabetically.
- */
 const TRACKED_VEHICLES = [
     'APC Lvl 1', 'APC Lvl 2', 'APC Lvl 3',
     'Tank Lvl 1', 'Tank Lvl 2', 'Tank Lvl 3',
@@ -12,23 +8,23 @@ const TRACKED_VEHICLES = [
 
 const vehicleThresholds = {
     // Jets
-    'jet 2 fin':        { gold: 2400, silver: 1000, bronze: 200 },
-    'jet 1 fin':        { gold: 2400, silver: 1000, bronze: 200 },
+    'jet 2 fin':        { gold: 1000, silver: 500, bronze: 200 },
+    'jet 1 fin':        { gold: 1000, silver: 500, bronze: 200 },
     
     // Ground Vehicles
-    'tank lvl 1':       { gold: 2400, silver: 1000, bronze: 200 },
-    'tank lvl 2':       { gold: 2400, silver: 1000, bronze: 200 },
-    'tank lvl 3':       { gold: 2400, silver: 1000, bronze: 200 },
-    'apc lvl 1':        { gold: 2400, silver: 1000, bronze: 200 },
-    'apc lvl 2':        { gold: 2400, silver: 1000, bronze: 200 },
-    'apc lvl 3':        { gold: 2400, silver: 1000, bronze: 200 },
-    'car':              { gold: 2400, silver: 1000, bronze: 200 },
+    'tank lvl 1':       { gold: 1000, silver: 500, bronze: 200 },
+    'tank lvl 2':       { gold: 1000, silver: 500, bronze: 200 },
+    'tank lvl 3':       { gold: 1000, silver: 500, bronze: 200 },
+    'apc lvl 1':        { gold: 1000, silver: 500, bronze: 200 },
+    'apc lvl 2':        { gold: 1000, silver: 500, bronze: 200 },
+    'apc lvl 3':        { gold: 1000, silver: 500, bronze: 200 },
+    'car':              { gold: 1000, silver: 500, bronze: 200 },
 
     // Helicopters
-    'heli lvl 3':       { gold: 2400, silver: 1000, bronze: 200 },
-    'heli lvl 2':       { gold: 2400, silver: 1000, bronze: 200 },
-    'heli lvl 1':       { gold: 2400, silver: 1000, bronze: 200 },
-    'heli (no weapon)': { gold: 50,  silver: 30,  bronze: 10 },   
+    'heli lvl 3':       { gold: 1000, silver: 500, bronze: 200 },
+    'heli lvl 2':       { gold: 1000, silver: 500, bronze: 200 },
+    'heli lvl 1':       { gold: 1000, silver: 500, bronze: 200 },
+    'heli (no weapon)': { gold: 67,  silver: 30,  bronze: 10 },   
 };
 
 /**
@@ -92,4 +88,3 @@ export function generateVehicleStarsHTML(vehicleKillsData) {
     `;
 
 }
-
