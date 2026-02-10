@@ -173,4 +173,3 @@ for (const weaponName in data.weaponStats) {
     };
 
 }
-

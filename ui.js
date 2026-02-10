@@ -474,7 +474,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 ${levelProgressHTML}
                 <div class="stat-row"><span class="stat-label">XP:</span><span class="stat-value">${(data.xp || 0).toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">XP Rank:</span><span class="stat-value">Top ${consts.topXpPercent.toFixed(4)}%</span></div>
-                <div class="stat-row"><span class="stat-label">Squad:</span>${data.squad?`<a class="stat-value" href="https://didyougetsniped.github.io/squads?squad=${data.squad}">${data.squad}</a>`:`<span class="stat-value">None</span>`}</div>
+                <div class="stat-row"><span class="stat-label">Squad:</span>${data.squad?`<a class="stat-value" href="/squads.html?squad=${data.squad}">${data.squad}</a>`:`<span class="stat-value">None</span>`}</div>
                 <div class="stat-row"><span class="stat-label">Steam:</span><span class="${steamHighlightClass}">${steamText}</span></div>
                 <div class="stat-row"><span class="stat-label">Total Games Played:</span><span class="stat-value">${consts.totalGames.toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Coins:</span><span class="stat-value">${(data.coins || 0).toLocaleString()}</span></div>
@@ -492,7 +492,14 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 </div>
                 </div>
             <div class="stat-card">
-                <h3>⭐ Broker Performance Rating (BPR) <a href="https://files.catbox.moe/oqwzj1.pdf" target="_blank" rel="noopener noreferrer" style="font-size: 0.8em; margin-left: 5px; color: #0d6efd;">(explanation)</a></h3>
+                <h3>⭐ Broker Performance Rating (BPR) <br>
+                <a href="https://files.catbox.moe/oqwzj1.pdf" target="_blank" rel="noopener noreferrer" style="font-size: 0.8em; margin-left: 10px; color: #0d6efd; text-decoration: none; vertical-align: middle;">
+                <img src="https://flagcdn.com/w20/us.png" alt="USA Flag" style="width: 18px; margin-right: 4px; vertical-align: middle;">(English)
+                </a>
+                <a href="https://files.catbox.moe/jsfolg.pdf" target="_blank" rel="noopener noreferrer" style="font-size: 0.8em; margin-left: 10px; color: #0d6efd; text-decoration: none; vertical-align: middle;">
+                <img src="https://flagcdn.com/w20/jp.png" alt="Japan Flag" style="width: 18px; margin-right: 4px; vertical-align: middle;">(日本語)
+                </a>
+                </h3>
                 <div class="stat-row" style="margin-bottom: 20px;">
                     <div><span class="stat-label">Score:</span></div>
                     <span class="stat-value highlight">${consts.performanceScoreDisplay}</span>

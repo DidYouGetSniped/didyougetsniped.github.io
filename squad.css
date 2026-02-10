@@ -16,6 +16,9 @@
     --border-color-medium: #4b5563;
     --border-color-focus: #3498db;
     --box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    --war-win: #32c56e;
+    --war-loss: #e85f5f;
+    --war-bg: #1e2229;
 }
 
 * {
@@ -240,6 +243,172 @@ body::before {
 }
 /* --- END NEW/UPDATED BIO STYLES --- */
 
+/* --- WAR HISTORY STYLES --- */
+.war-history-section {
+    background: var(--war-bg);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    border: 1px solid var(--border-color-light);
+}
+
+.war-history-toggle {
+    width: 100%;
+    padding: 18px 20px;
+    background: var(--bg-input-section);
+    border: none;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background-color 0.2s ease;
+}
+
+.war-history-toggle:hover {
+    background: #252933;
+}
+
+.toggle-icon {
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.war-history-toggle.expanded .toggle-icon {
+    transform: rotate(-180deg);
+}
+
+.toggle-text {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.war-record {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.war-history-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    padding: 0 20px;
+}
+
+.war-history-content.expanded {
+    max-height: 2000px;
+    padding: 20px;
+}
+
+.war-history-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.war-stat-card {
+    background: var(--bg-input);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid var(--border-color-light);
+}
+
+.war-stat-label {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.war-stat-value {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.war-stat-value.wins {
+    color: var(--war-win);
+}
+
+.war-stat-value.losses {
+    color: var(--war-loss);
+}
+
+.war-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.war-item {
+    background: var(--bg-input);
+    padding: 15px 18px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.war-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.war-item.win {
+    border-left-color: var(--war-win);
+    background: linear-gradient(90deg, rgba(50, 197, 110, 0.05) 0%, var(--bg-input) 100%);
+}
+
+.war-item.loss {
+    border-left-color: var(--war-loss);
+    background: linear-gradient(90deg, rgba(232, 95, 95, 0.05) 0%, var(--bg-input) 100%);
+}
+
+.war-opponent {
+    font-weight: 600;
+    font-size: 1em;
+    color: var(--text-primary);
+}
+
+.war-details {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.war-result {
+    font-weight: bold;
+    font-size: 1.1em;
+    min-width: 60px;
+    text-align: center;
+}
+
+.war-result.win {
+    color: var(--war-win);
+}
+
+.war-result.loss {
+    color: var(--war-loss);
+}
+
+.war-date {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+/* --- END WAR HISTORY STYLES --- */
 
 .status-badge{ font-weight:600; padding:12px 18px; border-radius:8px; text-align:center; margin-bottom:15px; font-size: 1.1em; }
 .status-badge.active{ background:rgba(50,197,110,.15); color:#32c56e; }
@@ -348,6 +517,29 @@ body::before {
   .squad-discord-logo { height: 28px; }
   .squad-bio { font-size: 0.95em; }
   .status-badge { font-size: 1em; padding: 10px 14px; }
+  
+  /* War history mobile adjustments */
+  .war-history-toggle {
+    padding: 15px;
+    font-size: 1em;
+  }
+  
+  .war-history-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .war-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 15px;
+  }
+  
+  .war-details {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 /* Inputs: stack neatly, full-width controls, comfy touch targets */
@@ -444,4 +636,6 @@ body::before {
   * { transition: none !important; }
   .btn:hover { transform: none; box-shadow: none; }
   .progress-bar-fill { transition: none !important; }
+  .toggle-icon { transition: none !important; }
+  .war-item:hover { transform: none; box-shadow: none; }
 }

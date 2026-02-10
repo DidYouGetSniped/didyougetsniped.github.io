@@ -26,7 +26,7 @@ The **Broker Performance Rating (BPR)** is a revolutionary metric that measures 
 
 BPR is the second iteration of the original DYGS Score, refined through extensive analysis and testing.
 
-[Learn more about BPR](https://didyougetsniped.github.io/bpr)
+[Learn more about BPR](https://files.catbox.moe/oqwzj1.pdf)
 
 ### Squad Tools
 - **Squad Stats**: View comprehensive squad-wide statistics

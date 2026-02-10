@@ -17,6 +17,61 @@
   
   <link rel="stylesheet" href="homepage.css" />
 
+  <!-- Modal Styles -->
+  <style>
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1000; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content/Box */
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto; /* 15% from the top and centered */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%; /* Could be more or less, depending on screen size */
+      max-width: 400px;
+      text-align: center;
+    }
+
+    /* The Close Button */
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .flag-link {
+      display: inline-block;
+      margin: 10px;
+    }
+
+    .flag-link img {
+      width: 100px;
+      height: auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGNQRLJMGK"></script>
   <script>
@@ -166,7 +221,7 @@
             <h3>BPR Rating</h3>
             <p>Learn about my Broker Performance Rating statistic</p>
           </div>
-          <a href="https://files.catbox.moe/oqwzj1.pdf" class="card-link">
+          <a href="#" class="card-link" onclick="showBPRModal(); return false;">
             <span>Open</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -239,7 +294,7 @@
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-brand">
-        <span>Created By: Did You Get Sniped</span>
+        <span>Created By: Did You Get Sniped?</span>
       </div>
       <p class="footer-text">Made with ❤️ for the Warbrokers community</p>
       <a href="https://discord.gg/NuST4n4sWt" class="footer-discord" target="_blank" rel="noopener noreferrer">
@@ -250,6 +305,22 @@
       </a>
     </div>
   </footer>
+
+  <!-- BPR Modal -->
+<div id="bprModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeBPRModal()">&times;</span>
+    <h2 style="color: black;">Select Language for BPR PDF</h2>
+    <a class="flag-link" href="https://files.catbox.moe/oqwzj1.pdf" target="_blank" rel="noopener noreferrer">
+      <img src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg" alt="USA Flag">
+      <br>English (USA)
+    </a>
+    <a class="flag-link" href="https://files.catbox.moe/jsfolg.pdf" target="_blank" rel="noopener noreferrer">
+      <img src="https://upload.wikimedia.org/wikipedia/en/9/9e/Flag_of_Japan.svg" alt="Japan Flag">
+      <br>Japanese (JP)
+    </a>
+  </div>
+</div>
 
   <!-- Scripts -->
   <script>
@@ -364,6 +435,23 @@
     }, { threshold: 0.1 });
 
     document.querySelectorAll('.tool-card, .section').forEach(el => observer.observe(el));
+
+    // Modal functions
+    function showBPRModal() {
+      document.getElementById('bprModal').style.display = 'block';
+    }
+
+    function closeBPRModal() {
+      document.getElementById('bprModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('bprModal');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    }
   </script>
 </body>
 </html>

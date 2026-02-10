@@ -2,6 +2,9 @@ import { setRandomBackground } from './background.js';
 import { squadDB } from './squaddb.js';
 import { progressBar } from './progressbar.js';
 
+// Squad wars data will be loaded dynamically
+let squadWarsData = {};
+
 document.addEventListener('DOMContentLoaded', () => {
     const rateLimitChannel = new BroadcastChannel('war-brokers-rate-limit');
 
@@ -19,6 +22,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setRandomBackground();
 
+    // Load squad wars data
+    async function loadSquadWarsData() {
+        try {
+            const response = await fetch('./squadwars.json');
+            if (response.ok) {
+                squadWarsData = await response.json();
+            } else {
+                console.warn('Could not load squad wars data');
+            }
+        } catch (error) {
+            console.error('Error loading squad wars data:', error);
+        }
+    }
+    loadSquadWarsData();
+
     const squadInput = document.getElementById('squad-input');
     const fetchBtn = document.getElementById('fetch-btn');
     const tzSelect = document.getElementById('timezone-select');
@@ -34,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const headers = document.querySelectorAll('#squad-table th');
     const rateLimitAlert = document.getElementById('rate-limit-alert');
     const alertTimer = document.getElementById('alert-timer');
+    const warHistorySection = document.getElementById('war-history-section');
+    const warHistoryToggle = document.getElementById('war-history-toggle');
+    const warHistoryContent = document.getElementById('war-history-content');
 
     let data = [],
         sortKey = null,
@@ -194,11 +215,145 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    tzSelect.onchange = fmtSelect.onchange = () => {
-        if (data.length) fillTable();
-    };
+    // War history toggle handler
+    warHistoryToggle.addEventListener('click', () => {
+        const isExpanded = warHistoryContent.classList.contains('expanded');
+        if (isExpanded) {
+            warHistoryContent.classList.remove('expanded');
+            warHistoryToggle.classList.remove('expanded');
+        } else {
+            warHistoryContent.classList.add('expanded');
+            warHistoryToggle.classList.add('expanded');
+        }
+    });
 
-    // Batched fetching with rate limiting
+    // Function to display war history
+    function displayWarHistory(squadName) {
+        const wars = squadWarsData[squadName];
+        
+        if (!wars || wars.length === 0) {
+            warHistorySection.style.display = 'none';
+            return;
+        }
+
+        // Sort wars by date (oldest first)
+        const sortedWars = [...wars].sort((a, b) => {
+            // If neither has a date, maintain original order
+            if (!a.date && !b.date) return 0;
+            // Wars without dates go to the end
+            if (!a.date) return 1;
+            if (!b.date) return -1;
+            
+            // Parse dates - format is like "9th May 2020" or "20th Feb 2022"
+            const parseDate = (dateStr) => {
+                const months = {
+                    'jan': 0, 'january': 0,
+                    'feb': 1, 'february': 1,
+                    'mar': 2, 'march': 2,
+                    'apr': 3, 'april': 3,
+                    'may': 4,
+                    'jun': 5, 'june': 5,
+                    'jul': 6, 'july': 6,
+                    'aug': 7, 'august': 7,
+                    'sep': 8, 'september': 8,
+                    'oct': 9, 'october': 9,
+                    'nov': 10, 'november': 10,
+                    'dec': 11, 'december': 11
+                };
+                
+                // Match pattern like "9th May 2020"
+                const match = dateStr.match(/(\d+)(?:st|nd|rd|th)?\s+(\w+)\s+(\d{4})/i);
+                if (!match) return new Date(0); // Invalid date goes to start
+                
+                const day = parseInt(match[1]);
+                const month = months[match[2].toLowerCase()];
+                const year = parseInt(match[3]);
+                
+                return new Date(year, month, day);
+            };
+            
+            const dateA = parseDate(a.date);
+            const dateB = parseDate(b.date);
+            
+            return dateA - dateB; // Ascending order (oldest first)
+        });
+
+        // Calculate statistics
+        let wins = 0;
+        let losses = 0;
+        
+        sortedWars.forEach(war => {
+            const result = war.result.toLowerCase();
+            if (result === 'win' || (result.includes('-') && parseInt(result.split('-')[0]) > parseInt(result.split('-')[1]))) {
+                wins++;
+            } else if (result === 'loss' || (result.includes('-') && parseInt(result.split('-')[0]) < parseInt(result.split('-')[1]))) {
+                losses++;
+            }
+        });
+
+        const totalWars = wars.length;
+        const winRate = totalWars > 0 ? ((wins / totalWars) * 100).toFixed(1) : 0;
+
+        // Update war record in toggle button
+        const warRecordSpan = warHistoryToggle.querySelector('.war-record');
+        warRecordSpan.textContent = `(${wins}W - ${losses}L)`;
+
+        // Create stats HTML
+        const statsHTML = `
+            <div class="war-stat-card">
+                <div class="war-stat-label">Total Wars</div>
+                <div class="war-stat-value">${totalWars}</div>
+            </div>
+            <div class="war-stat-card">
+                <div class="war-stat-label">Wins</div>
+                <div class="war-stat-value wins">${wins}</div>
+            </div>
+            <div class="war-stat-card">
+                <div class="war-stat-label">Losses</div>
+                <div class="war-stat-value losses">${losses}</div>
+            </div>
+            <div class="war-stat-card">
+                <div class="war-stat-label">Win Rate</div>
+                <div class="war-stat-value">${winRate}%</div>
+            </div>
+        `;
+
+        // Create wars list HTML
+        const warsListHTML = sortedWars.map(war => {
+            const result = war.result.toLowerCase();
+            let isWin = false;
+            let resultClass = '';
+            let displayResult = war.result;
+
+            if (result === 'win' || (result.includes('-') && parseInt(result.split('-')[0]) > parseInt(result.split('-')[1]))) {
+                isWin = true;
+                resultClass = 'win';
+            } else if (result === 'loss' || (result.includes('-') && parseInt(result.split('-')[0]) < parseInt(result.split('-')[1]))) {
+                isWin = false;
+                resultClass = 'loss';
+            }
+
+            return `
+                <div class="war-item ${resultClass}">
+                    <div class="war-opponent">vs ${war.opponent}</div>
+                    <div class="war-details">
+                        ${war.date ? `<div class="war-date">${war.date}</div>` : ''}
+                        <div class="war-result ${resultClass}">${displayResult}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Update the DOM
+        const statsContainer = warHistoryContent.querySelector('.war-history-stats');
+        const listContainer = warHistoryContent.querySelector('.war-history-list');
+        
+        statsContainer.innerHTML = statsHTML;
+        listContainer.innerHTML = warsListHTML;
+        
+        warHistorySection.style.display = 'block';
+    }
+
     async function fetchPlayersBatched(members) {
         const results = [];
         
@@ -306,6 +461,9 @@ document.addEventListener('DOMContentLoaded', () => {
         squadDisplaySection.style.display = 'none';
         squadDiscordLink.style.display = 'none';
         squadBio.style.display = 'none';
+        warHistorySection.style.display = 'none';
+        warHistoryContent.classList.remove('expanded');
+        warHistoryToggle.classList.remove('expanded');
         badge.style.display = 'none';
         statsGrid.style.display = 'none';
         tableSec.style.display = 'none';
@@ -359,6 +517,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     squadBio.style.display = 'block';
                 }
             }
+
+            // Display war history
+            displayWarHistory(squad);
 
             squadDisplaySection.style.display = 'flex';
             sortKey = null;
