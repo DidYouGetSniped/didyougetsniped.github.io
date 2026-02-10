@@ -25,6 +25,36 @@ document.addEventListener('DOMContentLoaded', function() {
   document.head.appendChild(style);
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let buffer = [];
+  const targetPhrase = 'lady gaga'.toLowerCase();
+  const phraseLength = targetPhrase.length;
+
+  document.addEventListener('keydown', function(event) {
+    const activeElement = document.activeElement;
+    const tagName = activeElement.tagName.toLowerCase();
+    const isInputField = tagName === 'input' || tagName === 'textarea';
+
+    if (isInputField) {
+      return; // Ignore key presses in text boxes
+    }
+
+    const key = event.key.toLowerCase();
+    if (key.length === 1 || key === ' ') { // Include letters, space, etc.
+      buffer.push(key);
+      if (buffer.length > phraseLength) {
+        buffer.shift(); // Keep buffer at phrase length
+      }
+      const typed = buffer.join('');
+      if (typed === targetPhrase) {
+        window.open('https://youtu.be/qrO4YZeyl0I?si=otJR8Y7zwXySSW1J', '_blank');
+        buffer = []; // Reset buffer after trigger
+      }
+    }
+  });
+});
+</script>
 <body>
     <div class="container">
         <header class="header">
