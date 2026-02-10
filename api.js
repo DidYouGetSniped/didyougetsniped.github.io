@@ -1,3 +1,5 @@
+import { applyRawOverrides } from './custom-stats.js';
+
 const API_BASE_URL = 'https://wbapi.wbpjs.com/players';
 
 export const RATE_LIMIT_CONFIG = {
@@ -188,11 +190,13 @@ function remapObjectKeys(dataObject, map) {
 }
 
 function processPlayerData(rawPlayerData) {
-    const processed = { ...rawPlayerData };
-    const raw_kills_per_weapon = rawPlayerData.kills_per_weapon || {};
-    const raw_kills_per_vehicle = rawPlayerData.kills_per_vehicle || {};
-    const raw_deaths = rawPlayerData.deaths || {};
-    const raw_self_destructs = rawPlayerData.self_destructs || {};
+    // Apply raw overrides first (for fields like steam, nick, etc.)
+    const rawWithOverrides = applyRawOverrides(rawPlayerData.uid, rawPlayerData);
+    const processed = { ...rawWithOverrides };
+    const raw_kills_per_weapon = rawWithOverrides.kills_per_weapon || {};
+    const raw_kills_per_vehicle = rawWithOverrides.kills_per_vehicle || {};
+    const raw_deaths = rawWithOverrides.deaths || {};
+    const raw_self_destructs = rawWithOverrides.self_destructs || {};
     const weaponKillsTotal = Object.entries(raw_kills_per_weapon)
         .filter(([key]) => !IGNORED_WEAPON_CODES.includes(key))
         .reduce((sum, [, value]) => sum + value, 0);
@@ -208,21 +212,21 @@ function processPlayerData(rawPlayerData) {
     processed.kdr = processed.totalDeaths > 0
         ? (processed.totalKills / processed.totalDeaths).toFixed(3)
         : processed.totalKills.toFixed(3);
-    processed.wins = remapObjectKeys(rawPlayerData.wins, GAMEMODE_NAMES);
-    processed.losses = remapObjectKeys(rawPlayerData.losses, GAMEMODE_NAMES);
+    processed.wins = remapObjectKeys(rawWithOverrides.wins, GAMEMODE_NAMES);
+    processed.losses = remapObjectKeys(rawWithOverrides.losses, GAMEMODE_NAMES);
     const filtered_raw_kills_per_vehicle = { ...raw_kills_per_vehicle };
     delete filtered_raw_kills_per_vehicle.v30;
-    const filtered_raw_damage_received = filterIgnoredWeapons(rawPlayerData.damage_received);
+    const filtered_raw_damage_received = filterIgnoredWeapons(rawWithOverrides.damage_received);
     const damage_received = remapObjectKeys(filtered_raw_damage_received, WEAPON_NAMES);
     processed.kills_per_vehicle = remapObjectKeys(filtered_raw_kills_per_vehicle, VEHICLE_KILL_NAMES);
     processed.deaths = remapObjectKeys(raw_deaths, DEATH_CAUSE_NAMES);
     const filtered_raw_kills = filterIgnoredWeapons(raw_kills_per_weapon);
-    const filtered_raw_headshots = filterIgnoredWeapons(rawPlayerData.headshots);
-    const filtered_raw_damage = filterIgnoredWeapons(rawPlayerData.damage_dealt);
-    const filtered_raw_shots_unzoomed = filterIgnoredWeapons(rawPlayerData.shots_fired_unzoomed);
-    const filtered_raw_shots_zoomed = filterIgnoredWeapons(rawPlayerData.shots_fired_zoomed);
-    const filtered_raw_hits_unzoomed = filterIgnoredWeapons(rawPlayerData.shots_hit_unzoomed);
-    const filtered_raw_hits_zoomed = filterIgnoredWeapons(rawPlayerData.shots_hit_zoomed);
+    const filtered_raw_headshots = filterIgnoredWeapons(rawWithOverrides.headshots);
+    const filtered_raw_damage = filterIgnoredWeapons(rawWithOverrides.damage_dealt);
+    const filtered_raw_shots_unzoomed = filterIgnoredWeapons(rawWithOverrides.shots_fired_unzoomed);
+    const filtered_raw_shots_zoomed = filterIgnoredWeapons(rawWithOverrides.shots_fired_zoomed);
+    const filtered_raw_hits_unzoomed = filterIgnoredWeapons(rawWithOverrides.shots_hit_unzoomed);
+    const filtered_raw_hits_zoomed = filterIgnoredWeapons(rawWithOverrides.shots_hit_zoomed);
     const kills_per_weapon = remapObjectKeys(filtered_raw_kills, WEAPON_NAMES);
     const headshots = remapObjectKeys(filtered_raw_headshots, WEAPON_NAMES);
     const damage_dealt = remapObjectKeys(filtered_raw_damage, WEAPON_NAMES);
@@ -259,11 +263,11 @@ function processPlayerData(rawPlayerData) {
             shotsFired, shotsHit
         };
     }
-    if (SPECIAL_LINKS[rawPlayerData.uid]) {
-        processed.socialLinks = SPECIAL_LINKS[rawPlayerData.uid];
+    if (SPECIAL_LINKS[rawWithOverrides.uid]) {
+        processed.socialLinks = SPECIAL_LINKS[rawWithOverrides.uid];
     }
-    if (PLAYER_BIOGRAPHIES[rawPlayerData.uid]) {
-        processed.biography = PLAYER_BIOGRAPHIES[rawPlayerData.uid];
+    if (PLAYER_BIOGRAPHIES[rawWithOverrides.uid]) {
+        processed.biography = PLAYER_BIOGRAPHIES[rawWithOverrides.uid];
     }
     delete processed.kills_per_weapon;
     delete processed.damage_dealt;
@@ -329,4 +333,3 @@ export async function searchPlayerByName(query) {
     };
 
 }
-

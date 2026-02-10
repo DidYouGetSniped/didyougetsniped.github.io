@@ -2,6 +2,7 @@ import { setRandomBackground } from '/background.js';
 import { fetchFullPlayerData, searchPlayerByName, RATE_LIMIT_CONFIG } from '/api.js';
 import { copyToClipboard, extractUID, formatDateTime, getJoinDateFromUID, timeAgo } from '/utils.js';
 import { renderPlayerInfo, renderSearchResults, displayMessage, updateMetaTags, resetMetaTags } from '/ui.js';
+import { applyRawOverrides, applyProcessedOverrides, applyPercentileOverrides } from '/custom-stats.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const rateLimitChannel = new BroadcastChannel('war-brokers-rate-limit');
@@ -97,6 +98,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (uid) {
                 const { rawPlayerData: rawData, playerData, killsPercentile, gamesPercentile, xpPercentile, fromCache } = await fetchFullPlayerData(uid);
                 
+                // Apply custom stat overrides
+                const rawDataWithOverrides = applyRawOverrides(uid, rawData);
+                const playerDataWithOverrides = applyProcessedOverrides(uid, playerData);
+                const percentilesWithOverrides = applyPercentileOverrides(uid, {
+                    killsPercentile,
+                    gamesPercentile,
+                    xpPercentile
+                });
+                
                 // Only count against rate limit if NOT from cache
                 if (!fromCache) {
                     RATE_LIMIT.requests.push(now);
@@ -112,10 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 currentPlayerUID = uid;
-                currentPlayerdata = playerData;
-                rawPlayerData = rawData;
-                percentilesData = { killsPercentile, gamesPercentile, xpPercentile };
-                updateMetaTags(playerData);
+                currentPlayerdata = playerDataWithOverrides;
+                rawPlayerData = rawDataWithOverrides;
+                percentilesData = percentilesWithOverrides;
+                updateMetaTags(playerDataWithOverrides);
                 displayFullPlayerInfo();
             } else {
                 const { results: searchResults, fromCache } = await searchPlayerByName(searchInput);
