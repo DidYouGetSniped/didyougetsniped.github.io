@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="updates.css" />
 
@@ -35,31 +35,26 @@
 <body>
   <!-- Animated Background -->
   <div class="bg-animation">
-    <div class="bg-gradient"></div>
-    <div class="bg-grid"></div>
-    <div class="floating-orbs">
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
-      <div class="orb orb-3"></div>
-    </div>
+    <canvas id="bg-canvas"></canvas>
+    <div class="bg-noise"></div>
   </div>
 
   <!-- Navigation Bar -->
-  <nav class="navbar">
+  <nav class="navbar" id="navbar">
     <div class="nav-container">
       <a href="/" class="nav-logo">
         <span class="logo-icon">⚔️</span>
         <span class="logo-text">DYGS's War Brokers Tools</span>
       </a>
       <div class="nav-links">
-        <a href="/index.html" class="nav-back">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <a href="/index.html" class="nav-link nav-back">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
           </svg>
-          <span>Back to Home</span>
+          <span>Home</span>
         </a>
-        <a href="https://discord.gg/NuST4n4sWt" class="nav-discord" target="_blank" rel="noopener noreferrer">
-          <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <a href="https://discord.gg/NuST4n4sWt" class="nav-link nav-discord" target="_blank" rel="noopener noreferrer">
+          <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
           </svg>
           <span>Discord</span>
@@ -71,261 +66,441 @@
   <!-- Hero Section -->
   <header class="hero">
     <div class="hero-content">
-      <div class="hero-badge">
-        <span class="badge-icon">📋</span>
-        <span>Changelog</span>
+      <div class="hero-eyebrow">
+        <div class="pulse-dot"></div>
+        <span>Live Changelog</span>
       </div>
       <h1 class="hero-title">
-        <span class="gradient-text">Updates</span>
+        <span class="title-line">What's</span>
+        <span class="title-line title-accent">New</span>
       </h1>
-      <p class="hero-subtitle">All changes to the site, newest first. Stay up to date with the latest features and improvements.</p>
-      <div class="update-stats">
-        <div class="stat-item">
-          <span class="stat-number" id="total-updates">14</span>
-          <span class="stat-label">Updates</span>
+      <p class="hero-subtitle">Every update, improvement, and fix — documented.</p>
+      <div class="stats-row">
+        <div class="stat-chip">
+          <span class="stat-value" id="total-updates">26</span>
+          <span class="stat-key">releases</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-number" id="total-changes">35+</span>
-          <span class="stat-label">Changes</span>
+        <div class="stat-chip">
+          <span class="stat-value" id="total-changes">80+</span>
+          <span class="stat-key">changes</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-number">2025</span>
-          <span class="stat-label">Active</span>
+        <div class="stat-chip">
+          <span class="stat-value">2025</span>
+          <span class="stat-key">since</span>
         </div>
       </div>
     </div>
   </header>
 
   <main class="main-content">
+    <!-- Filter / Search Bar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search updates..." autocomplete="off" />
+      </div>
+      <div class="toolbar-info">
+        <span id="visible-count"></span>
+      </div>
+    </div>
+
     <!-- Timeline Updates -->
     <section class="updates-section" aria-labelledby="updates-title">
       <h2 id="updates-title" class="sr-only">All Updates</h2>
-      
-      <!-- This list structure is parsed by index.html - DO NOT change the class name or basic structure -->
+
       <ul class="updates-list">
+
         <li>
-          <time class="update-time" datetime="2026-2-10">2/10/2026</time>
-          <ul class="changes-list">
-            <li>Added custom stats</li>
-            <li>Fixed background.js code</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2026-2-10">Feb 10, 2026</time>
+              <span class="change-count">3 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added custom stats</li>
+              <li><span class="tag tag-fix">fix</span>Fixed background.js code</li>
+              <li><span class="tag tag-update">update</span>Updated updates page</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2026-2-6">2/6/2026</time>
-          <ul class="changes-list">
-            <li>Changed values for vehicle "star" requirements</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2026-2-6">Feb 6, 2026</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-update">update</span>Changed values for vehicle "star" requirements</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2026-2-3">2/3/2026</time>
-          <ul class="changes-list">
-            <li>Small changes to Homepage CSS</li>
-            <li>Deleted To-Do</li>
-            <li>Deleted BPR page and Fixed Links</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2026-2-3">Feb 3, 2026</time>
+              <span class="change-count">3 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-update">update</span>Small changes to Homepage CSS</li>
+              <li><span class="tag tag-remove">removed</span>Deleted To-Do</li>
+              <li><span class="tag tag-remove">removed</span>Deleted BPR page and Fixed Links</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2026-1-31">1/31/2026</time>
-          <ul class="changes-list">
-            <li>Modern futuristic aesthetic for Player Count</li>
-            <li>Removed tension slider from Player Count (unnecessary control)</li>
-            <li>Smart (Auto) - intelligently adjusts based on dataset size for Player Count</li>
-            <li>Hourly, Every 3/6 Hours, Daily options for better control of large datasets for Player Count</li>
-            <li>Fixes the issue where "minimal" still showed too many points for Player Count</li>
-            <li>Custom date range picker - view any historical time period for Player Count</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2026-1-31">Jan 31, 2026</time>
+              <span class="change-count">6 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-update">update</span>Modern futuristic aesthetic for Player Count</li>
+              <li><span class="tag tag-remove">removed</span>Removed tension slider from Player Count</li>
+              <li><span class="tag tag-feature">feature</span>Smart (Auto) - intelligently adjusts based on dataset size for Player Count</li>
+              <li><span class="tag tag-feature">feature</span>Hourly, Every 3/6 Hours, Daily options for better control of large datasets</li>
+              <li><span class="tag tag-fix">fix</span>Fixes the issue where "minimal" still showed too many points</li>
+              <li><span class="tag tag-feature">feature</span>Custom date range picker - view any historical time period</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2026-1-29">1/29/2026</time>
-          <ul class="changes-list">
-            <li>Consolidated rate limiting to a single system with 19 requests per minute limit</li>
-            <li>Implemented intelligent caching that excludes cached requests from rate limit counting</li>
-            <li>Cache duration set to 60 seconds - repeated lookups of the same player within this window won't count against your rate limit</li>
-            <li>Added clear error messages showing exact wait time when rate limit is exceeded</li>
-            <li>Removed redundant rate limit UI elements for cleaner interface</li>
-            <li>Removed the blacklisted player UI check</li>
-            <li>Removed the raw JSON data display</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2026-1-29">Jan 29, 2026</time>
+              <span class="change-count">7 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-update">update</span>Consolidated rate limiting to a single system with 19 requests per minute limit</li>
+              <li><span class="tag tag-feature">feature</span>Implemented intelligent caching that excludes cached requests from rate limit counting</li>
+              <li><span class="tag tag-update">update</span>Cache duration set to 60 seconds</li>
+              <li><span class="tag tag-feature">feature</span>Added clear error messages showing exact wait time when rate limit is exceeded</li>
+              <li><span class="tag tag-remove">removed</span>Removed redundant rate limit UI elements</li>
+              <li><span class="tag tag-remove">removed</span>Removed the blacklisted player UI check</li>
+              <li><span class="tag tag-remove">removed</span>Removed the raw JSON data display</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2026-1-25">1/25/2026</time>
-          <ul class="changes-list">
-            <li>Added level selector to Squad Count</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2026-1-25">Jan 25, 2026</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added level selector to Squad Count</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2026-1-24">1/24/2026</time>
-          <ul class="changes-list">
-            <li>Updated Squad Count and Squad Inviter</li>
-            <li>Updated Squads and Player Stats Pages</li>
-            <li>Updated refresh-squad-data.yml</li>
-            <li>Updated fetch-data.js</li>
-            <li>Faster browsing (cache hits)</li>
-            <li>Fewer "rate limit exceeded" errors</li>
-            <li>Smooth squad loading with progress</li>
-            <li>5-50% fewer total requests</li>
-            <li>No burst traffic (batched requests)</li>
-            <li>Better resource utilization</li>
-            <li>Reduced server load</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2026-1-24">Jan 24, 2026</time>
+              <span class="change-count">11 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-update">update</span>Updated Squad Count and Squad Inviter</li>
+              <li><span class="tag tag-update">update</span>Updated Squads and Player Stats Pages</li>
+              <li><span class="tag tag-update">update</span>Updated refresh-squad-data.yml</li>
+              <li><span class="tag tag-update">update</span>Updated fetch-data.js</li>
+              <li><span class="tag tag-feature">feature</span>Faster browsing (cache hits)</li>
+              <li><span class="tag tag-fix">fix</span>Fewer "rate limit exceeded" errors</li>
+              <li><span class="tag tag-feature">feature</span>Smooth squad loading with progress</li>
+              <li><span class="tag tag-update">update</span>5-50% fewer total requests</li>
+              <li><span class="tag tag-update">update</span>No burst traffic (batched requests)</li>
+              <li><span class="tag tag-update">update</span>Better resource utilization</li>
+              <li><span class="tag tag-update">update</span>Reduced server load</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2026-1-7">1/7/2026</time>
-          <ul class="changes-list">
-            <li>Changed Jumps per Damage Dealt to Damage Dealt per Jump</li>
-            <li>Changed Player Count Tracker from every 15 minutes to every 30 minutes</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2026-1-7">Jan 7, 2026</time>
+              <span class="change-count">2 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-update">update</span>Changed Jumps per Damage Dealt to Damage Dealt per Jump</li>
+              <li><span class="tag tag-update">update</span>Changed Player Count Tracker from every 15 minutes to every 30 minutes</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-11-30">11/30/2025</time>
-          <ul class="changes-list">
-            <li>Updated copying of Join Date and Last Played for player stats</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-11-30">Nov 30, 2025</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-update">update</span>Updated copying of Join Date and Last Played for player stats</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-11-29">11/29/2025</time>
-          <ul class="changes-list">
-            <li>Updated Broker Performance Rating (BPR) page</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-11-29">Nov 29, 2025</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-update">update</span>Updated Broker Performance Rating (BPR) page</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-11-27">11/27/2025</time>
-          <ul class="changes-list">
-            <li>Updated homepage and updates page</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-11-27">Nov 27, 2025</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-update">update</span>Updated homepage and updates page</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-11-5">11/5/2025</time>
-          <ul class="changes-list">
-            <li>Added Player Stat Blacklist</li>
-            <li>Updated Squad Inviter with Warning</li>
-            <li>Updated Footer</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-11-5">Nov 5, 2025</time>
+              <span class="change-count">3 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added Player Stat Blacklist</li>
+              <li><span class="tag tag-update">update</span>Updated Squad Inviter with Warning</li>
+              <li><span class="tag tag-update">update</span>Updated Footer</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-11-4">11/4/2025</time>
-          <ul class="changes-list">
-            <li>Added Damage Dealt per Weapon Graph</li>
-            <li>Updated Machine Gun Turret to MG Turret</li>
-            <li>Added Open Graph meta tags to Updates page</li>
-            <li>Added Bar Chart Graph option</li>
-            <li>Updated To-Do List</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-11-4">Nov 4, 2025</time>
+              <span class="change-count">5 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added Damage Dealt per Weapon Graph</li>
+              <li><span class="tag tag-update">update</span>Updated Machine Gun Turret to MG Turret</li>
+              <li><span class="tag tag-feature">feature</span>Added Open Graph meta tags to Updates page</li>
+              <li><span class="tag tag-feature">feature</span>Added Bar Chart Graph option</li>
+              <li><span class="tag tag-update">update</span>Updated To-Do List</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-11-3">11/3/2025</time>
-          <ul class="changes-list">
-            <li>Added Damage Received per Weapon Graph</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-11-3">Nov 3, 2025</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added Damage Received per Weapon Graph</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-10-28">10/28/2025</time>
-          <ul class="changes-list">
-            <li>Added Open Graph meta tags to BPR page</li>
-            <li>Updated the date display logic</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-10-28">Oct 28, 2025</time>
+              <span class="change-count">2 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added Open Graph meta tags to BPR page</li>
+              <li><span class="tag tag-update">update</span>Updated the date display logic</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-10-23">10/23/2025</time>
-          <ul class="changes-list">
-            <li>Added Minimum Stat for Player Count Tracker</li>
-            <li>Fixed Player Count Tracker Data Collection</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-10-23">Oct 23, 2025</time>
+              <span class="change-count">2 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added Minimum Stat for Player Count Tracker</li>
+              <li><span class="tag tag-fix">fix</span>Fixed Player Count Tracker Data Collection</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-10-16">10/16/2025</time>
-          <ul class="changes-list">
-            <li>Added a few things for Player Count Tracker</li>
-            <li>Made Player Count Tracker look better on mobile</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-10-16">Oct 16, 2025</time>
+              <span class="change-count">2 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added a few things for Player Count Tracker</li>
+              <li><span class="tag tag-update">update</span>Made Player Count Tracker look better on mobile</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-10-15">10/15/2025</time>
-          <ul class="changes-list">
-            <li>Added Player Count Tracker</li>
-            <li>Changed name on homepage</li>
-            <li>Added custom cursor to a few pages</li>
-            <li>Added Google Analytics to player tracker</li>
-            <li>Updated how bot gets data from API for Player Count</li>
-            <li>Updates now opens in the same tab</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-10-15">Oct 15, 2025</time>
+              <span class="change-count">6 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added Player Count Tracker</li>
+              <li><span class="tag tag-update">update</span>Changed name on homepage</li>
+              <li><span class="tag tag-feature">feature</span>Added custom cursor to a few pages</li>
+              <li><span class="tag tag-feature">feature</span>Added Google Analytics to player tracker</li>
+              <li><span class="tag tag-update">update</span>Updated how bot gets data from API for Player Count</li>
+              <li><span class="tag tag-update">update</span>Updates now opens in the same tab</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-10-13">10/13/2025</time>
-          <ul class="changes-list">
-            <li>Added Weapon Kills per Vehicle Kill</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-10-13">Oct 13, 2025</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added Weapon Kills per Vehicle Kill</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-10-12">10/12/2025</time>
-          <ul class="changes-list">
-            <li>Added Total Weapon Kills</li>
-            <li>Added Total Vehicle Kills</li>
-            <li>Removed Missiles Launched Per Game</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-10-12">Oct 12, 2025</time>
+              <span class="change-count">3 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added Total Weapon Kills</li>
+              <li><span class="tag tag-feature">feature</span>Added Total Vehicle Kills</li>
+              <li><span class="tag tag-remove">removed</span>Removed Missiles Launched Per Game</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-10-5">10/5/2025</time>
-          <ul class="changes-list">
-            <li>Updated adverts</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-10-5">Oct 5, 2025</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-update">update</span>Updated adverts</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-09-13">9/13/2025</time>
-          <ul class="changes-list">
-            <li>Added more backgrounds and optimized background.js</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-09-13">Sep 13, 2025</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added more backgrounds and optimized background.js</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-09-11">9/11/2025</time>
-          <ul class="changes-list">
-            <li>Added squad inviter navigation bar</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-09-11">Sep 11, 2025</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added squad inviter navigation bar</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-09-06">9/6/2025</time>
-          <ul class="changes-list">
-            <li>Added description to squad inviter</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-09-06">Sep 6, 2025</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added description to squad inviter</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-09-03">9/3/2025</time>
-          <ul class="changes-list">
-            <li>Updated home page</li>
-            <li>Updated nav bar</li>
-            <li>Added manual squad inviter to homepage</li>
-            <li>Added BPR to homepage</li>
-            <li>Updated how updates look</li>
-            <li>Changed name of manual squad inviter</li>
-            <li>Added alphabetical sort on squad count</li>
-            <li>Updated nav bar links</li>
-            <li>Added adverts</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-09-03">Sep 3, 2025</time>
+              <span class="change-count">9 changes</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-update">update</span>Updated home page</li>
+              <li><span class="tag tag-update">update</span>Updated nav bar</li>
+              <li><span class="tag tag-feature">feature</span>Added manual squad inviter to homepage</li>
+              <li><span class="tag tag-feature">feature</span>Added BPR to homepage</li>
+              <li><span class="tag tag-update">update</span>Updated how updates look</li>
+              <li><span class="tag tag-update">update</span>Changed name of manual squad inviter</li>
+              <li><span class="tag tag-feature">feature</span>Added alphabetical sort on squad count</li>
+              <li><span class="tag tag-update">update</span>Updated nav bar links</li>
+              <li><span class="tag tag-feature">feature</span>Added adverts</li>
+            </ul>
+          </div>
         </li>
+
         <li>
-          <time class="update-time" datetime="2025-09-02">9/2/2025</time>
-          <ul class="changes-list">
-            <li>Added updates to home page</li>
-          </ul>
+          <div class="update-card">
+            <div class="card-header">
+              <time class="update-time" datetime="2025-09-02">Sep 2, 2025</time>
+              <span class="change-count">1 change</span>
+            </div>
+            <ul class="changes-list">
+              <li><span class="tag tag-feature">feature</span>Added updates to home page</li>
+            </ul>
+          </div>
         </li>
+
       </ul>
     </section>
+
+    <!-- Back to top -->
+    <button class="back-to-top" id="back-to-top" aria-label="Back to top">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 15l-6-6-6 6"/>
+      </svg>
+    </button>
   </main>
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-brand">
-        <span>Created By: Did You Get Sniped</span>
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span class="footer-logo">⚔️</span>
+        <div>
+          <p class="footer-brand">Did You Get Sniped</p>
+          <p class="footer-sub">Made with ❤️ for the Warbrokers community</p>
+        </div>
       </div>
-      <p class="footer-text">Made with ❤️ for the Warbrokers community</p>
       <a href="https://discord.gg/NuST4n4sWt" class="footer-discord" target="_blank" rel="noopener noreferrer">
         <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor">
           <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
         </svg>
-        Need Help? Join our Discord
+        Join Discord
       </a>
     </div>
   </footer>
@@ -338,22 +513,112 @@
       document.head.appendChild(style);
     });
   </script>
- <!-- Dynamic Stats Counter -->
+
+  <!-- Dynamic Stats Counter -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const updateItems = document.querySelectorAll('.updates-list > li');
       const totalUpdates = updateItems.length;
-      
       const changeItems = document.querySelectorAll('.changes-list li');
       const totalChanges = changeItems.length;
       
       document.getElementById('total-updates').textContent = totalUpdates;
       document.getElementById('total-changes').textContent = totalChanges + '+';
       
-      console.log(`Stats updated: ${totalUpdates} updates, ${totalChanges} changes`);
+      // Search functionality
+      const searchInput = document.getElementById('search-input');
+      const visibleCount = document.getElementById('visible-count');
+
+      function updateVisibleCount() {
+        const visible = document.querySelectorAll('.updates-list > li:not([hidden])').length;
+        visibleCount.textContent = visible === totalUpdates ? '' : `${visible} of ${totalUpdates} shown`;
+      }
+
+      searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        updateItems.forEach(li => {
+          const text = li.textContent.toLowerCase();
+          li.hidden = query && !text.includes(query);
+        });
+        updateVisibleCount();
+      });
+
+      // Back to top
+      const btn = document.getElementById('back-to-top');
+      window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 600);
+      });
+      btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+      // Navbar scroll effect
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 40);
+      });
+
+      // Intersection observer for scroll animations
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.update-card').forEach(card => observer.observe(card));
     });
   </script>
+
+  <!-- Background Canvas -->
+  <script>
+    (function() {
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      let w, h, particles = [];
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+
+      function createParticles() {
+        particles = [];
+        const count = Math.floor((w * h) / 18000);
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            r: Math.random() * 1.5 + 0.5,
+            dx: (Math.random() - 0.5) * 0.3,
+            dy: (Math.random() - 0.5) * 0.3,
+            opacity: Math.random() * 0.5 + 0.1
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => {
+          p.x += p.dx;
+          p.y += p.dy;
+          if (p.x < 0) p.x = w;
+          if (p.x > w) p.x = 0;
+          if (p.y < 0) p.y = h;
+          if (p.y > h) p.y = 0;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(139, 92, 246, ${p.opacity})`;
+          ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+
+      resize();
+      createParticles();
+      draw();
+      window.addEventListener('resize', () => { resize(); createParticles(); });
+    })();
+  </script>
 </body>
-
 </html>
-

@@ -15,7 +15,6 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- Styles will go here -->
   <link rel="stylesheet" href="homepage.css" />
 
   <!-- Google tag (gtag.js) -->
@@ -91,7 +90,6 @@
       </div>
 
       <div class="tools-grid">
-        <!-- Primary Tools -->
         <article class="tool-card featured">
           <div class="card-icon">📊</div>
           <div class="card-content">
@@ -222,7 +220,7 @@
       </div>
 
       <div class="latest-update-container" id="updates-list" aria-live="polite">
-        <div class="update-item skeleton">
+        <div class="skeleton">
           <div class="skeleton-time"></div>
           <div class="skeleton-text"></div>
         </div>
@@ -262,40 +260,61 @@
       document.head.appendChild(style);
     });
 
-    // Updates loader - loads only the latest update
+    // Updates loader
     (() => {
       const container = document.getElementById('updates-list');
       const src = new URL('updates.html', location.origin).href;
-
-      function clearSkeleton() {
-        container?.querySelectorAll('.skeleton').forEach(el => el.remove());
-      }
 
       async function loadLatestUpdate() {
         try {
           const res = await fetch(src, { cache: 'no-store' });
           if (!res.ok) throw new Error('HTTP ' + res.status);
           const html = await res.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const sourceList = doc.querySelector('.updates-list');
-          if (!sourceList) throw new Error('No updates list found');
+          const doc = new DOMParser().parseFromString(html, 'text/html');
 
-          const items = Array.from(sourceList.children).filter(el => el.tagName === 'LI');
-          clearSkeleton();
+          const firstItem = doc.querySelector('.updates-list > li');
+          if (!firstItem) throw new Error('No updates found');
+
+          const card = firstItem.querySelector('.update-card');
+          const dateEl = card?.querySelector('.update-time');
+          const changesList = card?.querySelector('.changes-list');
+
+          if (!dateEl || !changesList) throw new Error('Malformed update entry');
+
+          const dateText = dateEl.textContent.trim();
+          const changes = Array.from(changesList.querySelectorAll('li'));
+
           container.innerHTML = '';
-          
-          // Only show the first (latest) update
-          if (items.length > 0) {
-            const latestUpdate = items[0].cloneNode(true);
-            latestUpdate.classList.add('update-item', 'latest');
-            container.appendChild(latestUpdate);
-          } else {
-            container.innerHTML = '<div class="update-item"><p>No updates available.</p></div>';
-          }
+
+          const cardDiv = document.createElement('div');
+          cardDiv.className = 'update-card';
+
+          const header = document.createElement('div');
+          header.className = 'card-header';
+
+          const time = document.createElement('time');
+          time.className = 'update-time';
+          time.setAttribute('datetime', dateEl.getAttribute('datetime') || '');
+          time.textContent = dateText;
+
+          const count = document.createElement('span');
+          count.className = 'change-count';
+          count.textContent = changes.length === 1 ? '1 change' : changes.length + ' changes';
+
+          header.appendChild(time);
+          header.appendChild(count);
+          cardDiv.appendChild(header);
+
+          const ul = document.createElement('ul');
+          ul.className = 'changes-list';
+          changes.forEach(li => ul.appendChild(li.cloneNode(true)));
+
+          cardDiv.appendChild(ul);
+          container.appendChild(cardDiv);
+
         } catch (e) {
-          clearSkeleton();
-          container.innerHTML = '<div class="update-item error"><p>Could not load updates.</p></div>';
+          console.error('Failed to load updates:', e);
+          container.innerHTML = '<div class="update-error">Could not load the latest update.</div>';
         }
       }
 
