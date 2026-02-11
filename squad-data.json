@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-11T03:14:46.199Z",
+  "lastUpdated": "2026-02-11T13:50:50.778Z",
   "statistics": {
     "totalSquads": 534,
     "activeSquads": 255,
@@ -8,9 +8,9 @@
     "averageMembers": 6.97
   },
   "overallStats": {
-    "avgKillsELO": 1635.17,
+    "avgKillsELO": 1635.25,
     "avgGamesELO": 1737.65,
-    "avgLevel": 159.62,
+    "avgLevel": 159.64,
     "steamCount": 550,
     "steamPercent": 26.8,
     "totalPlayers": 2056
@@ -18,15 +18,15 @@
   "fetchInfo": {
     "totalApiCalls": 535,
     "failedFetches": 0,
-    "duration": "1835.9s"
+    "duration": "1829.3s"
   },
   "squads": [
     {
       "name": "CAESAR",
       "count": 168,
       "memberStats": {
-        "avgKillsELO": 1627.2906547619054,
-        "avgGamesELO": 1729.0345238095233,
+        "avgKillsELO": 1627.2571428571437,
+        "avgGamesELO": 1728.879226190476,
         "avgLevel": 194.14285714285714,
         "steamCount": 45,
         "totalMembers": 168
@@ -1131,8 +1131,8 @@
       "name": "UMS",
       "count": 43,
       "memberStats": {
-        "avgKillsELO": 1735.118604651163,
-        "avgGamesELO": 1867.4146511627905,
+        "avgKillsELO": 1735.233720930233,
+        "avgGamesELO": 1867.187906976744,
         "avgLevel": 338.9767441860465,
         "steamCount": 23,
         "totalMembers": 43
@@ -1587,9 +1587,9 @@
       "name": "BLAST",
       "count": 39,
       "memberStats": {
-        "avgKillsELO": 1640.939487179487,
-        "avgGamesELO": 1828.305128205128,
-        "avgLevel": 152.92307692307693,
+        "avgKillsELO": 1641.1592307692308,
+        "avgGamesELO": 1828.6387179487176,
+        "avgLevel": 153.5897435897436,
         "steamCount": 13,
         "totalMembers": 39
       },
@@ -1770,11 +1770,6 @@
           "level": 135
         },
         {
-          "uid": "5f11286cfe3c7a6b75f063a7",
-          "name": "60 k",
-          "level": 761
-        },
-        {
           "uid": "5eb3fc93fd3c7afa61ef9f5b",
           "name": "viren20k",
           "level": 638
@@ -1788,6 +1783,11 @@
           "uid": "63c5bc64d142afe031a28b22",
           "name": "XD2.0",
           "level": 73
+        },
+        {
+          "uid": "5f11286cfe3c7a6b75f063a7",
+          "name": "60 k",
+          "level": 787
         }
       ]
     },
@@ -1998,9 +1998,9 @@
       "name": "FISH",
       "count": 32,
       "memberStats": {
-        "avgKillsELO": 1695.4184375,
-        "avgGamesELO": 1807.3703124999993,
-        "avgLevel": 413.25,
+        "avgKillsELO": 1696.9775,
+        "avgGamesELO": 1808.3696874999994,
+        "avgLevel": 413.28125,
         "steamCount": 19,
         "totalMembers": 32
       },
@@ -2058,7 +2058,7 @@
         {
           "uid": "61ad1779bfea71876b375aa0",
           "name": "Bot Farmer",
-          "level": 215
+          "level": 216
         },
         {
           "uid": "62d023c9d142af213c5def32",
@@ -2793,13 +2793,18 @@
       "name": "AI",
       "count": 24,
       "memberStats": {
-        "avgKillsELO": 1817.895833333333,
-        "avgGamesELO": 2128.8054166666666,
-        "avgLevel": 597,
+        "avgKillsELO": 1818.332083333333,
+        "avgGamesELO": 2127.947083333333,
+        "avgLevel": 597.0416666666666,
         "steamCount": 22,
         "totalMembers": 24
       },
       "members": [
+        {
+          "uid": "64a28cf4fd3c7a9637f86a85",
+          "name": "beep boop",
+          "level": 787
+        },
         {
           "uid": "6449c8acd142afb66d07f776",
           "name": "Invis 101",
@@ -2809,11 +2814,6 @@
           "uid": "614cdc8bd142af3e0f3f8370",
           "name": "iffypedia",
           "level": 897
-        },
-        {
-          "uid": "64a28cf4fd3c7a9637f86a85",
-          "name": "beep boop",
-          "level": 786
         },
         {
           "uid": "5c219c1afd3c7a837ba79316",
@@ -2926,17 +2926,27 @@
       "name": "AHK",
       "count": 22,
       "memberStats": {
-        "avgKillsELO": 1631.4150000000002,
-        "avgGamesELO": 1689.303636363636,
+        "avgKillsELO": 1631.4149999999995,
+        "avgGamesELO": 1689.3036363636363,
         "avgLevel": 105.86363636363636,
         "steamCount": 7,
         "totalMembers": 22
       },
       "members": [
         {
-          "uid": "640da8f2d142af5a55effc38",
-          "name": "特攻の前田",
-          "level": 65
+          "uid": "61e14312fd3c7a473ee1882d",
+          "name": "aoi_kousei m9(^Д^)",
+          "level": 391
+        },
+        {
+          "uid": "618ba008d142af99678e11e5",
+          "name": "Fereiri no war",
+          "level": 114
+        },
+        {
+          "uid": "6187d0edbfea714843509ce5",
+          "name": "tamakage",
+          "level": 27
         },
         {
           "uid": "6002d92ebfea71987e24c7a6",
@@ -2944,13 +2954,68 @@
           "level": 56
         },
         {
+          "uid": "63900feebfea71301c75c5b6",
+          "name": "482K",
+          "level": 110
+        },
+        {
+          "uid": "61ec3e9cd142af662e85a408",
+          "name": "Alk",
+          "level": 86
+        },
+        {
+          "uid": "5ff83e24bfea716b48e52e7f",
+          "name": "ganondorofu",
+          "level": 63
+        },
+        {
           "uid": "61b8b022d142afa74038e332",
           "name": "_Iris1999__",
           "level": 89
         },
         {
-          "uid": "636d73b3bfea711109b2a37c",
-          "name": "U.S.A.RMY",
+          "uid": "631d3f6bbfea71ba58d70e86",
+          "name": "146-TUF",
+          "level": 44
+        },
+        {
+          "uid": "62b6d227bfea71302c157e35",
+          "name": "sawa.jp",
+          "level": 38
+        },
+        {
+          "uid": "5fae35cdd142afe530eae576",
+          "name": "red",
+          "level": 46
+        },
+        {
+          "uid": "624be1d5d142afdf1f6c0a84",
+          "name": "Duelist Hero",
+          "level": 148
+        },
+        {
+          "uid": "5d1b0154d142afa3403ccbba",
+          "name": "Kyne",
+          "level": 70
+        },
+        {
+          "uid": "5f5f57d0fd3c7a4e69c578f7",
+          "name": "paper",
+          "level": 57
+        },
+        {
+          "uid": "634c9fe2bfea71a05223bb8b",
+          "name": "Masahuking",
+          "level": 41
+        },
+        {
+          "uid": "6189f81ad142af97678e0bbf",
+          "name": "raifuu",
+          "level": 89
+        },
+        {
+          "uid": "640da8f2d142af5a55effc38",
+          "name": "特攻の前田",
           "level": 65
         },
         {
@@ -2959,54 +3024,14 @@
           "level": 38
         },
         {
-          "uid": "62b6d227bfea71302c157e35",
-          "name": "sawa.jp",
-          "level": 38
+          "uid": "636d73b3bfea711109b2a37c",
+          "name": "U.S.A.RMY",
+          "level": 65
         },
         {
-          "uid": "61e14312fd3c7a473ee1882d",
-          "name": "aoi_kousei m9(^Д^)",
-          "level": 391
-        },
-        {
-          "uid": "6189f81ad142af97678e0bbf",
-          "name": "raifuu",
-          "level": 89
-        },
-        {
-          "uid": "634c9fe2bfea71a05223bb8b",
-          "name": "Masahuking",
-          "level": 41
-        },
-        {
-          "uid": "61ec3e9cd142af662e85a408",
-          "name": "Alk",
-          "level": 86
-        },
-        {
-          "uid": "5f5f57d0fd3c7a4e69c578f7",
-          "name": "paper",
-          "level": 57
-        },
-        {
-          "uid": "631d3f6bbfea71ba58d70e86",
-          "name": "146-TUF",
-          "level": 44
-        },
-        {
-          "uid": "6158fe54fd3c7a435a0dc367",
-          "name": "ookamikun",
-          "level": 36
-        },
-        {
-          "uid": "63900feebfea71301c75c5b6",
-          "name": "482K",
-          "level": 110
-        },
-        {
-          "uid": "618ba008d142af99678e11e5",
-          "name": "Fereiri no war",
-          "level": 114
+          "uid": "61a448f4bfea711044375a98",
+          "name": "minami_sakura",
+          "level": 46
         },
         {
           "uid": "5bf783f6d142afb305fe580d",
@@ -3014,34 +3039,9 @@
           "level": 610
         },
         {
-          "uid": "624be1d5d142afdf1f6c0a84",
-          "name": "Duelist Hero",
-          "level": 148
-        },
-        {
-          "uid": "6187d0edbfea714843509ce5",
-          "name": "tamakage",
-          "level": 27
-        },
-        {
-          "uid": "5ff83e24bfea716b48e52e7f",
-          "name": "ganondorofu",
-          "level": 63
-        },
-        {
-          "uid": "5d1b0154d142afa3403ccbba",
-          "name": "Kyne",
-          "level": 70
-        },
-        {
-          "uid": "5fae35cdd142afe530eae576",
-          "name": "red",
-          "level": 46
-        },
-        {
-          "uid": "61a448f4bfea711044375a98",
-          "name": "minami_sakura",
-          "level": 46
+          "uid": "6158fe54fd3c7a435a0dc367",
+          "name": "ookamikun",
+          "level": 36
         }
       ]
     },
@@ -3049,37 +3049,17 @@
       "name": "SOF",
       "count": 22,
       "memberStats": {
-        "avgKillsELO": 1652.658181818182,
-        "avgGamesELO": 1523.2163636363634,
-        "avgLevel": 103.22727272727273,
+        "avgKillsELO": 1654.0972727272726,
+        "avgGamesELO": 1523.113181818182,
+        "avgLevel": 103.31818181818181,
         "steamCount": 5,
         "totalMembers": 22
       },
       "members": [
         {
-          "uid": "6728943bbfea71ab664bbf52",
-          "name": "arfa come back!!!!!!",
-          "level": 130
-        },
-        {
-          "uid": "693d5bc2d142af9c6bc061e6",
-          "name": "ｴﾝﾄﾞｳﾏﾒ.jp",
-          "level": 46
-        },
-        {
-          "uid": "68d68cbebfea71d32ed0dc45",
-          "name": "september jp",
-          "level": 81
-        },
-        {
           "uid": "680d6b05d142af981d49244e",
           "name": "Smooz001",
           "level": 27
-        },
-        {
-          "uid": "67dd137abfea712a445c07d9",
-          "name": "ゆっくりキャニオンYouTubeで検索",
-          "level": 67
         },
         {
           "uid": "68e0c23fd142af1b11bbd3b5",
@@ -3087,34 +3067,9 @@
           "level": 34
         },
         {
-          "uid": "6600ae14d142afde5cef7fe5",
-          "name": "E235-1000",
-          "level": 59
-        },
-        {
-          "uid": "66114de8d142afa85a06976a",
-          "name": "Tempura-JP",
-          "level": 469
-        },
-        {
           "uid": "67fb3282bfea71ec1bca8bd1",
           "name": "S-710",
-          "level": 81
-        },
-        {
-          "uid": "648960bbd142af583f1f7dad",
-          "name": "koukiYouTutbe登録よろしく！",
-          "level": 214
-        },
-        {
-          "uid": "6593e7b1fd3c7a0962e29e05",
-          "name": "木製のドア",
-          "level": 171
-        },
-        {
-          "uid": "6603b57dfe3c7a3331d8cc6e",
-          "name": "大日本帝国万歳",
-          "level": 69
+          "level": 82
         },
         {
           "uid": "660565aafe3c7a4a1ed8cc90",
@@ -3122,14 +3077,14 @@
           "level": 118
         },
         {
-          "uid": "683982b3bfea71612a14cac3",
-          "name": "hahihuheho-",
-          "level": 53
+          "uid": "64be6bd5d142af3b19d87b3a",
+          "name": "八雲鑿",
+          "level": 40
         },
         {
-          "uid": "67861020d142af393fd22ff8",
-          "name": "帝国兵01(JP)",
-          "level": 73
+          "uid": "68d68cbebfea71d32ed0dc45",
+          "name": "september jp",
+          "level": 81
         },
         {
           "uid": "67c1549ed142af304d7b3f7d",
@@ -3137,24 +3092,19 @@
           "level": 161
         },
         {
-          "uid": "64be6bd5d142af3b19d87b3a",
-          "name": "八雲鑿",
-          "level": 40
+          "uid": "66114de8d142afa85a06976a",
+          "name": "Tempura-JP",
+          "level": 469
         },
         {
-          "uid": "6775085cd142af2b39e7d4b9",
-          "name": "Snowman Oby",
-          "level": 211
+          "uid": "6600ae14d142afde5cef7fe5",
+          "name": "E235-1000",
+          "level": 59
         },
         {
-          "uid": "68ae76aebfea716606a52907",
-          "name": "Tkg umai",
-          "level": 29
-        },
-        {
-          "uid": "67f4be8cd142afd918295a79",
-          "name": "eringi",
-          "level": 45
+          "uid": "67dd137abfea712a445c07d9",
+          "name": "ゆっくりキャニオンYouTubeで検索",
+          "level": 67
         },
         {
           "uid": "679aa64dd142af7340b641e9",
@@ -3162,9 +3112,59 @@
           "level": 38
         },
         {
+          "uid": "6593e7b1fd3c7a0962e29e05",
+          "name": "木製のドア",
+          "level": 171
+        },
+        {
+          "uid": "67861020d142af393fd22ff8",
+          "name": "帝国兵01(JP)",
+          "level": 73
+        },
+        {
+          "uid": "693d5bc2d142af9c6bc061e6",
+          "name": "ｴﾝﾄﾞｳﾏﾒ.jp",
+          "level": 47
+        },
+        {
+          "uid": "6728943bbfea71ab664bbf52",
+          "name": "arfa come back!!!!!!",
+          "level": 130
+        },
+        {
+          "uid": "68ae76aebfea716606a52907",
+          "name": "Tkg umai",
+          "level": 29
+        },
+        {
+          "uid": "648960bbd142af583f1f7dad",
+          "name": "koukiYouTutbe登録よろしく！",
+          "level": 214
+        },
+        {
+          "uid": "6775085cd142af2b39e7d4b9",
+          "name": "Snowman Oby",
+          "level": 211
+        },
+        {
+          "uid": "67f4be8cd142afd918295a79",
+          "name": "eringi",
+          "level": 45
+        },
+        {
+          "uid": "683982b3bfea71612a14cac3",
+          "name": "hahihuheho-",
+          "level": 53
+        },
+        {
           "uid": "680c0010bfea71826eb49458",
           "name": "初心者ごとき",
           "level": 55
+        },
+        {
+          "uid": "6603b57dfe3c7a3331d8cc6e",
+          "name": "大日本帝国万歳",
+          "level": 69
         }
       ]
     },
@@ -4275,8 +4275,8 @@
       "name": "Best",
       "count": 15,
       "memberStats": {
-        "avgKillsELO": 1665.236,
-        "avgGamesELO": 1734.4933333333333,
+        "avgKillsELO": 1665.743333333333,
+        "avgGamesELO": 1734.7720000000002,
         "avgLevel": 111.13333333333334,
         "steamCount": 2,
         "totalMembers": 15
@@ -5027,13 +5027,18 @@
       "name": "Warzone",
       "count": 13,
       "memberStats": {
-        "avgKillsELO": 1563.6461538461538,
-        "avgGamesELO": 1661.4061538461538,
-        "avgLevel": 95.76923076923077,
+        "avgKillsELO": 1565.6592307692308,
+        "avgGamesELO": 1661.7569230769232,
+        "avgLevel": 95.92307692307692,
         "steamCount": 1,
         "totalMembers": 13
       },
       "members": [
+        {
+          "uid": "6648bc7cd142afcf53e0f30b",
+          "name": "nakirigumi",
+          "level": 44
+        },
         {
           "uid": "639f698fbfea7194310f45d6",
           "name": "KingTaco",
@@ -5058,11 +5063,6 @@
           "uid": "611f499dd142aff107bb28b7",
           "name": "Taiwan",
           "level": 230
-        },
-        {
-          "uid": "6648bc7cd142afcf53e0f30b",
-          "name": "nakirigumi",
-          "level": 42
         },
         {
           "uid": "62e1de85bfea71dd102745ab",
@@ -6138,9 +6138,9 @@
       "name": "VSU",
       "count": 9,
       "memberStats": {
-        "avgKillsELO": 1829.382222222222,
-        "avgGamesELO": 1954.0533333333333,
-        "avgLevel": 204.77777777777777,
+        "avgKillsELO": 1831.0522222222223,
+        "avgGamesELO": 1955.4755555555555,
+        "avgLevel": 205,
         "steamCount": 5,
         "totalMembers": 9
       },
@@ -6148,7 +6148,7 @@
         {
           "uid": "637cb72cd142af0911587bb1",
           "name": "haruru",
-          "level": 371
+          "level": 373
         },
         {
           "uid": "64b8f56bbfea71ce76f6bf39",
