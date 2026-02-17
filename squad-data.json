@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-16T13:44:12.857Z",
+  "lastUpdated": "2026-02-17T03:03:30.960Z",
   "statistics": {
     "totalSquads": 535,
     "activeSquads": 253,
@@ -8,7 +8,7 @@
     "averageMembers": 7
   },
   "overallStats": {
-    "avgKillsELO": 1635.33,
+    "avgKillsELO": 1635.32,
     "avgGamesELO": 1737.97,
     "avgLevel": 159.78,
     "steamCount": 548,
@@ -18,7 +18,7 @@
   "fetchInfo": {
     "totalApiCalls": 536,
     "failedFetches": 0,
-    "duration": "1848.6s"
+    "duration": "1847.6s"
   },
   "squads": [
     {
@@ -2788,13 +2788,18 @@
       "name": "AI",
       "count": 24,
       "memberStats": {
-        "avgKillsELO": 1818.9466666666665,
-        "avgGamesELO": 2127.7608333333333,
-        "avgLevel": 597.25,
+        "avgKillsELO": 1818.6970833333332,
+        "avgGamesELO": 2127.8316666666665,
+        "avgLevel": 597.2916666666666,
         "steamCount": 22,
         "totalMembers": 24
       },
       "members": [
+        {
+          "uid": "64a28cf4fd3c7a9637f86a85",
+          "name": "beep boop",
+          "level": 788
+        },
         {
           "uid": "66151fc2d142afb50e946204",
           "name": "Automaton",
@@ -2824,11 +2829,6 @@
           "uid": "6011bb49d142afed6b12d43e",
           "name": "Fatty",
           "level": 247
-        },
-        {
-          "uid": "64a28cf4fd3c7a9637f86a85",
-          "name": "beep boop",
-          "level": 787
         },
         {
           "uid": "5d3b19c2bfea715f7443d8a8",
@@ -3044,8 +3044,8 @@
       "name": "SOF",
       "count": 22,
       "memberStats": {
-        "avgKillsELO": 1658.608181818182,
-        "avgGamesELO": 1522.005,
+        "avgKillsELO": 1658.1399999999996,
+        "avgGamesELO": 1522.1499999999999,
         "avgLevel": 103.63636363636364,
         "steamCount": 5,
         "totalMembers": 22
@@ -3075,11 +3075,6 @@
           "uid": "64be6bd5d142af3b19d87b3a",
           "name": "八雲鑿",
           "level": 40
-        },
-        {
-          "uid": "68d68cbebfea71d32ed0dc45",
-          "name": "september jp",
-          "level": 83
         },
         {
           "uid": "67c1549ed142af304d7b3f7d",
@@ -3160,6 +3155,11 @@
           "uid": "6603b57dfe3c7a3331d8cc6e",
           "name": "大日本帝国万歳",
           "level": 69
+        },
+        {
+          "uid": "68d68cbebfea71d32ed0dc45",
+          "name": "september jp",
+          "level": 83
         }
       ]
     },
