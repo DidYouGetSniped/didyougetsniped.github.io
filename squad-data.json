@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-18T03:06:23.875Z",
+  "lastUpdated": "2026-02-18T13:45:47.912Z",
   "statistics": {
     "totalSquads": 535,
     "activeSquads": 253,
@@ -8,8 +8,8 @@
     "averageMembers": 7
   },
   "overallStats": {
-    "avgKillsELO": 1635.3,
-    "avgGamesELO": 1737.95,
+    "avgKillsELO": 1635.31,
+    "avgGamesELO": 1737.94,
     "avgLevel": 159.79,
     "steamCount": 548,
     "steamPercent": 26.7,
@@ -18,16 +18,16 @@
   "fetchInfo": {
     "totalApiCalls": 536,
     "failedFetches": 0,
-    "duration": "1850.4s"
+    "duration": "1866.2s"
   },
   "squads": [
     {
       "name": "CAESAR",
       "count": 167,
       "memberStats": {
-        "avgKillsELO": 1626.5634730538927,
-        "avgGamesELO": 1728.4172455089818,
-        "avgLevel": 192.61077844311376,
+        "avgKillsELO": 1626.650538922156,
+        "avgGamesELO": 1728.1655089820356,
+        "avgLevel": 192.61676646706587,
         "steamCount": 44,
         "totalMembers": 167
       },
@@ -410,7 +410,7 @@
         {
           "uid": "63c8fbcfd142aff929a28ea2",
           "name": "Colonel Fires",
-          "level": 746
+          "level": 747
         },
         {
           "uid": "6424257ed142af8d0f717738",
@@ -2788,13 +2788,28 @@
       "name": "AI",
       "count": 24,
       "memberStats": {
-        "avgKillsELO": 1818.5495833333332,
-        "avgGamesELO": 2127.8316666666665,
-        "avgLevel": 597.2916666666666,
+        "avgKillsELO": 1818.02625,
+        "avgGamesELO": 2128.8908333333334,
+        "avgLevel": 597.3333333333334,
         "steamCount": 22,
         "totalMembers": 24
       },
       "members": [
+        {
+          "uid": "614cdc8bd142af3e0f3f8370",
+          "name": "iffypedia",
+          "level": 899
+        },
+        {
+          "uid": "5bb89344fd3c7aad01680c47",
+          "name": "Brothers To Arms",
+          "level": 261
+        },
+        {
+          "uid": "6011bb49d142afed6b12d43e",
+          "name": "Fatty",
+          "level": 247
+        },
         {
           "uid": "5d3b19c2bfea715f7443d8a8",
           "name": "Buddy The Elf",
@@ -2816,24 +2831,9 @@
           "level": 791
         },
         {
-          "uid": "5bb89344fd3c7aad01680c47",
-          "name": "Brothers To Arms",
-          "level": 261
-        },
-        {
-          "uid": "614cdc8bd142af3e0f3f8370",
-          "name": "iffypedia",
-          "level": 898
-        },
-        {
           "uid": "5c219c1afd3c7a837ba79316",
           "name": "R!MM3R",
           "level": 245
-        },
-        {
-          "uid": "6011bb49d142afed6b12d43e",
-          "name": "Fatty",
-          "level": 247
         },
         {
           "uid": "618d996ad142af99678e1a60",
@@ -4270,33 +4270,13 @@
       "name": "Best",
       "count": 15,
       "memberStats": {
-        "avgKillsELO": 1667.1833333333334,
-        "avgGamesELO": 1732.599333333333,
-        "avgLevel": 111.8,
+        "avgKillsELO": 1667.7313333333332,
+        "avgGamesELO": 1732.6059999999998,
+        "avgLevel": 111.93333333333334,
         "steamCount": 2,
         "totalMembers": 15
       },
       "members": [
-        {
-          "uid": "66734ea3bfea71956185a3c1",
-          "name": "USMC17",
-          "level": 79
-        },
-        {
-          "uid": "66925ff2bfea71187b615457",
-          "name": "1.21 Gigawatts",
-          "level": 57
-        },
-        {
-          "uid": "65a6a1ecd142af957041785e",
-          "name": "Ghost09",
-          "level": 62
-        },
-        {
-          "uid": "652fe93abfea717754b98d1b",
-          "name": "ThaBestofthaBest",
-          "level": 382
-        },
         {
           "uid": "676596d4d142af4f3862b722",
           "name": "Crazy Tra!n",
@@ -4306,6 +4286,26 @@
           "uid": "677d1f28bfea71a8755eca02",
           "name": "(team)corn sssoop",
           "level": 130
+        },
+        {
+          "uid": "65a6a1ecd142af957041785e",
+          "name": "Ghost09",
+          "level": 62
+        },
+        {
+          "uid": "652fe93abfea717754b98d1b",
+          "name": "ThaBestofthaBest",
+          "level": 384
+        },
+        {
+          "uid": "66734ea3bfea71956185a3c1",
+          "name": "USMC17",
+          "level": 79
+        },
+        {
+          "uid": "66925ff2bfea71187b615457",
+          "name": "1.21 Gigawatts",
+          "level": 57
         },
         {
           "uid": "68eaf5ccbfea71af5d0da850",
@@ -9882,8 +9882,8 @@
       "name": "WoH",
       "count": 3,
       "memberStats": {
-        "avgKillsELO": 1836.8400000000001,
-        "avgGamesELO": 1868.1766666666665,
+        "avgKillsELO": 1836.4399999999998,
+        "avgGamesELO": 1869.8833333333332,
         "avgLevel": 107,
         "steamCount": 2,
         "totalMembers": 3
