@@ -154,6 +154,47 @@ function buildSnapshot(date, player, killsPct, gamesPct, xpPct) {
     const totalShotsFired = totalShotsFiredUnzoomed + totalShotsFiredZoomed;
     const totalShotsHit   = totalShotsHitUnzoomed   + totalShotsHitZoomed;
 
+    // ── Per-weapon detailed stats (named, ignored codes excluded) ────────────
+    // Build a map of weapon name → { kills, deaths, headshots, damageDealt,
+    //   damageReceived, shotsFired, shotsHit, kdr, accuracy, headshotRate }
+    const weaponStats = {};
+    for (const [code, kills] of Object.entries(rawWeaponKills)) {
+        if (IGNORED_WEAPON_CODES.has(code)) continue;
+        const name = WEAPON_NAMES[code] || code;
+
+        const deaths      = (raw.deaths               || {})[code] || 0;
+        const headshots   = (raw.headshots             || {})[code] || 0;
+        const damageDealt = (raw.damage_dealt          || {})[code] || 0;
+        const damageRecv  = (raw.damage_received       || {})[code] || 0;
+        const firedUnzoom = (raw.shots_fired_unzoomed  || {})[code] || 0;
+        const firedZoom   = (raw.shots_fired_zoomed    || {})[code] || 0;
+        const hitUnzoom   = (raw.shots_hit_unzoomed    || {})[code] || 0;
+        const hitZoom     = (raw.shots_hit_zoomed      || {})[code] || 0;
+        const shotsFired  = firedUnzoom + firedZoom;
+        const shotsHit    = hitUnzoom + hitZoom;
+
+        weaponStats[name] = {
+            kills,
+            deaths,
+            headshots,
+            damageDealt:    Math.round(damageDealt),
+            damageReceived: Math.round(damageRecv),
+            shotsFired,
+            shotsHit,
+            kdr:           deaths > 0 ? parseFloat((kills / deaths).toFixed(3)) : kills,
+            accuracy:      shotsFired > 0 ? parseFloat(((shotsHit / shotsFired) * 100).toFixed(2)) : 0,
+            headshotRate:  kills > 0 ? parseFloat(((headshots / kills) * 100).toFixed(2)) : 0,
+            damagePerKill: kills > 0 ? Math.round(damageDealt / kills) : 0,
+        };
+    }
+
+    // ── Per-vehicle detailed stats ─────────────────────────────────────────
+    const vehicleStats = {};
+    for (const [code, kills] of Object.entries(rawVehicleKills)) {
+        const name = VEHICLE_KILL_NAMES[code] || code;
+        vehicleStats[name] = { kills };
+    }
+
     return {
         // When / who
         date,
@@ -201,11 +242,15 @@ function buildSnapshot(date, player, killsPct, gamesPct, xpPct) {
         totalShotsHitZoomed,
 
         // Named breakdowns (ready for charts — no code→name lookup needed in browser)
-        kills_per_weapon:  remapKeys(rawWeaponKills,         WEAPON_NAMES),
-        kills_per_vehicle: remapKeys(rawVehicleKills,        VEHICLE_KILL_NAMES),
-        deaths:            remapKeys(raw.deaths || {},       DEATH_CAUSE_NAMES),
-        wins:              remapKeys(raw.wins   || {},       GAMEMODE_NAMES),
-        losses:            remapKeys(raw.losses || {},       GAMEMODE_NAMES),
+        kills_per_weapon:  remapKeys(rawWeaponKills,   WEAPON_NAMES),
+        kills_per_vehicle: remapKeys(rawVehicleKills,  VEHICLE_KILL_NAMES),
+        deaths:            remapKeys(raw.deaths || {}, DEATH_CAUSE_NAMES),
+        wins:              remapKeys(raw.wins   || {}, GAMEMODE_NAMES),
+        losses:            remapKeys(raw.losses || {}, GAMEMODE_NAMES),
+
+        // Full per-weapon and per-vehicle breakdowns for historical tracking
+        weapon_stats:  weaponStats,
+        vehicle_stats: vehicleStats,
     };
 }
 
