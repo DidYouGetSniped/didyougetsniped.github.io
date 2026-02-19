@@ -39,7 +39,7 @@ jobs:
       - name: Check for changes
         id: check_changes
         run: |
-          if git diff --quiet historical-stats/; then
+          if [ -z "$(git status --porcelain historical-stats/)" ]; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
@@ -85,4 +85,5 @@ jobs:
 
       - name: No changes detected
         if: steps.check_changes.outputs.changed == 'false'
+
         run: echo "ℹ️  Snapshot data unchanged — skipping commit"
