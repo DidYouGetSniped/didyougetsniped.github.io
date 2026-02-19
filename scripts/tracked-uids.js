@@ -20,7 +20,7 @@
 
 export const TRACKED_UIDS = [
 
-    // { uid: 'REPLACE_WITH_REAL_UID_1', label: 'Player One'   },
+    { uid: '60d08b15d142afee4b1dfabe', label: 'DYGS'   },
     // { uid: 'REPLACE_WITH_REAL_UID_2', label: 'Player Two'   },
     // { uid: 'REPLACE_WITH_REAL_UID_3', label: 'Player Three' },
     // { uid: 'REPLACE_WITH_REAL_UID_4', label: 'Player Four'  },
