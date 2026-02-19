@@ -1,0 +1,88 @@
+name: Daily Stats Snapshot
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Runs once a day at 02:00 UTC, fetches stats for every UID listed in
+# scripts/tracked-uids.js, and commits the result to historical-stats/.
+# You can also trigger it manually from the Actions tab ("Run workflow").
+#
+# Note: the root package.json already declares "type": "module", so
+# scripts/fetch-stats.js runs as an ES module without any extra config.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # 02:00 UTC — well clear of the squad (00:00/12:00) and player-count (every 30 min) workflows
+  workflow_dispatch:        # manual trigger from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # full history needed for clean rebases
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run stats fetcher
+        run: node scripts/fetch-stats.js
+        timeout-minutes: 30   # 4 requests × N players at 20 req/min — adjust if tracking many players
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet historical-stats/; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push if changed
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add historical-stats/
+          git commit -m "chore: daily stats snapshot $(date -u '+%Y-%m-%d') [skip ci]"
+
+          # Pull latest with rebase before pushing (mirrors refresh-squad-data pattern)
+          echo "Pulling latest changes..."
+          if ! git pull --rebase origin main; then
+            echo "Rebase failed, attempting merge strategy..."
+            git rebase --abort 2>/dev/null || true
+            git pull origin main --no-rebase
+          fi
+
+          # Push with retry logic (guards against race with track-players.yml)
+          max_attempts=3
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "Push attempt $attempt of $max_attempts..."
+            if git push origin main; then
+              echo "✅ Successfully pushed snapshot"
+              exit 0
+            else
+              if [ $attempt -lt $max_attempts ]; then
+                echo "⚠️  Push failed, pulling and retrying..."
+                git pull --rebase origin main 2>/dev/null || git pull origin main --no-rebase
+                sleep 5
+              fi
+            fi
+            attempt=$((attempt + 1))
+          done
+
+          echo "❌ Failed to push after $max_attempts attempts"
+          exit 1
+
+      - name: No changes detected
+        if: steps.check_changes.outputs.changed == 'false'
+        run: echo "ℹ️  Snapshot data unchanged — skipping commit"
