@@ -579,7 +579,8 @@ function setupTrendsTab(pid, snapshots) {
     }
 
     function addSeries(descriptor) {
-        // Don't add duplicate
+        // Only block exact duplicates (identical type + weapon/vehicle + field).
+        // This allows e.g. "Sniper Rifle — Kills" and "Sniper Rifle — Accuracy" to coexist.
         const exists = activeSeries.some(s => JSON.stringify(s.descriptor) === JSON.stringify(descriptor));
         if (exists) return;
         activeSeries.push({ id: nextId++, descriptor, colour: nextColour() });
@@ -599,7 +600,7 @@ function setupTrendsTab(pid, snapshots) {
             const inList = activeSeries.some(s => JSON.stringify(s.descriptor) === key);
 
             if (chk.checked && !inList) {
-                activeSeries.push({ id: nextId++, descriptor: desc, colour: nextColour() });
+                activeSeries.push({ id: nextId++, descriptor: desc, colour: nextColour(), fromChecklist: true });
             } else if (!chk.checked && inList) {
                 const idx = activeSeries.findIndex(s => JSON.stringify(s.descriptor) === key);
                 if (idx >= 0) activeSeries.splice(idx, 1);
@@ -613,14 +614,18 @@ function setupTrendsTab(pid, snapshots) {
         chk.addEventListener('change', syncWeaponCheckboxes);
     });
 
-    // When the weapon subfield changes, update all active weapon series
+    // When the weapon subfield changes, only update series that were added via
+    // the checkbox (not via the dropdown add-series). We identify checkbox-managed
+    // series by a flag set in syncWeaponCheckboxes. Series added via the dropdown
+    // are left untouched so you can have e.g. "Sniper — Kills" and "Sniper — Accuracy"
+    // on the same chart simultaneously.
     document.getElementById(`hist-wfield-${pid}`)?.addEventListener('change', () => {
         const field = wField();
-        // Update in-place so colours stay stable
         for (const s of activeSeries) {
-            if (s.descriptor.type === 'weapon') s.descriptor.field = field;
+            if (s.descriptor.type === 'weapon' && s.fromChecklist) {
+                s.descriptor.field = field;
+            }
         }
-        // Sync checkboxes visual state (they're still checked, just field changed)
         renderTags();
         redraw();
     });
@@ -642,7 +647,7 @@ function setupTrendsTab(pid, snapshots) {
             const key  = JSON.stringify(desc);
             if (chk.checked) {
                 if (!activeSeries.some(s => JSON.stringify(s.descriptor) === key)) {
-                    activeSeries.push({ id: nextId++, descriptor: desc, colour: nextColour() });
+                    activeSeries.push({ id: nextId++, descriptor: desc, colour: nextColour(), fromChecklist: true });
                 }
             } else {
                 const idx = activeSeries.findIndex(s => JSON.stringify(s.descriptor) === key);
@@ -660,7 +665,7 @@ function setupTrendsTab(pid, snapshots) {
             const desc = { type: 'vehicle', vehicle: name, field: 'kills' };
             const key  = JSON.stringify(desc);
             if (!activeSeries.some(s => JSON.stringify(s.descriptor) === key)) {
-                activeSeries.push({ id: nextId++, descriptor: desc, colour: nextColour() });
+                activeSeries.push({ id: nextId++, descriptor: desc, colour: nextColour(), fromChecklist: true });
             }
         });
         renderTags();
