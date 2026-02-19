@@ -23,71 +23,74 @@ const C = {
 
 // ── Per-weapon stat sub-fields available for charting ─────────────────────────
 const WEAPON_SUBFIELDS = [
-    { key: 'kills',          label: 'Kills'            },
-    { key: 'deaths',         label: 'Deaths'           },
-    { key: 'headshots',      label: 'Headshots'        },
-    { key: 'kdr',            label: 'K/D Ratio'        },
-    { key: 'accuracy',       label: 'Accuracy (%)'     },
-    { key: 'headshotRate',   label: 'Headshot Rate (%)'},
-    { key: 'damageDealt',    label: 'Damage Dealt'     },
-    { key: 'damageReceived', label: 'Damage Received'  },
-    { key: 'damagePerKill',  label: 'Damage per Kill'  },
-    { key: 'shotsFired',     label: 'Shots Fired'      },
-    { key: 'shotsHit',       label: 'Shots Hit'        },
+    { key: 'kills',          label: 'Kills',             higher: true  },
+    { key: 'deaths',         label: 'Deaths',            higher: false },
+    { key: 'headshots',      label: 'Headshots',         higher: true  },
+    { key: 'kdr',            label: 'K/D Ratio',         higher: true  },
+    { key: 'accuracy',       label: 'Accuracy (%)',      higher: true  },
+    { key: 'headshotRate',   label: 'Headshot Rate (%)', higher: true  },
+    { key: 'damageDealt',    label: 'Damage Dealt',      higher: true  },
+    { key: 'damageReceived', label: 'Damage Received',   higher: false },
+    { key: 'damagePerKill',  label: 'Damage per Kill',   higher: null  },
+    { key: 'shotsFired',     label: 'Shots Fired',       higher: null  },
+    { key: 'shotsHit',       label: 'Shots Hit',         higher: true  },
 ];
 
 // ── Top-level metrics (non-weapon) ────────────────────────────────────────────
 const TOP_METRICS = [
-    { key: 'kdr',                 label: 'K/D Ratio'           },
-    { key: 'killsELO',            label: 'Kills ELO'           },
-    { key: 'gamesELO',            label: 'Games ELO'           },
-    { key: 'totalKills',          label: 'Total Kills'         },
-    { key: 'totalDeaths',         label: 'Total Deaths'        },
-    { key: 'weaponKillsTotal',    label: 'Weapon Kills'        },
-    { key: 'vehicleKillsTotal',   label: 'Vehicle Kills'       },
-    { key: 'totalGames',          label: 'Total Games'         },
-    { key: 'totalWins',           label: 'Total Wins'          },
-    { key: 'totalLosses',         label: 'Total Losses'        },
-    { key: 'level',               label: 'Level'               },
-    { key: 'xp',                  label: 'XP'                  },
-    { key: 'coins',               label: 'Coins'               },
-    { key: 'totalHeadshots',      label: 'Total Headshots'     },
-    { key: 'totalDamageDealt',    label: 'Total Damage Dealt'  },
-    { key: 'totalDamageReceived', label: 'Total Damage Received'},
-    { key: 'totalShotsFired',     label: 'Total Shots Fired'   },
-    { key: 'totalShotsHit',       label: 'Total Shots Hit'     },
-    { key: 'selfDestructs',       label: 'Self Destructs'      },
-    { key: 'killsPercentile',     label: 'Kills Rank (top %)'  },
-    { key: 'gamesPercentile',     label: 'Games Rank (top %)'  },
-    { key: 'xpPercentile',        label: 'XP Rank (top %)'     },
+    { key: 'kdr',                 label: 'K/D Ratio'            },
+    { key: 'killsELO',            label: 'Kills ELO'            },
+    { key: 'gamesELO',            label: 'Games ELO'            },
+    { key: 'totalKills',          label: 'Total Kills'          },
+    { key: 'totalDeaths',         label: 'Total Deaths'         },
+    { key: 'weaponKillsTotal',    label: 'Weapon Kills'         },
+    { key: 'vehicleKillsTotal',   label: 'Vehicle Kills'        },
+    { key: 'totalGames',          label: 'Total Games'          },
+    { key: 'totalWins',           label: 'Total Wins'           },
+    { key: 'totalLosses',         label: 'Total Losses'         },
+    { key: 'level',               label: 'Level'                },
+    { key: 'xp',                  label: 'XP'                   },
+    { key: 'coins',               label: 'Coins'                },
+    { key: 'totalHeadshots',      label: 'Total Headshots'      },
+    { key: 'totalDamageDealt',    label: 'Total Damage Dealt'   },
+    { key: 'totalDamageReceived', label: 'Total Damage Received' },
+    { key: 'totalShotsFired',     label: 'Total Shots Fired'    },
+    { key: 'totalShotsHit',       label: 'Total Shots Hit'      },
+    { key: 'selfDestructs',       label: 'Self Destructs'       },
+    { key: 'killsPercentile',     label: 'Kills Rank (top %)'   },
+    { key: 'gamesPercentile',     label: 'Games Rank (top %)'   },
+    { key: 'xpPercentile',        label: 'XP Rank (top %)'      },
 ];
 
-// ── Comparison table stats ────────────────────────────────────────────────────
+// ── Top-level comparison table stats ─────────────────────────────────────────
+// higher: true  → green when B > A
+// higher: false → green when B < A
+// higher: null  → no colour coding
 const COMPARE_STATS = [
-    { key: 'nick',                label: 'Username',            fmt: v => String(v ?? '—'),                       higher: null  },
-    { key: 'level',               label: 'Level',               fmt: v => Number(v).toLocaleString(),             higher: true  },
-    { key: 'xp',                  label: 'XP',                  fmt: v => Number(v).toLocaleString(),             higher: true  },
-    { key: 'coins',               label: 'Coins',               fmt: v => Number(v).toLocaleString(),             higher: true  },
-    { key: 'squad',               label: 'Squad',               fmt: v => v || 'None',                            higher: null  },
-    { key: 'killsELO',            label: 'Kills ELO',           fmt: v => Number(v).toFixed(2),                   higher: true  },
-    { key: 'gamesELO',            label: 'Games ELO',           fmt: v => Number(v).toFixed(2),                   higher: true  },
-    { key: 'kdr',                 label: 'K/D Ratio',           fmt: v => Number(v).toFixed(3),                   higher: true  },
-    { key: 'totalKills',          label: 'Total Kills',         fmt: v => Number(v).toLocaleString(),             higher: true  },
-    { key: 'totalDeaths',         label: 'Total Deaths',        fmt: v => Number(v).toLocaleString(),             higher: false },
-    { key: 'weaponKillsTotal',    label: 'Weapon Kills',        fmt: v => Number(v).toLocaleString(),             higher: true  },
-    { key: 'vehicleKillsTotal',   label: 'Vehicle Kills',       fmt: v => Number(v).toLocaleString(),             higher: true  },
-    { key: 'totalGames',          label: 'Total Games',         fmt: v => Number(v).toLocaleString(),             higher: true  },
-    { key: 'totalWins',           label: 'Total Wins',          fmt: v => Number(v).toLocaleString(),             higher: true  },
-    { key: 'totalLosses',         label: 'Total Losses',        fmt: v => Number(v).toLocaleString(),             higher: false },
-    { key: 'totalHeadshots',      label: 'Total Headshots',     fmt: v => Number(v).toLocaleString(),             higher: true  },
-    { key: 'totalDamageDealt',    label: 'Total Damage Dealt',  fmt: v => Number(v).toLocaleString(),             higher: true  },
-    { key: 'totalDamageReceived', label: 'Total Damage Received',fmt: v => Number(v).toLocaleString(),            higher: false },
-    { key: 'totalShotsFired',     label: 'Total Shots Fired',   fmt: v => Number(v).toLocaleString(),             higher: null  },
-    { key: 'totalShotsHit',       label: 'Total Shots Hit',     fmt: v => Number(v).toLocaleString(),             higher: true  },
-    { key: 'selfDestructs',       label: 'Self Destructs',      fmt: v => Number(v).toLocaleString(),             higher: false },
-    { key: 'killsPercentile',     label: 'Kills Rank (top %)',  fmt: v => Number(v).toFixed(4) + '%',             higher: false },
-    { key: 'gamesPercentile',     label: 'Games Rank (top %)',  fmt: v => Number(v).toFixed(4) + '%',             higher: false },
-    { key: 'xpPercentile',        label: 'XP Rank (top %)',     fmt: v => Number(v).toFixed(4) + '%',             higher: false },
+    { key: 'nick',                label: 'Username',             fmt: v => String(v ?? '—'),                       higher: null  },
+    { key: 'level',               label: 'Level',                fmt: v => Number(v).toLocaleString(),             higher: true  },
+    { key: 'xp',                  label: 'XP',                   fmt: v => Number(v).toLocaleString(),             higher: true  },
+    { key: 'coins',               label: 'Coins',                fmt: v => Number(v).toLocaleString(),             higher: true  },
+    { key: 'squad',               label: 'Squad',                fmt: v => v || 'None',                            higher: null  },
+    { key: 'killsELO',            label: 'Kills ELO',            fmt: v => Number(v).toFixed(2),                   higher: true  },
+    { key: 'gamesELO',            label: 'Games ELO',            fmt: v => Number(v).toFixed(2),                   higher: true  },
+    { key: 'kdr',                 label: 'K/D Ratio',            fmt: v => Number(v).toFixed(3),                   higher: true  },
+    { key: 'totalKills',          label: 'Total Kills',          fmt: v => Number(v).toLocaleString(),             higher: true  },
+    { key: 'totalDeaths',         label: 'Total Deaths',         fmt: v => Number(v).toLocaleString(),             higher: false },
+    { key: 'weaponKillsTotal',    label: 'Weapon Kills',         fmt: v => Number(v).toLocaleString(),             higher: true  },
+    { key: 'vehicleKillsTotal',   label: 'Vehicle Kills',        fmt: v => Number(v).toLocaleString(),             higher: true  },
+    { key: 'totalGames',          label: 'Total Games',          fmt: v => Number(v).toLocaleString(),             higher: true  },
+    { key: 'totalWins',           label: 'Total Wins',           fmt: v => Number(v).toLocaleString(),             higher: true  },
+    { key: 'totalLosses',         label: 'Total Losses',         fmt: v => Number(v).toLocaleString(),             higher: false },
+    { key: 'totalHeadshots',      label: 'Total Headshots',      fmt: v => Number(v).toLocaleString(),             higher: true  },
+    { key: 'totalDamageDealt',    label: 'Total Damage Dealt',   fmt: v => Number(v).toLocaleString(),             higher: true  },
+    { key: 'totalDamageReceived', label: 'Total Damage Received', fmt: v => Number(v).toLocaleString(),            higher: false },
+    { key: 'totalShotsFired',     label: 'Total Shots Fired',    fmt: v => Number(v).toLocaleString(),             higher: null  },
+    { key: 'totalShotsHit',       label: 'Total Shots Hit',      fmt: v => Number(v).toLocaleString(),             higher: true  },
+    { key: 'selfDestructs',       label: 'Self Destructs',       fmt: v => Number(v).toLocaleString(),             higher: false },
+    { key: 'killsPercentile',     label: 'Kills Rank (top %)',   fmt: v => Number(v).toFixed(4) + '%',             higher: false },
+    { key: 'gamesPercentile',     label: 'Games Rank (top %)',   fmt: v => Number(v).toFixed(4) + '%',             higher: false },
+    { key: 'xpPercentile',        label: 'XP Rank (top %)',      fmt: v => Number(v).toFixed(4) + '%',             higher: false },
 ];
 
 // ── Colour palette for multi-series lines ─────────────────────────────────────
@@ -140,7 +143,7 @@ async function fetchSnapshots(uid) {
 }
 
 // ── Series resolver ───────────────────────────────────────────────────────────
-// A series descriptor looks like one of:
+// A series descriptor is one of:
 //   { type: 'top',     key: 'kdr' }
 //   { type: 'weapon',  weapon: 'Sniper Rifle', field: 'kills' }
 //   { type: 'vehicle', vehicle: 'Tank Lvl 1',  field: 'kills' }
@@ -185,7 +188,7 @@ function drawMultiLineChart(canvasId, snapshots, seriesList) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
 
-    const labels = snapshots.map(s => s.date);
+    const labels   = snapshots.map(s => s.date);
     const datasets = seriesList.map(({ descriptor, colour }) => ({
         label: seriesLabel(descriptor),
         data: resolveSeriesValues(snapshots, descriptor),
@@ -233,8 +236,8 @@ function drawBarChart(canvasId, snapA, snapB, descriptor) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
 
-    const valA = resolveSeriesValues([snapA], descriptor)[0] ?? 0;
-    const valB = resolveSeriesValues([snapB], descriptor)[0] ?? 0;
+    const valA  = resolveSeriesValues([snapA], descriptor)[0] ?? 0;
+    const valB  = resolveSeriesValues([snapB], descriptor)[0] ?? 0;
     const label = seriesLabel(descriptor);
 
     _charts[canvasId] = new window.Chart(canvas.getContext('2d'), {
@@ -269,8 +272,21 @@ function drawBarChart(canvasId, snapA, snapB, descriptor) {
     });
 }
 
+// ── Delta helper ──────────────────────────────────────────────────────────────
+function deltaHTML(vA, vB, higher, fmtFn) {
+    if (higher === null || typeof vA !== 'number' || typeof vB !== 'number') return '';
+    const delta = vB - vA;
+    if (delta === 0) return `<span style="color:${C.muted};">—</span>`;
+    const positive = higher ? delta > 0 : delta < 0;
+    const colour   = positive ? C.green : C.red;
+    const sign     = delta > 0 ? '+' : '';
+    const formatted = fmtFn ? fmtFn(Math.abs(delta)) : Math.abs(delta).toLocaleString();
+    return `<span style="color:${colour};font-weight:700;">${sign}${delta < 0 ? '-' : ''}${formatted}</span>`;
+}
+
 // ── Comparison table ──────────────────────────────────────────────────────────
 function renderCompareTable(pid, snapA, snapB) {
+    // Update column header labels
     const la = document.getElementById(`hist-cmp-label-a-${pid}`);
     const lb = document.getElementById(`hist-cmp-label-b-${pid}`);
     if (la) la.textContent = `🔵 ${snapA.date}`;
@@ -279,34 +295,84 @@ function renderCompareTable(pid, snapA, snapB) {
     const rowsEl = document.getElementById(`hist-cmp-rows-${pid}`);
     if (!rowsEl) return;
 
-    rowsEl.innerHTML = COMPARE_STATS.map(stat => {
-        const vA = snapA[stat.key];
-        const vB = snapB[stat.key];
-        const fA = stat.fmt(vA ?? 0);
-        const fB = stat.fmt(vB ?? 0);
-
-        let deltaHTML = '';
-        if (stat.higher !== null && typeof vA === 'number' && typeof vB === 'number') {
-            const delta = Number(vB) - Number(vA);
-            if (delta !== 0) {
-                const positive = stat.higher ? delta > 0 : delta < 0;
-                const colour   = positive ? C.green : C.red;
-                const sign     = delta > 0 ? '+' : '';
-                deltaHTML = `<span style="color:${colour};font-weight:700;">${sign}${delta.toLocaleString()}</span>`;
-            } else {
-                deltaHTML = `<span style="color:${C.muted};">—</span>`;
-            }
-        }
-
+    // ── Helper: one comparison row ─────────────────────────────────────────
+    function makeRow(label, vA, vB, higher, fmt) {
+        const fA = fmt ? fmt(vA ?? 0) : (vA ?? '—');
+        const fB = fmt ? fmt(vB ?? 0) : (vB ?? '—');
         return `
             <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;align-items:center;
                  padding:8px 4px;border-bottom:1px solid ${C.border};">
-                <span style="color:${C.muted};font-size:.88em;">${stat.label}</span>
+                <span style="color:${C.muted};font-size:.88em;">${label}</span>
                 <span style="color:${C.text};text-align:right;font-size:.95em;">${fA}</span>
                 <span style="color:${C.text};text-align:right;font-size:.95em;">${fB}</span>
-                <span style="text-align:right;">${deltaHTML}</span>
+                <span style="text-align:right;">${deltaHTML(Number(vA ?? 0), Number(vB ?? 0), higher, fmt ? v => fmt(v) : null)}</span>
             </div>`;
+    }
+
+    // ── Section heading ────────────────────────────────────────────────────
+    function sectionHeader(title) {
+        return `
+            <div style="margin:18px 0 6px;padding:6px 4px;border-bottom:2px solid ${C.borderMed};">
+                <span style="color:${C.text};font-weight:700;font-size:1em;">${title}</span>
+            </div>`;
+    }
+
+    // ── Top-level stats ────────────────────────────────────────────────────
+    let html = sectionHeader('📊 Overall Stats');
+    html += COMPARE_STATS.map(stat => {
+        const vA = snapA[stat.key];
+        const vB = snapB[stat.key];
+        return makeRow(stat.label, vA, vB, stat.higher, stat.fmt);
     }).join('');
+
+    // ── Per-weapon stats ───────────────────────────────────────────────────
+    const allWeapons = new Set([
+        ...Object.keys(snapA.weapon_stats || {}),
+        ...Object.keys(snapB.weapon_stats || {}),
+    ]);
+
+    if (allWeapons.size > 0) {
+        html += sectionHeader('🔫 Per-Weapon Stats');
+
+        for (const weapon of [...allWeapons].sort()) {
+            const wsA = snapA.weapon_stats?.[weapon] || {};
+            const wsB = snapB.weapon_stats?.[weapon] || {};
+
+            // Weapon name as a sub-header
+            html += `
+                <div style="padding:10px 4px 4px;margin-top:6px;">
+                    <span style="color:${C.blue};font-weight:700;font-size:.92em;">${weapon}</span>
+                </div>`;
+
+            for (const sf of WEAPON_SUBFIELDS) {
+                const vA = wsA[sf.key] ?? 0;
+                const vB = wsB[sf.key] ?? 0;
+                const fmt = (sf.key === 'kdr' || sf.key === 'accuracy' || sf.key === 'headshotRate')
+                    ? v => Number(v).toFixed(sf.key === 'kdr' ? 3 : 2)
+                    : v => Number(v).toLocaleString();
+                html += makeRow(sf.label, vA, vB, sf.higher, fmt);
+            }
+        }
+    }
+
+    // ── Per-vehicle stats ──────────────────────────────────────────────────
+    const allVehicles = new Set([
+        ...Object.keys(snapA.vehicle_stats || {}),
+        ...Object.keys(snapB.vehicle_stats || {}),
+    ]);
+
+    if (allVehicles.size > 0) {
+        html += sectionHeader('🚗 Per-Vehicle Stats');
+
+        for (const vehicle of [...allVehicles].sort()) {
+            const vsA = snapA.vehicle_stats?.[vehicle] || {};
+            const vsB = snapB.vehicle_stats?.[vehicle] || {};
+            html += makeRow(vehicle, vsA.kills ?? 0, vsB.kills ?? 0, true,
+                v => Number(v).toLocaleString());
+        }
+    }
+
+    rowsEl.innerHTML = html;
 }
 
 // ── Collect all weapon and vehicle names present in any snapshot ──────────────
@@ -333,25 +399,7 @@ function buildPanelHTML(pid, snapshots) {
         .map(({ s, i }) => `<option value="${i}">${s.date} — ${s.nick}</option>`)
         .join('');
 
-    // ── Weapon checklist (kills only — subfield chosen separately) ────────
-    const weaponCheckboxes = weapons.map(w =>
-        `<label style="display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;">
-            <input type="checkbox" class="hist-wchk-${pid}" data-name="${w}" style="accent-color:${C.purple};width:14px;height:14px;">
-            <span style="font-size:.85em;color:${C.text};">${w}</span>
-        </label>`
-    ).join('');
-
-    const vehicleCheckboxes = vehicles.map(v =>
-        `<label style="display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;">
-            <input type="checkbox" class="hist-vchk-${pid}" data-name="${v}" style="accent-color:${C.blue};width:14px;height:14px;">
-            <span style="font-size:.85em;color:${C.text};">${v}</span>
-        </label>`
-    ).join('');
-
-    const subFieldOptions = WEAPON_SUBFIELDS.map(f =>
-        `<option value="${f.key}">${f.label}</option>`).join('');
-
-    // ── Dropdown-add options ───────────────────────────────────────────────
+    // ── Dropdown options for trends add-series ─────────────────────────────
     const topMetricOptions = TOP_METRICS.map(m =>
         `<option value="top::${m.key}">${m.label}</option>`).join('');
 
@@ -364,16 +412,10 @@ function buildPanelHTML(pid, snapshots) {
         `<option value="vehicle::${v}::kills">${v} — Kills</option>`
     ).join('');
 
-    // ── Bar chart metric dropdown ──────────────────────────────────────────
-    const barTopOptions = TOP_METRICS.map(m =>
-        `<option value="top::${m.key}">${m.label}</option>`).join('');
-    const barWeaponOptions = weapons.flatMap(w =>
-        WEAPON_SUBFIELDS.map(f =>
-            `<option value="weapon::${w}::${f.key}">${w} — ${f.label}</option>`)
-    ).join('');
-    const barVehicleOptions = vehicles.map(v =>
-        `<option value="vehicle::${v}::kills">${v} — Kills</option>`
-    ).join('');
+    // ── Bar chart metric dropdown (same options) ───────────────────────────
+    const barTopOptions     = topMetricOptions;
+    const barWeaponOptions  = weaponDropOptions;
+    const barVehicleOptions = vehicleDropOptions;
 
     const compareHeader = `
         <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;padding:8px 4px;
@@ -402,40 +444,6 @@ function buildPanelHTML(pid, snapshots) {
     <!-- ══════════════════ TRENDS TAB ══════════════════════════════════════ -->
     <div id="hist-tab-trends-${pid}">
 
-        <!-- ── Weapon checklist ── -->
-        ${weapons.length ? `
-        <div style="background:${C.sectionBg};border:1px solid ${C.borderMed};border-radius:10px;padding:14px;margin-bottom:14px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-                <span style="color:${C.text};font-weight:700;font-size:.95em;">🔫 Weapons</span>
-                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                    <label style="color:${C.muted};font-size:.85em;">Stat:</label>
-                    <select id="hist-wfield-${pid}" style="${sel()}">
-                        ${subFieldOptions}
-                    </select>
-                    <button id="hist-wall-${pid}" style="padding:5px 10px;border-radius:6px;border:1px solid ${C.borderMed};background:${C.inputBg};color:${C.text};cursor:pointer;font-size:.82em;">All</button>
-                    <button id="hist-wnone-${pid}" style="padding:5px 10px;border-radius:6px;border:1px solid ${C.borderMed};background:${C.inputBg};color:${C.text};cursor:pointer;font-size:.82em;">None</button>
-                </div>
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px 16px;">
-                ${weaponCheckboxes}
-            </div>
-        </div>` : ''}
-
-        <!-- ── Vehicle checklist ── -->
-        ${vehicles.length ? `
-        <div style="background:${C.sectionBg};border:1px solid ${C.borderMed};border-radius:10px;padding:14px;margin-bottom:14px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-                <span style="color:${C.text};font-weight:700;font-size:.95em;">🚗 Vehicles (Kills)</span>
-                <div style="display:flex;gap:8px;">
-                    <button id="hist-vall-${pid}" style="padding:5px 10px;border-radius:6px;border:1px solid ${C.borderMed};background:${C.inputBg};color:${C.text};cursor:pointer;font-size:.82em;">All</button>
-                    <button id="hist-vnone-${pid}" style="padding:5px 10px;border-radius:6px;border:1px solid ${C.borderMed};background:${C.inputBg};color:${C.text};cursor:pointer;font-size:.82em;">None</button>
-                </div>
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px 16px;">
-                ${vehicleCheckboxes}
-            </div>
-        </div>` : ''}
-
         <!-- ── Dropdown add-series ── -->
         <div style="background:${C.sectionBg};border:1px solid ${C.borderMed};border-radius:10px;padding:14px;margin-bottom:14px;">
             <span style="color:${C.text};font-weight:700;font-size:.95em;display:block;margin-bottom:10px;">➕ Add Series</span>
@@ -451,6 +459,12 @@ function buildPanelHTML(pid, snapshots) {
                            color:#fff;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:.9em;">
                     + Add
                 </button>
+                <button id="hist-clear-btn-${pid}"
+                    style="padding:8px 14px;border-radius:8px;border:1px solid ${C.borderMed};cursor:pointer;
+                           background:${C.inputBg};color:${C.muted};
+                           font-family:'JetBrains Mono',monospace;font-size:.85em;">
+                    Clear All
+                </button>
             </div>
             <!-- Active series tags -->
             <div id="hist-series-tags-${pid}" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;"></div>
@@ -460,8 +474,8 @@ function buildPanelHTML(pid, snapshots) {
         <div style="position:relative;height:360px;width:100%;">
             <canvas id="hist-line-${pid}"></canvas>
         </div>
-        <div id="hist-line-empty-${pid}" style="display:none;text-align:center;padding:40px;color:${C.muted};">
-            Select at least one weapon, vehicle, or add a series above to see the chart.
+        <div id="hist-line-empty-${pid}" style="text-align:center;padding:40px;color:${C.muted};">
+            Use the dropdown above to add series to the chart.
         </div>
     </div>
 
@@ -528,14 +542,13 @@ function parseDescriptor(value) {
 
 // ── Trends tab state & rendering ─────────────────────────────────────────────
 function setupTrendsTab(pid, snapshots) {
-    // activeSeries: Array<{ id, descriptor, colour }>
     const activeSeries = [];
     let   nextId = 0;
 
-    const canvasId  = `hist-line-${pid}`;
-    const emptyEl   = () => document.getElementById(`hist-line-empty-${pid}`);
-    const canvas    = () => document.getElementById(canvasId);
-    const tagsEl    = () => document.getElementById(`hist-series-tags-${pid}`);
+    const canvasId = `hist-line-${pid}`;
+    const emptyEl  = () => document.getElementById(`hist-line-empty-${pid}`);
+    const canvas   = () => document.getElementById(canvasId);
+    const tagsEl   = () => document.getElementById(`hist-series-tags-${pid}`);
 
     function redraw() {
         const c = canvas();
@@ -569,7 +582,7 @@ function setupTrendsTab(pid, snapshots) {
 
         el.querySelectorAll('button[data-sid]').forEach(btn => {
             btn.addEventListener('click', () => {
-                const id = Number(btn.dataset.sid);
+                const id  = Number(btn.dataset.sid);
                 const idx = activeSeries.findIndex(s => s.id === id);
                 if (idx >= 0) activeSeries.splice(idx, 1);
                 renderTags();
@@ -579,8 +592,7 @@ function setupTrendsTab(pid, snapshots) {
     }
 
     function addSeries(descriptor) {
-        // Only block exact duplicates (identical type + weapon/vehicle + field).
-        // This allows e.g. "Sniper Rifle — Kills" and "Sniper Rifle — Accuracy" to coexist.
+        // Block exact duplicates (same type + weapon/vehicle + field)
         const exists = activeSeries.some(s => JSON.stringify(s.descriptor) === JSON.stringify(descriptor));
         if (exists) return;
         activeSeries.push({ id: nextId++, descriptor, colour: nextColour() });
@@ -588,107 +600,22 @@ function setupTrendsTab(pid, snapshots) {
         redraw();
     }
 
-    // ── Weapon checkboxes ──────────────────────────────────────────────────
-    const wField = () => document.getElementById(`hist-wfield-${pid}`)?.value ?? 'kills';
-
-    function syncWeaponCheckboxes() {
-        document.querySelectorAll(`.hist-wchk-${pid}`).forEach(chk => {
-            const name  = chk.dataset.name;
-            const field = wField();
-            const desc  = { type: 'weapon', weapon: name, field };
-            const key   = JSON.stringify(desc);
-            const inList = activeSeries.some(s => JSON.stringify(s.descriptor) === key);
-
-            if (chk.checked && !inList) {
-                activeSeries.push({ id: nextId++, descriptor: desc, colour: nextColour(), fromChecklist: true });
-            } else if (!chk.checked && inList) {
-                const idx = activeSeries.findIndex(s => JSON.stringify(s.descriptor) === key);
-                if (idx >= 0) activeSeries.splice(idx, 1);
-            }
-        });
-        renderTags();
-        redraw();
-    }
-
-    document.querySelectorAll(`.hist-wchk-${pid}`).forEach(chk => {
-        chk.addEventListener('change', syncWeaponCheckboxes);
-    });
-
-    // When the weapon subfield changes, only update series that were added via
-    // the checkbox (not via the dropdown add-series). We identify checkbox-managed
-    // series by a flag set in syncWeaponCheckboxes. Series added via the dropdown
-    // are left untouched so you can have e.g. "Sniper — Kills" and "Sniper — Accuracy"
-    // on the same chart simultaneously.
-    document.getElementById(`hist-wfield-${pid}`)?.addEventListener('change', () => {
-        const field = wField();
-        for (const s of activeSeries) {
-            if (s.descriptor.type === 'weapon' && s.fromChecklist) {
-                s.descriptor.field = field;
-            }
-        }
-        renderTags();
-        redraw();
-    });
-
-    document.getElementById(`hist-wall-${pid}`)?.addEventListener('click', () => {
-        document.querySelectorAll(`.hist-wchk-${pid}`).forEach(c => c.checked = true);
-        syncWeaponCheckboxes();
-    });
-    document.getElementById(`hist-wnone-${pid}`)?.addEventListener('click', () => {
-        document.querySelectorAll(`.hist-wchk-${pid}`).forEach(c => c.checked = false);
-        syncWeaponCheckboxes();
-    });
-
-    // ── Vehicle checkboxes ─────────────────────────────────────────────────
-    document.querySelectorAll(`.hist-vchk-${pid}`).forEach(chk => {
-        chk.addEventListener('change', () => {
-            const name = chk.dataset.name;
-            const desc = { type: 'vehicle', vehicle: name, field: 'kills' };
-            const key  = JSON.stringify(desc);
-            if (chk.checked) {
-                if (!activeSeries.some(s => JSON.stringify(s.descriptor) === key)) {
-                    activeSeries.push({ id: nextId++, descriptor: desc, colour: nextColour(), fromChecklist: true });
-                }
-            } else {
-                const idx = activeSeries.findIndex(s => JSON.stringify(s.descriptor) === key);
-                if (idx >= 0) activeSeries.splice(idx, 1);
-            }
-            renderTags();
-            redraw();
-        });
-    });
-
-    document.getElementById(`hist-vall-${pid}`)?.addEventListener('click', () => {
-        document.querySelectorAll(`.hist-vchk-${pid}`).forEach(c => c.checked = true);
-        document.querySelectorAll(`.hist-vchk-${pid}`).forEach(chk => {
-            const name = chk.dataset.name;
-            const desc = { type: 'vehicle', vehicle: name, field: 'kills' };
-            const key  = JSON.stringify(desc);
-            if (!activeSeries.some(s => JSON.stringify(s.descriptor) === key)) {
-                activeSeries.push({ id: nextId++, descriptor: desc, colour: nextColour(), fromChecklist: true });
-            }
-        });
-        renderTags();
-        redraw();
-    });
-    document.getElementById(`hist-vnone-${pid}`)?.addEventListener('click', () => {
-        document.querySelectorAll(`.hist-vchk-${pid}`).forEach(c => c.checked = false);
-        for (let i = activeSeries.length - 1; i >= 0; i--) {
-            if (activeSeries[i].descriptor.type === 'vehicle') activeSeries.splice(i, 1);
-        }
-        renderTags();
-        redraw();
-    });
-
-    // ── Dropdown add-series ────────────────────────────────────────────────
+    // ── Add Series button ──────────────────────────────────────────────────
     document.getElementById(`hist-add-btn-${pid}`)?.addEventListener('click', () => {
-        const sel = document.getElementById(`hist-add-select-${pid}`);
-        if (!sel) return;
-        const desc = parseDescriptor(sel.value);
+        const selectEl = document.getElementById(`hist-add-select-${pid}`);
+        if (!selectEl) return;
+        const desc = parseDescriptor(selectEl.value);
         if (desc) addSeries(desc);
     });
 
-    // Initial state: empty chart with placeholder message
+    // ── Clear All button ───────────────────────────────────────────────────
+    document.getElementById(`hist-clear-btn-${pid}`)?.addEventListener('click', () => {
+        activeSeries.length = 0;
+        renderTags();
+        redraw();
+    });
+
+    // Initial state: show placeholder
     redraw();
 }
 
@@ -710,10 +637,10 @@ function refreshBar(pid, snapshots) {
         drawBarChart(`hist-bar-${pid}`, snapA, snapB, descriptor);
 
         if (summaryEl) {
-            const valA  = resolveSeriesValues([snapA], descriptor)[0] ?? 0;
-            const valB  = resolveSeriesValues([snapB], descriptor)[0] ?? 0;
-            const delta = valB - valA;
-            const sign  = delta >= 0 ? '+' : '';
+            const valA   = resolveSeriesValues([snapA], descriptor)[0] ?? 0;
+            const valB   = resolveSeriesValues([snapB], descriptor)[0] ?? 0;
+            const delta  = valB - valA;
+            const sign   = delta >= 0 ? '+' : '';
             const colour = delta >= 0 ? C.green : C.red;
             summaryEl.innerHTML = delta !== 0
                 ? `Change: <span style="color:${colour};font-weight:700;">${sign}${Number(delta).toLocaleString()}</span>`
@@ -783,10 +710,10 @@ export function setupHistoricalMount(uid) {
             }
 
             const pid = uid.replace(/[^a-z0-9]/gi, '_');
-            _colourIndex = 0; // reset palette for each player
+            _colourIndex = 0;
             content.innerHTML = buildPanelHTML(pid, snapshots);
 
-            // Default snapshot selectors: oldest → newest
+            // Default snapshot selectors: oldest (A) → newest (B)
             const setDefault = (aId, bId) => {
                 const a = document.getElementById(aId);
                 const b = document.getElementById(bId);
@@ -816,7 +743,7 @@ export function setupHistoricalMount(uid) {
                 document.getElementById(id)?.addEventListener('change', () => refreshBar(pid, snapshots));
             });
 
-            // Wire up trends tab (checkboxes, add-series, etc.)
+            // Wire up trends tab (dropdown add-series only)
             ensureChartJs().then(() => {
                 setupTrendsTab(pid, snapshots);
                 // Pre-populate compare table
