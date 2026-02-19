@@ -274,13 +274,17 @@ function drawBarChart(canvasId, snapA, snapB, descriptor) {
 
 // ── Delta helper ──────────────────────────────────────────────────────────────
 function deltaHTML(vA, vB, higher, fmtFn) {
-    if (higher === null || typeof vA !== 'number' || typeof vB !== 'number') return '';
+    if (typeof vA !== 'number' || typeof vB !== 'number') return '';
     const delta = vB - vA;
     if (delta === 0) return `<span style="color:${C.muted};">—</span>`;
+    const sign      = delta > 0 ? '+' : '';
+    const formatted = fmtFn ? fmtFn(Math.abs(delta)) : Math.abs(delta).toLocaleString();
+    // No colour coding when higher === null (neutral stats like Shots Fired, Damage per Kill)
+    if (higher === null) {
+        return `<span style="color:${C.muted};font-weight:700;">${sign}${delta < 0 ? '-' : ''}${formatted}</span>`;
+    }
     const positive = higher ? delta > 0 : delta < 0;
     const colour   = positive ? C.green : C.red;
-    const sign     = delta > 0 ? '+' : '';
-    const formatted = fmtFn ? fmtFn(Math.abs(delta)) : Math.abs(delta).toLocaleString();
     return `<span style="color:${colour};font-weight:700;">${sign}${delta < 0 ? '-' : ''}${formatted}</span>`;
 }
 
@@ -334,6 +338,21 @@ function renderCompareTable(pid, snapA, snapB) {
     if (allWeapons.size > 0) {
         html += sectionHeader('🔫 Per-Weapon Stats');
 
+        // ── Stat explanation callout ───────────────────────────────────────
+        html += `
+            <div style="margin:8px 0 14px;padding:12px 14px;border-radius:8px;
+                 border:1px solid ${C.borderMed};background:${C.sectionBg};font-size:.83em;
+                 color:${C.muted};line-height:1.6;">
+                <span style="color:${C.text};font-weight:700;">ℹ️ How these stats are calculated</span><br>
+                <b style="color:${C.text};">Accuracy (%)</b> — Shots that hit ÷ shots fired × 100.
+                A value of 40% means 4 out of every 10 bullets connected.<br>
+                <b style="color:${C.text};">Headshot Rate (%)</b> — Headshot hits ÷ kills × 100.
+                This counts <em>every</em> headshot hit registered, not just killing headshots.
+                Values above 100% are normal — a rate of 200% simply means you landed an average of
+                2 headshots per kill with that weapon (common with automatic weapons that require
+                multiple hits to down a target).
+            </div>`;
+
         for (const weapon of [...allWeapons].sort()) {
             const wsA = snapA.weapon_stats?.[weapon] || {};
             const wsB = snapB.weapon_stats?.[weapon] || {};
@@ -350,7 +369,32 @@ function renderCompareTable(pid, snapA, snapB) {
                 const fmt = (sf.key === 'kdr' || sf.key === 'accuracy' || sf.key === 'headshotRate')
                     ? v => Number(v).toFixed(sf.key === 'kdr' ? 3 : 2)
                     : v => Number(v).toLocaleString();
-                html += makeRow(sf.label, vA, vB, sf.higher, fmt);
+
+                // Inline tooltip for the two commonly-confusing stats
+                let labelOverride = null;
+                if (sf.key === 'headshotRate') {
+                    labelOverride = `${sf.label} <span title="Headshot hits ÷ kills × 100. Can exceed 100% because automatic weapons often register multiple headshot hits before a kill."
+                        style="cursor:help;color:${C.muted};font-size:.9em;">ⓘ</span>`;
+                } else if (sf.key === 'accuracy') {
+                    labelOverride = `${sf.label} <span title="Shots hit ÷ shots fired × 100."
+                        style="cursor:help;color:${C.muted};font-size:.9em;">ⓘ</span>`;
+                }
+
+                // makeRow uses textContent for the label, so we inject HTML manually for tooltips
+                if (labelOverride) {
+                    const fA = fmt(vA);
+                    const fB = fmt(vB);
+                    html += `
+                        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;align-items:center;
+                             padding:8px 4px;border-bottom:1px solid ${C.border};">
+                            <span style="color:${C.muted};font-size:.88em;">${labelOverride}</span>
+                            <span style="color:${C.text};text-align:right;font-size:.95em;">${fA}</span>
+                            <span style="color:${C.text};text-align:right;font-size:.95em;">${fB}</span>
+                            <span style="text-align:right;">${deltaHTML(Number(vA), Number(vB), sf.higher, v => fmt(v))}</span>
+                        </div>`;
+                } else {
+                    html += makeRow(sf.label, vA, vB, sf.higher, fmt);
+                }
             }
         }
     }
@@ -367,7 +411,14 @@ function renderCompareTable(pid, snapA, snapB) {
         for (const vehicle of [...allVehicles].sort()) {
             const vsA = snapA.vehicle_stats?.[vehicle] || {};
             const vsB = snapB.vehicle_stats?.[vehicle] || {};
-            html += makeRow(vehicle, vsA.kills ?? 0, vsB.kills ?? 0, true,
+
+            // Vehicle name as a sub-header (mirrors weapon pattern)
+            html += `
+                <div style="padding:10px 4px 4px;margin-top:6px;">
+                    <span style="color:${C.blue};font-weight:700;font-size:.92em;">${vehicle}</span>
+                </div>`;
+
+            html += makeRow('Kills', vsA.kills ?? 0, vsB.kills ?? 0, true,
                 v => Number(v).toLocaleString());
         }
     }
