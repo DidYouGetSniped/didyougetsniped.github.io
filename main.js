@@ -3,6 +3,7 @@ import { fetchFullPlayerData, searchPlayerByName, RATE_LIMIT_CONFIG } from '/api
 import { copyToClipboard, extractUID, formatDateTime, getJoinDateFromUID, timeAgo } from '/utils.js';
 import { renderPlayerInfo, renderSearchResults, displayMessage, updateMetaTags, resetMetaTags } from '/ui.js';
 import { applyRawOverrides, applyProcessedOverrides, applyPercentileOverrides } from '/custom-stats.js';
+import { setupHistoricalMount } from '/history.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const rateLimitChannel = new BroadcastChannel('war-brokers-rate-limit');
@@ -180,6 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (timeAgoInterval) clearInterval(timeAgoInterval);
         timeAgoInterval = setInterval(updateTimeAgoDisplays, 30000);
+
+        setupHistoricalMount(currentPlayerUID); 
     }
 
     function updateDisplayedDates() {

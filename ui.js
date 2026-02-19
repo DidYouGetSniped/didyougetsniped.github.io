@@ -534,6 +534,7 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
 
         ${miscStatsHTML}
         ${graphsHTML}
+        <div id="hist-mount-${data.uid}"></div>
     `;
 }
 
