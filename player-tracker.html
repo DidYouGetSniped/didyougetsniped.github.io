@@ -232,7 +232,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let chart = null;
     let trackerData = null;
+    let trackerIndex = null;
+    let latestWindowStartMs = null;
     let refreshInterval = null;
+    const monthDataCache = new Map();
+    const TRACKER_BASE_PATH = './playercountinfo';
 
     // Load all preferences from localStorage (with defaults)
     const savedPrefs = localStorage.getItem('playerTrackerPrefs');
@@ -279,14 +283,151 @@ document.addEventListener('DOMContentLoaded', function() {
         return m.format(format);
     }
 
+    function toMonthKey(date) {
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        return `${year}-${month}`;
+    }
+
+    function monthKeysBetween(startDate, endDate) {
+        const start = new Date(Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), 1));
+        const end = new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), 1));
+        const keys = [];
+        const cursor = new Date(start.getTime());
+
+        while (cursor <= end) {
+            keys.push(toMonthKey(cursor));
+            cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+        }
+        return keys;
+    }
+
+    function dedupeByTimestamp(points) {
+        const seen = new Set();
+        const deduped = [];
+        for (const point of points) {
+            if (seen.has(point.timestamp)) continue;
+            seen.add(point.timestamp);
+            deduped.push(point);
+        }
+        return deduped;
+    }
+
+    function getRequestedRangeBounds() {
+        const now = new Date();
+        const range = timeRangeSelect.value;
+
+        if (range === 'all') {
+            return { start: null, end: now };
+        }
+
+        if (range === 'custom') {
+            const duration = parseInt(customDuration.value, 10) || 48;
+            if (!customStartDate.value) {
+                return {
+                    start: new Date(now.getTime() - duration * 60 * 60 * 1000),
+                    end: now
+                };
+            }
+            const start = new Date(customStartDate.value);
+            const end = new Date(start.getTime() + duration * 60 * 60 * 1000);
+            return { start, end };
+        }
+
+        const hours = parseInt(range, 10) || 24;
+        return {
+            start: new Date(now.getTime() - hours * 60 * 60 * 1000),
+            end: now
+        };
+    }
+
+    async function fetchJson(path) {
+        const response = await fetch(`${path}?t=${Date.now()}`);
+        if (!response.ok) throw new Error(`Failed to load ${path}`);
+        return response.json();
+    }
+
+    async function loadMonthData(monthKey) {
+        if (monthDataCache.has(monthKey)) {
+            return monthDataCache.get(monthKey);
+        }
+
+        try {
+            const monthPayload = await fetchJson(`${TRACKER_BASE_PATH}/player-tracker-data/${monthKey}.json`);
+            const points = Array.isArray(monthPayload.data) ? monthPayload.data : [];
+            monthDataCache.set(monthKey, points);
+            return points;
+        } catch (error) {
+            console.warn(`Could not load month ${monthKey}:`, error);
+            monthDataCache.set(monthKey, []);
+            return [];
+        }
+    }
+
+    async function ensureDataForCurrentRange() {
+        if (!trackerData || !trackerIndex || !Array.isArray(trackerIndex.months) || trackerIndex.months.length === 0) {
+            return;
+        }
+
+        const { start, end } = getRequestedRangeBounds();
+        let requiredMonths = [];
+
+        if (!start) {
+            requiredMonths = trackerIndex.months.map(m => m.month);
+        } else if (latestWindowStartMs === null || start.getTime() < latestWindowStartMs) {
+            requiredMonths = monthKeysBetween(start, end || new Date());
+        } else {
+            return;
+        }
+
+        if (requiredMonths.length === 0) return;
+
+        const availableMonths = new Set(trackerIndex.months.map(m => m.month));
+        requiredMonths = requiredMonths.filter(month => availableMonths.has(month));
+        if (requiredMonths.length === 0) return;
+
+        const monthDataSets = await Promise.all(requiredMonths.map(loadMonthData));
+        const merged = monthDataSets.flat().sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        trackerData.data = dedupeByTimestamp(merged);
+    }
+
+    async function refreshView() {
+        await ensureDataForCurrentRange();
+        updateChart();
+        updateStats();
+    }
+
     async function loadTrackerData() {
         try {
-            const response = await fetch('./player-tracker-data.json?t=' + Date.now());
-            if (!response.ok) throw new Error('Failed to load data');
-            trackerData = await response.json();
+            try {
+                trackerIndex = await fetchJson(`${TRACKER_BASE_PATH}/player-tracker-index.json`);
+            } catch {
+                trackerIndex = null;
+            }
+
+            if (trackerIndex) {
+                const latest = await fetchJson(`${TRACKER_BASE_PATH}/player-tracker-latest.json`);
+                trackerData = {
+                    lastUpdated: trackerIndex.lastUpdated || latest.lastUpdated,
+                    currentPlayers: trackerIndex.currentPlayers ?? latest.currentPlayers,
+                    dataPoints: trackerIndex.totalDataPoints ?? latest.dataPoints,
+                    data: Array.isArray(latest.data) ? latest.data : []
+                };
+                latestWindowStartMs = trackerData.data.length > 0 ? new Date(trackerData.data[0].timestamp).getTime() : null;
+            } else {
+                try {
+                    const legacy = await fetchJson(`${TRACKER_BASE_PATH}/player-tracker-data.json`);
+                    trackerData = legacy;
+                } catch {
+                    trackerData = await fetchJson('./player-tracker-data.json');
+                }
+                latestWindowStartMs = trackerData.data && trackerData.data.length > 0
+                    ? new Date(trackerData.data[0].timestamp).getTime()
+                    : null;
+            }
+
             updateStatus(true, `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`);
-            updateChart();
-            updateStats();
+            await refreshView();
         } catch (error) {
             console.error('Error loading tracker data:', error);
             updateStatus(false, 'Error loading data - file may not exist yet');
@@ -533,7 +674,7 @@ document.addEventListener('DOMContentLoaded', function() {
     chartTypeSelect.addEventListener('change', () => {
         preferences.chartType = chartTypeSelect.value;
         savePreferences();
-        updateChart();
+        refreshView();
     });
     
     timeRangeSelect.addEventListener('change', () => {
@@ -547,49 +688,43 @@ document.addEventListener('DOMContentLoaded', function() {
             customRangeGroup.style.display = 'none';
         }
         
-        updateChart();
-        updateStats();
+        refreshView();
     });
     
     customStartDate.addEventListener('change', () => {
         preferences.customStartDate = customStartDate.value;
         savePreferences();
-        updateChart();
-        updateStats();
+        refreshView();
     });
     
     customDuration.addEventListener('change', () => {
         preferences.customDuration = parseInt(customDuration.value) || 48;
         savePreferences();
-        updateChart();
-        updateStats();
+        refreshView();
     });
     
     dataDensitySelect.addEventListener('change', () => {
         preferences.dataDensity = dataDensitySelect.value;
         savePreferences();
-        updateChart();
-        updateStats();
+        refreshView();
     });
     
     showGridCheckbox.addEventListener('change', () => {
         preferences.showGrid = showGridCheckbox.checked;
         savePreferences();
-        updateChart();
+        refreshView();
     });
 
     timezoneSelect.addEventListener('change', () => {
         preferences.timezone = timezoneSelect.value;
         savePreferences();
-        updateChart();
-        updateStats();
+        refreshView();
     });
 
     use24HourCheckbox.addEventListener('change', () => {
         preferences.use24Hour = use24HourCheckbox.checked;
         savePreferences();
-        updateChart();
-        updateStats();
+        refreshView();
     });
 
     refreshBtn.addEventListener('click', loadTrackerData);
