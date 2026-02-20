@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="homepage.css" />
 
@@ -96,9 +96,11 @@
     <div class="nav-container">
       <a href="/" class="nav-logo">
         <span class="logo-icon">⚔️</span>
-        <span class="logo-text">DYGS's War Brokers Tools</span>
+        <span class="logo-text">DYGS War Brokers Tools</span>
       </a>
       <div class="nav-links">
+        <a href="#tools-title" class="nav-link">Tools</a>
+        <a href="updates.html" class="nav-link">Updates</a>
         <a href="https://discord.gg/NuST4n4sWt" class="nav-discord" target="_blank" rel="noopener noreferrer">
           <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
@@ -111,27 +113,26 @@
 
   <!-- Hero Section -->
   <header class="hero">
-    <div class="hero-content">
-      <h1 class="hero-title">
-        Welcome to <span class="gradient-text">DYGS's War Brokers Tools</span>
-      </h1>
-      <p class="hero-subtitle">Your comprehensive platform for Warbrokers statistics, squad management, and real-time player analytics.</p>
-      <div class="hero-stats">
-        <div class="stat-item">
-          <span class="stat-number">7+</span>
-          <span class="stat-label">Tools</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-number">Live</span>
-          <span class="stat-label">Data</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-number">Free</span>
-          <span class="stat-label">Forever</span>
+    <div class="hero-layout">
+      <div class="hero-content">
+        <p class="hero-eyebrow">War Brokers Tools</p>
+        <h1 class="hero-title">
+          Everything you need for <span class="gradient-text">smarter War Brokers Data</span>
+        </h1>
+        <p class="hero-subtitle">Track players, manage squads, check live servers, and follow updates from one place.</p>
+        <div class="hero-actions">
+          <a href="#tools-title" class="hero-btn hero-btn-primary">Explore Tools</a>
+          <a href="updates.html" class="hero-btn hero-btn-secondary">Read Updates</a>
         </div>
       </div>
+      <aside class="hero-panel" aria-label="Platform highlights">
+        <h2 class="panel-title">At a glance</h2>
+        <ul class="panel-list">
+          <li><span>Tooling</span><strong>7+ utilities</strong></li>
+          <li><span>Data cadence</span><strong>Live + historical</strong></li>
+          <li><span>Access</span><strong>Free for everyone</strong></li>
+        </ul>
+      </aside>
     </div>
   </header>
 
@@ -143,7 +144,7 @@
           <span class="title-icon">🛠️</span>
           Tools & Features
         </h2>
-        <p class="section-desc">Professional tools designed for the Warbrokers community</p>
+        <p class="section-desc">Fast, focused utilities for stats, squads, maps, and tracking</p>
       </div>
 
       <div class="tools-grid">
@@ -154,7 +155,7 @@
             <p>Comprehensive player statistics with detailed breakdowns and revolutionary BPR statistic</p>
           </div>
           <a href="/wbinfo.html" class="card-link">
-            <span>Open Tool</span>
+            <span>Open</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -168,7 +169,7 @@
             <p>Browse squads and look at their members</p>
           </div>
           <a href="/squads.html" class="card-link">
-            <span>Open Tool</span>
+            <span>Open</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -182,7 +183,7 @@
             <p>Browse active games with filters for region, map, player count, and more — without hopping in-game</p>
           </div>
           <a href="/warbrokers_mapper.html" class="card-link">
-            <span>Open Tool</span>
+            <span>Open</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
