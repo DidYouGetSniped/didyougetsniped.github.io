@@ -33,12 +33,6 @@
 </head>
 
 <body>
-  <!-- Animated Background -->
-  <div class="bg-animation">
-    <canvas id="bg-canvas"></canvas>
-    <div class="bg-noise"></div>
-  </div>
-
   <!-- Navigation Bar -->
   <nav class="navbar" id="navbar">
     <div class="nav-container">
@@ -116,10 +110,12 @@
   <div class="update-card">
     <div class="card-header">
       <time class="update-time" datetime="2026-02-20">Feb 20, 2026</time>
-      <span class="change-count">1 change</span>
+      <span class="change-count">3 changes</span>
     </div>
     <ul class="changes-list">
-      <li><span class="tag tag-update">update</span>Updated the code of Player Count Tracking</li>
+      <li><span class="tag tag-update">update</span>Homepage now uses the War Brokers themed rotating background with a subtle blur.</li>
+      <li><span class="tag tag-update">update</span>Squad Inviter now uses the same War Brokers themed rotating background with blur.</li>
+      <li><span class="tag tag-update">update</span>Updates page now uses the shared War Brokers themed background system instead of the old canvas background.</li>
     </ul>
   </div>
 </li>
@@ -611,55 +607,9 @@
     });
   </script>
 
-  <!-- Background Canvas -->
-  <script>
-    (function() {
-      const canvas = document.getElementById('bg-canvas');
-      const ctx = canvas.getContext('2d');
-      let w, h, particles = [];
-
-      function resize() {
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
-      }
-
-      function createParticles() {
-        particles = [];
-        const count = Math.floor((w * h) / 18000);
-        for (let i = 0; i < count; i++) {
-          particles.push({
-            x: Math.random() * w,
-            y: Math.random() * h,
-            r: Math.random() * 1.5 + 0.5,
-            dx: (Math.random() - 0.5) * 0.3,
-            dy: (Math.random() - 0.5) * 0.3,
-            opacity: Math.random() * 0.5 + 0.1
-          });
-        }
-      }
-
-      function draw() {
-        ctx.clearRect(0, 0, w, h);
-        particles.forEach(p => {
-          p.x += p.dx;
-          p.y += p.dy;
-          if (p.x < 0) p.x = w;
-          if (p.x > w) p.x = 0;
-          if (p.y < 0) p.y = h;
-          if (p.y > h) p.y = 0;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(139, 92, 246, ${p.opacity})`;
-          ctx.fill();
-        });
-        requestAnimationFrame(draw);
-      }
-
-      resize();
-      createParticles();
-      draw();
-      window.addEventListener('resize', () => { resize(); createParticles(); });
-    })();
+  <script type="module">
+    import { setRandomBackground } from '/background.js';
+    document.addEventListener('DOMContentLoaded', setRandomBackground);
   </script>
 </body>
 </html>

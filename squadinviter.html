@@ -73,15 +73,31 @@
       padding: 20px;
       color: var(--text);
       font-family: 'Manrope', system-ui, -apple-system, sans-serif;
-      background: 
-        radial-gradient(circle at 20% 80%, rgba(255, 82, 82, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
-        var(--bg);
+      background: var(--bg);
       position: relative;
       overflow-x: hidden;
+      isolation: isolate;
     }
 
     body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-image: var(--background-image-url);
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      filter: blur(8px) brightness(0.34);
+      transform: scale(1.05);
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    body::after {
       content: '';
       position: fixed;
       top: -50%;
@@ -92,7 +108,7 @@
         repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px);
       pointer-events: none;
       animation: grain 8s steps(10) infinite;
-      z-index: 1;
+      z-index: -1;
     }
 
     nav {
@@ -482,6 +498,12 @@
         padding: 16px;
       }
 
+      body::before {
+        background-attachment: scroll;
+        filter: blur(6px) brightness(0.33);
+        transform: none;
+      }
+
       nav {
         top: 16px;
         left: 16px;
@@ -603,6 +625,11 @@
       </div>
     </div>
   </div>
+
+  <script type="module">
+    import { setRandomBackground } from '/background.js';
+    document.addEventListener('DOMContentLoaded', setRandomBackground);
+  </script>
 
   <script>
     const form = document.getElementById('inviteForm');

@@ -28,6 +28,25 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
+  isolation: isolate;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -2;
+  background-image: var(--background-image-url);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  filter: blur(8px) brightness(0.35);
+  transform: scale(1.05);
 }
 
 ::selection { background: var(--blue-500); color: #fff; }
@@ -46,10 +65,10 @@ a, button { transition: var(--ease); }
 .bg-gradient {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(30,58,95,0.4) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(30,58,95,0.35) 0%, transparent 60%),
     radial-gradient(ellipse 50% 30% at 90% 20%, rgba(59,130,246,0.1) 0%, transparent 50%),
     radial-gradient(ellipse 50% 30% at 10% 80%, rgba(59,130,246,0.08) 0%, transparent 50%),
-    var(--bg-0);
+    rgba(6, 10, 18, 0.68);
 }
 
 .bg-grid {
@@ -340,6 +359,12 @@ a, button { transition: var(--ease); }
 
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
+  body::before {
+    background-attachment: scroll;
+    filter: blur(6px) brightness(0.32);
+    transform: none;
+  }
+
   .navbar { padding: 0.5rem 1rem; }
   .nav-discord span { display: none; }
   .nav-discord { padding: 0.5rem; }
