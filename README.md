@@ -1,9 +1,9 @@
-# War Brokers Stats Website
+# Did You Get Sniped?'s War Brokers Tools
 
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fdidyougetsniped.github.io)](https://didyougetsniped.github.io)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Server-7289da?logo=discord&logoColor=white)](https://discord.gg/NuST4n4sWt)
 
-A comprehensive statistics and tools website for [War Brokers](https://warbrokers.io), featuring player stats, squad analytics, performance ratings, and more.
+A comprehensive website for [War Brokers](https://warbrokers.io), featuring player stats, squad analytics, performance ratings, and more.
 
 🔗 **Live Site**: [didyougetsniped.github.io](https://didyougetsniped.github.io)
 
@@ -15,18 +15,6 @@ A comprehensive statistics and tools website for [War Brokers](https://warbroker
 - **Weapon & Vehicle Analytics**: Detailed breakdowns with achievement tracking
 - **Interactive Charts**: Visualize your performance across different metrics
 - **Timezone Support**: View timestamps in your local timezone or any major timezone worldwide
-
-### Broker Performance Rating (BPR)
-The **Broker Performance Rating (BPR)** is a revolutionary metric that measures player effectiveness, resilience, and overall game impact. Unlike simple K/D ratios, BPR considers:
-- Combat efficiency (damage-weighted K/D)
-- ELO rankings (kills and games)
-- Game impact and longevity
-- Survivability and resilience
-- Experience and dedication
-
-BPR is the second iteration of the original DYGS Score, refined through extensive analysis and testing.
-
-[Learn more about BPR](https://files.catbox.moe/oqwzj1.pdf)
 
 ### Squad Tools
 - **Squad Stats**: View comprehensive squad-wide statistics
@@ -40,6 +28,18 @@ BPR is the second iteration of the original DYGS Score, refined through extensiv
 - **Historical Data**: View trends with customizable time ranges
 - **Interactive Charts**: Visualize player activity patterns
 - **Export Functionality**: Export data as CSV or PNG
+
+### Broker Performance Rating (BPR)
+The **Broker Performance Rating (BPR)** is a revolutionary metric that measures player effectiveness, resilience, and overall game impact. Unlike simple K/D ratios, BPR considers:
+- Combat efficiency (damage-weighted K/D)
+- ELO rankings (kills and games)
+- Game impact and longevity
+- Survivability and resilience
+- Experience and dedication
+
+BPR is the second iteration of the original DYGS Score, refined through extensive analysis and testing.
+
+[Learn more about BPR](https://files.catbox.moe/oqwzj1.pdf)
 
 ## 🛠️ Technical Stack
 
@@ -89,116 +89,67 @@ Custom achievement tracking for:
 
 ## 📁 Project Structure
 
-```
-├── index.html              # Homepage
-├── wbinfo.html            # Player stats page
-├── squads.html            # Squad stats page
-├── squadcount.html        # Squad count tracker
-├── squadinviter.html      # Squad invitation tool
-├── player-tracker.html    # Player count tracker
-├── bpr.html              # BPR explanation page
-├── updates.html          # Changelog
-│
-├── main.js               # Player stats logic
-├── squads.js            # Squad stats logic
-├── api.js               # API wrapper with caching
-├── ui.js                # UI rendering
-├── uiconst.js           # Performance calculations
-├── utils.js             # Utility functions
-├── weaponlogic.js       # Weapon achievement system
-├── vehiclelogic.js      # Vehicle achievement system
-├── squaddb.js           # Squad information database
-├── progressbar.js       # Progress indicator
-├── background.js        # Random background system
-│
-├── fetch-data.js            # Squad data collection script
-├── fetch-player-count.js    # Player count collection script
-│
-└── .github/workflows/
-    ├── refresh-squad-data.yml       # Squad data automation
-    └── fetch-player-count.yml       # Player count automation
+```text
+|-- index.html                     # Homepage
+|-- wbinfo.html                    # Player stats page
+|-- squads.html                    # Squad stats page
+|-- squadcount.html                # Squad count tracker
+|-- squadinviter.html              # Squad invitation tool
+|-- player-tracker.html            # Player count tracker
+|-- updates.html                   # Changelog
+|-- warbrokers_mapper.html         # Mapper page
+|
+|-- main.js                        # Player stats logic
+|-- squads.js                      # Squad stats logic
+|-- api.js                         # API wrapper with caching
+|-- ui.js                          # UI rendering
+|-- uiconst.js                     # Performance calculations
+|-- utils.js                       # Utility functions
+|-- custom-stats.js                # Custom stats utilities
+|-- history.js                     # Historical stats logic
+|-- mapper.js                      # Mapper logic
+|-- weaponlogic.js                 # Weapon achievement system
+|-- vehiclelogic.js                # Vehicle achievement system
+|-- squaddb.js                     # Squad information database
+|-- progressbar.js                 # Progress indicator
+|-- background.js                  # Random background system
+|
+|-- style.css                      # Global styles
+|-- homepage.css                   # Homepage styles
+|-- squad.css                      # Squad page styles
+|-- squadcount.css                 # Squad count styles
+|-- playercounttracker.css         # Player tracker styles
+|-- mapper.css                     # Mapper styles
+|-- updates.css                    # Updates page styles
+|
+|-- fetch-data.js                  # Squad data collection script
+|-- fetch-player-count.js          # Player count collection script
+|-- scripts/
+|   |-- fetch-stats.js             # Tracked player stats collector
+|   `-- tracked-uids.js            # UIDs for tracked player stats
+|
+|-- squad-data.json                # Cached squad data
+|-- squadwars.json                 # Squad war data
+|-- playercountinfo/
+|   `-- player-tracker-data/       # Monthly player count archives
+|-- historical-stats/
+|   `-- <uid>/snapshots.json       # Per-player historical snapshots
+|
+`-- .github/workflows/
+    |-- refresh-squad-data.yml     # Squad data automation
+    |-- track-players.yml          # Player count automation
+    `-- fetch-stats.yml            # Tracked stats automation
 ```
 
 ## 🎯 Performance Optimizations
 
-### Caching Strategy
+### Caching Strategy and Data Efficiency
 - **60-second TTL**: Repeated lookups within 60s are instant
 - **Rate Limit Bypass**: Cached data doesn't count against limits
 - **Smart Invalidation**: Auto-cleanup of expired cache entries
-
-### Batch Processing
-```javascript
-const BATCH_SIZE = 3;           // Process 3 requests at a time
-const BATCH_DELAY = 500;        // 500ms between batches
-// Result: ~6 requests/min, well under 19/min limit
-```
-
-### Data Efficiency
 - **Failed Squad Retry**: Prioritizes previously failed fetches
 - **Progress Tracking**: Real-time updates during long operations
 - **Minimal Requests**: Achieves 5-50% reduction in API calls
-
-## 🎨 Features in Detail
-
-### Interactive Charts
-- **Pie & Bar Charts**: Toggle between visualization types
-- **Custom Legends**: Click to show/hide data points
-- **Sorting Options**: By size or alphabetically
-- **Reset Functionality**: Quick return to default view
-
-### Time & Date Handling
-- **12 Timezones**: Major zones across all continents
-- **Dual Formats**: 12-hour and 24-hour time
-- **Relative Times**: "X hours ago" with auto-updates
-- **Join Date Extraction**: Calculated from MongoDB ObjectID
-
-### Weapon Statistics
-For each weapon tracked:
-- Kills, Deaths, Headshots
-- Damage dealt & received
-- K/D ratio
-- Accuracy (zoomed & unzoomed)
-- Headshot rate
-- Damage per kill/hit
-- Shots fired & hit
-
-## 📈 BPR Calculation
-
-The Broker Performance Rating uses a sophisticated formula:
-
-```javascript
-Core Performance = √(Factor A · Factor B)
-
-Factor A (Combat Skills):
-  √(Combat Efficiency) + Kills ELO Bonus
-
-Factor B (Game Impact & Resilience):
-  Avg Damage Impact + Games ELO Bonus + Resilience
-
-Overall BPR = (Core Performance + XP Bonus) × 100
-```
-
-[Full BPR Documentation](https://files.catbox.moe/oqwzj1.pdf)
-
-## 🤝 Credits & Acknowledgments
-
-### Created By
-**Did You Get Sniped? (DYGS)**
-
-### Special Thanks
-- **EpicFeathers**: Contributions and support
-- **Pomp**: War Brokers API (`wbapi.wbpjs.com`)
-- **TheChillTankMain**: Photos and assets
-- **War Brokers Community**: Feedback and testing
-
-### Third-Party Libraries
-- [Chart.js](https://www.chartjs.org/) - Data visualization
-- [Moment.js](https://momentjs.com/) - Time/date handling
-- [html2canvas](https://html2canvas.hertzen.com/) - Chart export
-
-## 📝 Changelog
-
-See [updates.html](https://didyougetsniped.github.io/updates) for the changelog.
 
 ## 🚦 Rate Limiting
 
@@ -207,11 +158,6 @@ See [updates.html](https://didyougetsniped.github.io/updates) for the changelog.
 - Cached requests don't count toward limit
 - 60-second cache duration
 - Clear error messages with countdown timers
-
-**Best Practices**:
-- Use search by name first (single request)
-- Avoid rapid consecutive lookups
-- Let cache work (wait 60s for repeated lookups)
 
 ## 📊 Data Collection
 
@@ -226,13 +172,26 @@ See [updates.html](https://didyougetsniped.github.io/updates) for the changelog.
 - **Storage**: `playercountinfo/player-tracker-data/YYYY-MM.json`
 - **Retention**: All historical data preserved
 
-## 🐛 Known Issues & Limitations
+## 🤝 Credits & Acknowledgments
 
-1. **API Rate Limits**: Strict 20 requests/minute limit (we use 19 to be safe)
-2. **No Backend**: All processing happens client-side
-3. **Data Freshness**: Squad data updates every 12 hours
-4. **Blacklisted Players**: Some players may be restricted from view
-5. **Browser Support**: Requires modern browser with ES6 module support
+### Created By
+**Did You Get Sniped? (DYGS)**
+
+### Special Thanks
+- **EpicFeathers**: Contributions and support
+- **Pomp**: War Brokers API (`wbapi.wbpjs.com`)
+- **TheChillTankMain**: Photos and assets
+- **War Brokers Community**: Feedback and testing
+- **[OpenAI Codex](https://openai.com/codex/)**: Making coding much faster
+
+### Third-Party Libraries
+- [Chart.js](https://www.chartjs.org/) - Data visualization
+- [Moment.js](https://momentjs.com/) - Time/date handling
+- [html2canvas](https://html2canvas.hertzen.com/) - Chart export
+
+## 📝 Changelog
+
+See [updates.html](https://didyougetsniped.github.io/updates) for the changelog.
 
 ## 📜 License & Disclaimer
 
