@@ -232,11 +232,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let chart = null;
     let trackerData = null;
-    let trackerIndex = null;
-    let latestWindowStartMs = null;
     let refreshInterval = null;
     const monthDataCache = new Map();
     const TRACKER_BASE_PATH = './playercountinfo';
+    const MONTH_LOOKBACK_LIMIT = 120;
+    const MISSING_MONTH_STOP_THRESHOLD = 3;
 
     // Load all preferences from localStorage (with defaults)
     const savedPrefs = localStorage.getItem('playerTrackerPrefs');
@@ -355,43 +355,79 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const monthPayload = await fetchJson(`${TRACKER_BASE_PATH}/player-tracker-data/${monthKey}.json`);
             const points = Array.isArray(monthPayload.data) ? monthPayload.data : [];
-            monthDataCache.set(monthKey, points);
-            return points;
+            const result = { exists: true, data: points };
+            monthDataCache.set(monthKey, result);
+            return result;
         } catch (error) {
             console.warn(`Could not load month ${monthKey}:`, error);
-            monthDataCache.set(monthKey, []);
-            return [];
+            const result = { exists: false, data: [] };
+            monthDataCache.set(monthKey, result);
+            return result;
         }
     }
 
+    async function discoverAvailableMonths() {
+        const keys = [];
+        const cursor = new Date();
+        cursor.setUTCDate(1);
+        cursor.setUTCHours(0, 0, 0, 0);
+
+        let foundAny = false;
+        let missingStreak = 0;
+
+        for (let i = 0; i < MONTH_LOOKBACK_LIMIT; i++) {
+            const monthKey = toMonthKey(cursor);
+            const monthResult = await loadMonthData(monthKey);
+
+            if (monthResult.exists) {
+                keys.push(monthKey);
+                foundAny = true;
+                missingStreak = 0;
+            } else if (foundAny) {
+                missingStreak += 1;
+                if (missingStreak >= MISSING_MONTH_STOP_THRESHOLD) {
+                    break;
+                }
+            }
+
+            cursor.setUTCMonth(cursor.getUTCMonth() - 1);
+        }
+
+        return keys.reverse();
+    }
+
     async function ensureDataForCurrentRange() {
-        if (!trackerData || !trackerIndex || !Array.isArray(trackerIndex.months) || trackerIndex.months.length === 0) {
+        if (!trackerData || !Array.isArray(trackerData.availableMonths) || trackerData.availableMonths.length === 0) {
+            if (trackerData) {
+                trackerData.data = [];
+                trackerData.dataPoints = 0;
+            }
             return;
         }
 
         const { start, end } = getRequestedRangeBounds();
-        let requiredMonths = [];
+        const availableMonths = new Set(trackerData.availableMonths);
+        let requiredMonths = !start
+            ? trackerData.availableMonths.slice()
+            : monthKeysBetween(start, end || new Date()).filter(month => availableMonths.has(month));
 
-        if (!start) {
-            requiredMonths = trackerIndex.months.map(m => m.month);
-        } else if (latestWindowStartMs === null || start.getTime() < latestWindowStartMs) {
-            requiredMonths = monthKeysBetween(start, end || new Date());
-        } else {
+        if (requiredMonths.length === 0) {
+            trackerData.data = [];
+            trackerData.dataPoints = 0;
             return;
         }
 
-        if (requiredMonths.length === 0) return;
-
-        const availableMonths = new Set(trackerIndex.months.map(m => m.month));
-        requiredMonths = requiredMonths.filter(month => availableMonths.has(month));
-        if (requiredMonths.length === 0) return;
-
-        const monthDataSets = await Promise.all(requiredMonths.map(loadMonthData));
+        const monthDataSets = await Promise.all(requiredMonths.map(async monthKey => {
+            const monthResult = await loadMonthData(monthKey);
+            return monthResult.data;
+        }));
         const merged = monthDataSets.flat().sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
         trackerData.data = dedupeByTimestamp(merged);
+        trackerData.dataPoints = trackerData.data.length;
     }
 
     async function refreshView() {
+        if (!trackerData) return;
         await ensureDataForCurrentRange();
         updateChart();
         updateStats();
@@ -399,38 +435,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function loadTrackerData() {
         try {
-            try {
-                trackerIndex = await fetchJson(`${TRACKER_BASE_PATH}/player-tracker-index.json`);
-            } catch {
-                trackerIndex = null;
+            monthDataCache.clear();
+            const availableMonths = await discoverAvailableMonths();
+            if (availableMonths.length === 0) {
+                throw new Error('No monthly tracker files found');
             }
 
-            if (trackerIndex) {
-                const latest = await fetchJson(`${TRACKER_BASE_PATH}/player-tracker-latest.json`);
-                trackerData = {
-                    lastUpdated: trackerIndex.lastUpdated || latest.lastUpdated,
-                    currentPlayers: trackerIndex.currentPlayers ?? latest.currentPlayers,
-                    dataPoints: trackerIndex.totalDataPoints ?? latest.dataPoints,
-                    data: Array.isArray(latest.data) ? latest.data : []
-                };
-                latestWindowStartMs = trackerData.data.length > 0 ? new Date(trackerData.data[0].timestamp).getTime() : null;
-            } else {
-                try {
-                    const legacy = await fetchJson(`${TRACKER_BASE_PATH}/player-tracker-data.json`);
-                    trackerData = legacy;
-                } catch {
-                    trackerData = await fetchJson('./player-tracker-data.json');
-                }
-                latestWindowStartMs = trackerData.data && trackerData.data.length > 0
-                    ? new Date(trackerData.data[0].timestamp).getTime()
-                    : null;
-            }
+            const latestMonthKey = availableMonths[availableMonths.length - 1];
+            const latestMonth = await loadMonthData(latestMonthKey);
+            const latestPoint = latestMonth.data.length > 0
+                ? latestMonth.data[latestMonth.data.length - 1]
+                : null;
 
-            updateStatus(true, `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`);
+            trackerData = {
+                lastUpdated: latestPoint ? latestPoint.timestamp : null,
+                currentPlayers: latestPoint ? latestPoint.players : 0,
+                dataPoints: 0,
+                data: [],
+                availableMonths
+            };
+
+            const statusMessage = trackerData.lastUpdated
+                ? `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`
+                : 'Monthly tracker files loaded';
+            updateStatus(true, statusMessage);
             await refreshView();
         } catch (error) {
             console.error('Error loading tracker data:', error);
-            updateStatus(false, 'Error loading data - file may not exist yet');
+            trackerData = null;
+            updateStatus(false, 'Error loading monthly data');
         }
     }
 
@@ -451,10 +484,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateStats() {
-        if (!trackerData || !trackerData.data || trackerData.data.length === 0) return;
+        if (!trackerData || !trackerData.data || trackerData.data.length === 0) {
+            currentPlayersEl.textContent = '-';
+            peakPlayersEl.textContent = '-';
+            minPlayersEl.textContent = '-';
+            avgPlayersEl.textContent = '-';
+            dataPointsEl.textContent = '0 data points';
+            lastUpdateEl.textContent = trackerData && trackerData.lastUpdated
+                ? `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`
+                : 'Last updated: Never';
+            return;
+        }
 
         const filtered = getFilteredData();
-        if (filtered.length === 0) return;
+        if (filtered.length === 0) {
+            currentPlayersEl.textContent = '-';
+            peakPlayersEl.textContent = '-';
+            minPlayersEl.textContent = '-';
+            avgPlayersEl.textContent = '-';
+            dataPointsEl.textContent = '0 data points';
+            lastUpdateEl.textContent = trackerData.lastUpdated
+                ? `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`
+                : 'Last updated: Never';
+            return;
+        }
 
         const players = filtered.map(d => d.players);
         const current = players[players.length - 1];
@@ -467,7 +520,9 @@ document.addEventListener('DOMContentLoaded', function() {
         minPlayersEl.textContent = min.toLocaleString();
         avgPlayersEl.textContent = avg.toLocaleString();
         dataPointsEl.textContent = `${filtered.length} data point${filtered.length !== 1 ? 's' : ''}`;
-        lastUpdateEl.textContent = `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`;
+        lastUpdateEl.textContent = trackerData.lastUpdated
+            ? `Last updated: ${new Date(trackerData.lastUpdated).toLocaleTimeString()}`
+            : 'Last updated: Never';
     }
 
     function getFilteredData() {

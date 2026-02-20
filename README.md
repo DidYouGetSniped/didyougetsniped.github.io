@@ -223,7 +223,7 @@ See [updates.html](https://didyougetsniped.github.io/updates) for the changelog.
 
 ### Player Count
 - **Frequency**: Every 30 minutes (automated via GitHub Actions)
-- **Storage**: `player-tracker-data.json`
+- **Storage**: `playercountinfo/player-tracker-data/YYYY-MM.json`
 - **Retention**: All historical data preserved
 
 ## 🐛 Known Issues & Limitations

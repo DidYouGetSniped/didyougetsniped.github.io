@@ -1,5 +1,5 @@
 // fetch-player-count.js
-import { writeFileSync, readFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
+import { writeFileSync, readFileSync, mkdirSync, existsSync, readdirSync, rmSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -32,11 +32,12 @@ async function fetchPlayerCount() {
 }
 
 const TRACKER_ROOT_DIR = 'playercountinfo';
-const LEGACY_DATA_FILE = 'player-tracker-data.json';
-const LATEST_DATA_FILE = 'player-tracker-latest.json';
-const INDEX_DATA_FILE = 'player-tracker-index.json';
 const MONTHLY_DATA_SUBDIR = 'player-tracker-data';
-const LATEST_WINDOW_DAYS = 30;
+const LEGACY_TRACKER_FILES = [
+  'player-tracker-data.json',
+  'player-tracker-latest.json',
+  'player-tracker-index.json'
+];
 
 function toMonthKey(timestamp) {
   return timestamp.slice(0, 7);
@@ -91,78 +92,16 @@ function loadMonthlyPoints(monthlyDirPath) {
   return dedupeByTimestamp(points.sort(sortByTimestamp));
 }
 
-function writeMonthlyFilesFromPoints(allPoints, monthlyDirPath) {
-  const buckets = new Map();
-  for (const point of allPoints) {
-    const monthKey = toMonthKey(point.timestamp);
-    if (!buckets.has(monthKey)) buckets.set(monthKey, []);
-    buckets.get(monthKey).push(point);
-  }
-
-  for (const [monthKey, points] of buckets.entries()) {
-    const monthPoints = dedupeByTimestamp(points.sort(sortByTimestamp));
-    const monthPayload = {
-      month: monthKey,
-      lastUpdated: monthPoints[monthPoints.length - 1]?.timestamp || null,
-      dataPoints: monthPoints.length,
-      data: monthPoints
-    };
-    writeJson(path.join(monthlyDirPath, `${monthKey}.json`), monthPayload);
+function removeFileIfExists(filePath) {
+  if (existsSync(filePath)) {
+    rmSync(filePath);
   }
 }
 
-function buildIndex(monthlyDirPath, currentPlayers) {
-  const monthFiles = existsSync(monthlyDirPath)
-    ? readdirSync(monthlyDirPath).filter(name => /^\d{4}-\d{2}\.json$/.test(name)).sort()
-    : [];
-
-  const months = [];
-  let totalDataPoints = 0;
-  let lastUpdated = null;
-
-  for (const fileName of monthFiles) {
-    const monthPath = path.join(monthlyDirPath, fileName);
-    const parsed = readJsonIfExists(monthPath);
-    if (!parsed || !Array.isArray(parsed.data)) continue;
-
-    const month = fileName.replace('.json', '');
-    const dataPoints = parsed.data.length;
-    const monthLastUpdated = parsed.data[dataPoints - 1]?.timestamp || parsed.lastUpdated || null;
-
-    months.push({
-      month,
-      file: `${TRACKER_ROOT_DIR}/${MONTHLY_DATA_SUBDIR}/${fileName}`,
-      dataPoints,
-      lastUpdated: monthLastUpdated
-    });
-
-    totalDataPoints += dataPoints;
-    if (monthLastUpdated && (!lastUpdated || monthLastUpdated > lastUpdated)) {
-      lastUpdated = monthLastUpdated;
-    }
+function cleanupLegacyTrackerFiles(trackerRootPath) {
+  for (const fileName of LEGACY_TRACKER_FILES) {
+    removeFileIfExists(path.join(trackerRootPath, fileName));
   }
-
-  return {
-    lastUpdated,
-    currentPlayers,
-    totalDataPoints,
-    months
-  };
-}
-
-function writeLatestWindow(allPoints, currentPlayers, nowIso, rootDir) {
-  const cutoff = Date.now() - LATEST_WINDOW_DAYS * 24 * 60 * 60 * 1000;
-  const latestPoints = allPoints.filter(p => new Date(p.timestamp).getTime() >= cutoff);
-  const payload = {
-    lastUpdated: nowIso,
-    dataPoints: latestPoints.length,
-    currentPlayers,
-    windowDays: LATEST_WINDOW_DAYS,
-    data: latestPoints
-  };
-
-  writeJson(path.join(rootDir, LATEST_DATA_FILE), payload);
-  writeJson(path.join(rootDir, LEGACY_DATA_FILE), payload);
 }
 
 /**
@@ -178,19 +117,9 @@ async function run() {
     const monthlyDirPath = path.join(trackerRootPath, MONTHLY_DATA_SUBDIR);
     mkdirSync(trackerRootPath, { recursive: true });
     mkdirSync(monthlyDirPath, { recursive: true });
+    cleanupLegacyTrackerFiles(trackerRootPath);
 
-    const legacyPath = path.join(__dirname, LEGACY_DATA_FILE);
-    const trackerLegacyPath = path.join(trackerRootPath, LEGACY_DATA_FILE);
     let allPoints = loadMonthlyPoints(monthlyDirPath);
-
-    // One-time migration path: if monthly data does not exist yet, seed it from legacy data.
-    if (allPoints.length === 0) {
-      const legacy = readJsonIfExists(trackerLegacyPath) || readJsonIfExists(legacyPath);
-      if (legacy && Array.isArray(legacy.data) && legacy.data.length > 0) {
-        allPoints = dedupeByTimestamp(legacy.data.sort(sortByTimestamp));
-        writeMonthlyFilesFromPoints(allPoints, monthlyDirPath);
-      }
-    }
 
     let lastPlayerCount = null;
     if (allPoints.length > 0) {
@@ -229,12 +158,6 @@ async function run() {
       dataPoints: monthPoints.length,
       data: monthPoints
     });
-
-    const index = buildIndex(monthlyDirPath, playerCount);
-    index.lastUpdated = timestamp;
-    writeJson(path.join(trackerRootPath, INDEX_DATA_FILE), index);
-
-    writeLatestWindow(allPoints, playerCount, timestamp, trackerRootPath);
 
     console.log(`Successfully fetched and wrote player data. Total data points: ${allPoints.length}`);
   } catch (error) {
