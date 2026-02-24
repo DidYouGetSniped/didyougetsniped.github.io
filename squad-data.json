@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-24T03:05:44.673Z",
+  "lastUpdated": "2026-02-24T13:47:01.599Z",
   "statistics": {
     "totalSquads": 535,
     "activeSquads": 253,
@@ -8,7 +8,7 @@
     "averageMembers": 7.03
   },
   "overallStats": {
-    "avgKillsELO": 1635.4,
+    "avgKillsELO": 1635.45,
     "avgGamesELO": 1737.06,
     "avgLevel": 159.96,
     "steamCount": 547,
@@ -16,9 +16,9 @@
     "totalPlayers": 2060
   },
   "fetchInfo": {
-    "totalApiCalls": 554,
-    "failedFetches": 6,
-    "duration": "1978.4s"
+    "totalApiCalls": 536,
+    "failedFetches": 0,
+    "duration": "1857.7s"
   },
   "squads": [
     {
@@ -27,7 +27,7 @@
       "memberStats": {
         "avgKillsELO": 1626.7304790419169,
         "avgGamesELO": 1727.0986826347298,
-        "avgLevel": 192.94011976047904,
+        "avgLevel": 192.94610778443115,
         "steamCount": 44,
         "totalMembers": 167
       },
@@ -530,7 +530,7 @@
         {
           "uid": "5f856195bfea71e453fba71f",
           "name": "_Random guy",
-          "level": 1026
+          "level": 1027
         },
         {
           "uid": "606d7730bfea71fb7889a0c8",
@@ -1993,8 +1993,8 @@
       "name": "PAIN",
       "count": 33,
       "memberStats": {
-        "avgKillsELO": 1673.2333333333336,
-        "avgGamesELO": 1775.449393939394,
+        "avgKillsELO": 1673.2181818181818,
+        "avgGamesELO": 1774.439393939394,
         "avgLevel": 269.42424242424244,
         "steamCount": 24,
         "totalMembers": 33
@@ -2031,14 +2031,14 @@
           "level": 485
         },
         {
-          "uid": "5f01b720bfea712452481d0c",
-          "name": "Arnab",
-          "level": 463
-        },
-        {
           "uid": "655e46dad142af8267cdf387",
           "name": "Bogdan_23",
           "level": 786
+        },
+        {
+          "uid": "5f01b720bfea712452481d0c",
+          "name": "Arnab",
+          "level": 463
         },
         {
           "uid": "66b3a121fe3c7a1232284b2d",
@@ -2171,9 +2171,9 @@
       "name": "FISH",
       "count": 31,
       "memberStats": {
-        "avgKillsELO": 1694.1483870967738,
-        "avgGamesELO": 1813.2561290322574,
-        "avgLevel": 419.9032258064516,
+        "avgKillsELO": 1697.604838709677,
+        "avgGamesELO": 1814.6938709677413,
+        "avgLevel": 419.96774193548384,
         "steamCount": 18,
         "totalMembers": 31
       },
@@ -2240,8 +2240,8 @@
         },
         {
           "uid": "631e2566d142af12269e89e4",
-          "name": "Tsunami!",
-          "level": 417
+          "name": "DonutDevorer",
+          "level": 419
         },
         {
           "uid": "5f1cf600fe3c7a6b2779e6cf",
@@ -2497,9 +2497,9 @@
       "name": "APG",
       "count": 27,
       "memberStats": {
-        "avgKillsELO": 1685.4707407407407,
-        "avgGamesELO": 1739.2207407407407,
-        "avgLevel": 164.11111111111111,
+        "avgKillsELO": 1685.7237037037037,
+        "avgGamesELO": 1738.1829629629628,
+        "avgLevel": 164.14814814814815,
         "steamCount": 8,
         "totalMembers": 27
       },
@@ -2587,7 +2587,7 @@
         {
           "uid": "61d0e22dbfea713d68ae6a2c",
           "name": "Gettysburg",
-          "level": 136
+          "level": 137
         },
         {
           "uid": "615602dfbfea71c07f196ecc",
@@ -4282,7 +4282,7 @@
       "memberStats": {
         "avgKillsELO": 1667.7713333333334,
         "avgGamesELO": 1733.3713333333333,
-        "avgLevel": 112.2,
+        "avgLevel": 112.26666666666667,
         "steamCount": 2,
         "totalMembers": 15
       },
@@ -4290,7 +4290,7 @@
         {
           "uid": "652fe93abfea717754b98d1b",
           "name": "ThaBestofthaBest",
-          "level": 388
+          "level": 389
         },
         {
           "uid": "65a6a1ecd142af957041785e",
@@ -4627,8 +4627,8 @@
       "name": "Polar",
       "count": 14,
       "memberStats": {
-        "avgKillsELO": 1869.952142857143,
-        "avgGamesELO": 2102.4314285714286,
+        "avgKillsELO": 1869.6935714285714,
+        "avgGamesELO": 2103.011428571429,
         "avgLevel": 618.7857142857143,
         "steamCount": 14,
         "totalMembers": 14
@@ -5319,8 +5319,8 @@
       "name": "BTB",
       "count": 11,
       "memberStats": {
-        "avgKillsELO": 1646.6709090909092,
-        "avgGamesELO": 1734.6790909090907,
+        "avgKillsELO": 1646.6145454545456,
+        "avgGamesELO": 1735.44,
         "avgLevel": 144.1818181818182,
         "steamCount": 6,
         "totalMembers": 11
@@ -5455,8 +5455,8 @@
       "name": "GLORY",
       "count": 11,
       "memberStats": {
-        "avgKillsELO": 1547.3663636363638,
-        "avgGamesELO": 1599.4172727272728,
+        "avgKillsELO": 1547.9181818181821,
+        "avgGamesELO": 1599.71,
         "avgLevel": 70.72727272727273,
         "steamCount": 1,
         "totalMembers": 11
