@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-04T13:36:43.148Z",
+  "lastUpdated": "2026-03-05T03:00:38.401Z",
   "statistics": {
     "totalSquads": 533,
     "activeSquads": 253,
@@ -9,8 +9,8 @@
   },
   "overallStats": {
     "avgKillsELO": 1635.62,
-    "avgGamesELO": 1736.4,
-    "avgLevel": 160.15,
+    "avgGamesELO": 1736.44,
+    "avgLevel": 160.16,
     "steamCount": 551,
     "steamPercent": 26.7,
     "totalPlayers": 2063
@@ -18,7 +18,7 @@
   "fetchInfo": {
     "totalApiCalls": 534,
     "failedFetches": 0,
-    "duration": "1846.7s"
+    "duration": "1851.6s"
   },
   "squads": [
     {
@@ -27,7 +27,7 @@
       "memberStats": {
         "avgKillsELO": 1626.9790419161684,
         "avgGamesELO": 1727.4941317365265,
-        "avgLevel": 193.22754491017963,
+        "avgLevel": 193.23353293413174,
         "steamCount": 44,
         "totalMembers": 167
       },
@@ -95,7 +95,7 @@
         {
           "uid": "6698bdf3d142af601f50256a",
           "name": "[BOT] What! U Died?",
-          "level": 602
+          "level": 603
         },
         {
           "uid": "6702a682bfea718268f9eb67",
@@ -1993,9 +1993,9 @@
       "name": "PAIN",
       "count": 34,
       "memberStats": {
-        "avgKillsELO": 1672.3785294117645,
-        "avgGamesELO": 1766.0355882352942,
-        "avgLevel": 264.11764705882354,
+        "avgKillsELO": 1672.3341176470587,
+        "avgGamesELO": 1767.030882352941,
+        "avgLevel": 264.1470588235294,
         "steamCount": 24,
         "totalMembers": 34
       },
@@ -2072,7 +2072,7 @@
         },
         {
           "uid": "5f01b720bfea712452481d0c",
-          "name": "ShadowLikesMen",
+          "name": "ShadowLikesCaesar",
           "level": 470
         },
         {
@@ -2158,7 +2158,7 @@
         {
           "uid": "661e5b82bfea71d97a4ec751",
           "name": "Shadow Of Death",
-          "level": 317
+          "level": 318
         },
         {
           "uid": "636d4669bfea712f08b2a37d",
@@ -4632,7 +4632,7 @@
       "name": "Polar",
       "count": 14,
       "memberStats": {
-        "avgKillsELO": 1871.0049999999999,
+        "avgKillsELO": 1870.955,
         "avgGamesELO": 2104.3571428571427,
         "avgLevel": 619.2142857142857,
         "steamCount": 14,
@@ -7125,13 +7125,18 @@
       "name": "TheEnd",
       "count": 7,
       "memberStats": {
-        "avgKillsELO": 1708.5785714285716,
-        "avgGamesELO": 1604.26,
-        "avgLevel": 99.42857142857143,
+        "avgKillsELO": 1708.061428571429,
+        "avgGamesELO": 1609.1742857142856,
+        "avgLevel": 100.14285714285714,
         "steamCount": 3,
         "totalMembers": 7
       },
       "members": [
+        {
+          "uid": "696b9529bfea7125462a6c35",
+          "name": "Skin Smurf",
+          "level": 47
+        },
         {
           "uid": "66eeb2c2d142af7514c7d0ee",
           "name": "OdonTheGoat",
@@ -7146,11 +7151,6 @@
           "uid": "68aa189ebfea71dc232ffb5a",
           "name": "ThunderMaxDrifts",
           "level": 69
-        },
-        {
-          "uid": "696b9529bfea7125462a6c35",
-          "name": "AimWentWithValentine",
-          "level": 42
         },
         {
           "uid": "672954d6d142af9b1a72511a",
@@ -11999,7 +11999,7 @@
       "name": "WolfPack",
       "count": 2,
       "memberStats": {
-        "avgKillsELO": 1644.0700000000002,
+        "avgKillsELO": 1645.835,
         "avgGamesELO": 1680.03,
         "avgLevel": 284,
         "steamCount": 2,
