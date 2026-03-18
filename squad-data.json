@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-17T13:52:32.498Z",
+  "lastUpdated": "2026-03-18T03:08:08.013Z",
   "statistics": {
     "totalSquads": 535,
     "activeSquads": 253,
@@ -9,7 +9,7 @@
   },
   "overallStats": {
     "avgKillsELO": 1636.4,
-    "avgGamesELO": 1735.64,
+    "avgGamesELO": 1735.6,
     "avgLevel": 160.59,
     "steamCount": 552,
     "steamPercent": 26.7,
@@ -18,7 +18,7 @@
   "fetchInfo": {
     "totalApiCalls": 536,
     "failedFetches": 0,
-    "duration": "1855.8s"
+    "duration": "1859.8s"
   },
   "squads": [
     {
@@ -1121,9 +1121,9 @@
       "name": "UMS",
       "count": 44,
       "memberStats": {
-        "avgKillsELO": 1737.3800000000003,
-        "avgGamesELO": 1845.8679545454545,
-        "avgLevel": 338.45454545454544,
+        "avgKillsELO": 1737.144772727273,
+        "avgGamesELO": 1845.6209090909092,
+        "avgLevel": 338.47727272727275,
         "steamCount": 24,
         "totalMembers": 44
       },
@@ -1221,7 +1221,7 @@
         {
           "uid": "676b6337bfea71147b77dc09",
           "name": "IRO HAPI",
-          "level": 329
+          "level": 330
         },
         {
           "uid": "6738da0fd142afab42146d8c",
@@ -2931,9 +2931,9 @@
       "name": "AI",
       "count": 23,
       "memberStats": {
-        "avgKillsELO": 1817.8617391304347,
-        "avgGamesELO": 2131.0886956521736,
-        "avgLevel": 615.1739130434783,
+        "avgKillsELO": 1818.1082608695651,
+        "avgGamesELO": 2130.1217391304344,
+        "avgLevel": 615.2173913043479,
         "steamCount": 21,
         "totalMembers": 23
       },
@@ -3011,7 +3011,7 @@
         {
           "uid": "6449c8acd142afb66d07f776",
           "name": "Invis 101",
-          "level": 840
+          "level": 841
         },
         {
           "uid": "66151fc2d142afb50e946204",
@@ -4285,9 +4285,9 @@
       "name": "Best",
       "count": 15,
       "memberStats": {
-        "avgKillsELO": 1667.876,
-        "avgGamesELO": 1730.648,
-        "avgLevel": 113.2,
+        "avgKillsELO": 1667.9393333333333,
+        "avgGamesELO": 1731.1173333333331,
+        "avgLevel": 113.33333333333333,
         "steamCount": 2,
         "totalMembers": 15
       },
@@ -4295,7 +4295,7 @@
         {
           "uid": "652fe93abfea717754b98d1b",
           "name": "TheBestoftheBest",
-          "level": 403
+          "level": 405
         },
         {
           "uid": "64f90a5abfea7108461a9c9e",
@@ -8406,22 +8406,22 @@
       "name": "BOT",
       "count": 4,
       "memberStats": {
-        "avgKillsELO": 1713.6725,
-        "avgGamesELO": 2097.515,
+        "avgKillsELO": 1715.9599999999998,
+        "avgGamesELO": 2093.185,
         "avgLevel": 613,
         "steamCount": 4,
         "totalMembers": 4
       },
       "members": [
         {
-          "uid": "5e57527efe3c7acc73342809",
-          "name": "EncryptR_",
-          "level": 1521
-        },
-        {
           "uid": "609aa68ed142afe952202c5c",
           "name": "EpicEfeathers",
           "level": 188
+        },
+        {
+          "uid": "5e57527efe3c7acc73342809",
+          "name": "EncryptR_",
+          "level": 1521
         },
         {
           "uid": "61615f38d142af62453c6a90",
@@ -11889,8 +11889,8 @@
       "name": "VIETNAM",
       "count": 2,
       "memberStats": {
-        "avgKillsELO": 1739.04,
-        "avgGamesELO": 1953.9100000000499,
+        "avgKillsELO": 1744.155,
+        "avgGamesELO": 1944.66500000005,
         "avgLevel": 1127.5,
         "steamCount": 1,
         "totalMembers": 2
@@ -13152,9 +13152,9 @@
       "name": "COA",
       "count": 1,
       "memberStats": {
-        "avgKillsELO": 1679.4,
-        "avgGamesELO": 1783.16,
-        "avgLevel": 98,
+        "avgKillsELO": 1656.42,
+        "avgGamesELO": 1765.99,
+        "avgLevel": 99,
         "steamCount": 1,
         "totalMembers": 1
       },
@@ -13162,7 +13162,7 @@
         {
           "uid": "5abc1830d142af6d3de53629",
           "name": "ijet7",
-          "level": 98
+          "level": 99
         }
       ]
     },
