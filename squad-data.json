@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-22T03:10:12.136Z",
+  "lastUpdated": "2026-03-22T13:31:33.345Z",
   "statistics": {
     "totalSquads": 536,
     "activeSquads": 253,
@@ -8,9 +8,9 @@
     "averageMembers": 7.07
   },
   "overallStats": {
-    "avgKillsELO": 1636.71,
-    "avgGamesELO": 1734.9,
-    "avgLevel": 160.57,
+    "avgKillsELO": 1636.68,
+    "avgGamesELO": 1734.89,
+    "avgLevel": 160.58,
     "steamCount": 555,
     "steamPercent": 26.8,
     "totalPlayers": 2072
@@ -18,16 +18,16 @@
   "fetchInfo": {
     "totalApiCalls": 537,
     "failedFetches": 0,
-    "duration": "1848.8s"
+    "duration": "1861.7s"
   },
   "squads": [
     {
       "name": "CAESAR",
       "count": 167,
       "memberStats": {
-        "avgKillsELO": 1630.2412574850302,
-        "avgGamesELO": 1725.8562275449094,
-        "avgLevel": 194.92215568862275,
+        "avgKillsELO": 1629.9498802395212,
+        "avgGamesELO": 1726.0370658682627,
+        "avgLevel": 194.96407185628743,
         "steamCount": 45,
         "totalMembers": 167
       },
@@ -35,7 +35,7 @@
         {
           "uid": "673df89fbfea71457474372b",
           "name": "CagaMel",
-          "level": 221
+          "level": 222
         },
         {
           "uid": "5dab38a4bfea71b87127edd6",
@@ -85,12 +85,12 @@
         {
           "uid": "666228d8d142afd34de86ff7",
           "name": "Dams",
-          "level": 222
+          "level": 224
         },
         {
           "uid": "6698bdf3d142af601f50256a",
           "name": "[BOT] Ashla",
-          "level": 631
+          "level": 632
         },
         {
           "uid": "63023adfbfea716c59438773",
@@ -170,7 +170,7 @@
         {
           "uid": "6647551fbfea7197130934a2",
           "name": "DrEpicGTM",
-          "level": 58
+          "level": 59
         },
         {
           "uid": "63619469bfea713f0a999e90",
@@ -228,14 +228,14 @@
           "level": 37
         },
         {
+          "uid": "65cee709bfea711b1bd2fb1a",
+          "name": "WhereDidtheCheseGo",
+          "level": 741
+        },
+        {
           "uid": "600722c9bfea71503dbd4905",
           "name": "Colonel Grant",
           "level": 512
-        },
-        {
-          "uid": "65cee709bfea711b1bd2fb1a",
-          "name": "WhereDidtheCheseGo",
-          "level": 740
         },
         {
           "uid": "65709ad6d142af097c677ba7",
@@ -405,7 +405,7 @@
         {
           "uid": "63c8fbcfd142aff929a28ea2",
           "name": "Colonel Fires",
-          "level": 768
+          "level": 769
         },
         {
           "uid": "6424257ed142af8d0f717738",
@@ -1126,9 +1126,9 @@
       "name": "UMS",
       "count": 44,
       "memberStats": {
-        "avgKillsELO": 1735.3740909090914,
-        "avgGamesELO": 1845.0313636363637,
-        "avgLevel": 339.25,
+        "avgKillsELO": 1735.5281818181822,
+        "avgGamesELO": 1844.7427272727275,
+        "avgLevel": 339.27272727272725,
         "steamCount": 24,
         "totalMembers": 44
       },
@@ -1191,7 +1191,7 @@
         {
           "uid": "67f4cfefd142afd618295a83",
           "name": "1magine dying",
-          "level": 326
+          "level": 327
         },
         {
           "uid": "66b10398bfea71266167f654",
@@ -1993,9 +1993,9 @@
       "name": "PAIN",
       "count": 36,
       "memberStats": {
-        "avgKillsELO": 1682.3230555555556,
-        "avgGamesELO": 1747.7458333333336,
-        "avgLevel": 263.8333333333333,
+        "avgKillsELO": 1681.9563888888888,
+        "avgGamesELO": 1747.8594444444448,
+        "avgLevel": 263.8611111111111,
         "steamCount": 25,
         "totalMembers": 36
       },
@@ -2141,14 +2141,14 @@
           "level": 236
         },
         {
-          "uid": "652590b9fd3c7a6860d01367",
-          "name": "Kitty",
-          "level": 250
-        },
-        {
           "uid": "610bbd0ad142af1276e5ebbc",
           "name": "So washed",
           "level": 591
+        },
+        {
+          "uid": "652590b9fd3c7a6860d01367",
+          "name": "Kitty",
+          "level": 250
         },
         {
           "uid": "64cf8924fd3c7ade59326c2c",
@@ -2158,7 +2158,7 @@
         {
           "uid": "60113680bfea71486b6fedab",
           "name": "Hffirrje88CZ",
-          "level": 494
+          "level": 495
         },
         {
           "uid": "5df48a90d142af367d04022b",
@@ -2655,8 +2655,8 @@
       "name": "SOF",
       "count": 26,
       "memberStats": {
-        "avgKillsELO": 1647.2619230769233,
-        "avgGamesELO": 1530.233076923077,
+        "avgKillsELO": 1647.3046153846155,
+        "avgGamesELO": 1529.8650000000002,
         "avgLevel": 101,
         "steamCount": 4,
         "totalMembers": 26
@@ -3059,8 +3059,8 @@
       "name": "AI",
       "count": 22,
       "memberStats": {
-        "avgKillsELO": 1827.1222727272727,
-        "avgGamesELO": 2131.558636363636,
+        "avgKillsELO": 1826.7977272727273,
+        "avgGamesELO": 2131.26,
         "avgLevel": 613.8181818181819,
         "steamCount": 20,
         "totalMembers": 22
@@ -5674,27 +5674,27 @@
       "name": "TheEnd",
       "count": 11,
       "memberStats": {
-        "avgKillsELO": 1735.1854545454546,
-        "avgGamesELO": 1675.5136363636366,
-        "avgLevel": 117.72727272727273,
+        "avgKillsELO": 1735.0836363636365,
+        "avgGamesELO": 1674.159090909091,
+        "avgLevel": 117.9090909090909,
         "steamCount": 6,
         "totalMembers": 11
       },
       "members": [
         {
-          "uid": "63d1e2a4d142afce16957983",
-          "name": "Ice59339",
-          "level": 108
+          "uid": "68c3868cfe3c7a84387b23c9",
+          "name": "IELTS",
+          "level": 156
         },
         {
           "uid": "66eeb2c2d142af7514c7d0ee",
           "name": "OdonTheGoat",
-          "level": 285
+          "level": 286
         },
         {
-          "uid": "68c3868cfe3c7a84387b23c9",
-          "name": "IELTS",
-          "level": 155
+          "uid": "63d1e2a4d142afce16957983",
+          "name": "Ice59339",
+          "level": 108
         },
         {
           "uid": "68aa189ebfea71dc232ffb5a",
