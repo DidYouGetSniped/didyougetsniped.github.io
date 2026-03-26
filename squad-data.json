@@ -1,35 +1,35 @@
 {
-  "lastUpdated": "2026-03-25T13:51:27.139Z",
+  "lastUpdated": "2026-03-26T03:14:49.669Z",
   "statistics": {
     "totalSquads": 536,
     "activeSquads": 254,
     "emptySquads": 282,
-    "totalMembers": 2071,
+    "totalMembers": 2070,
     "averageMembers": 7.04
   },
   "overallStats": {
-    "avgKillsELO": 1636.73,
-    "avgGamesELO": 1734.89,
-    "avgLevel": 160.55,
+    "avgKillsELO": 1636.8,
+    "avgGamesELO": 1735.2,
+    "avgLevel": 160.59,
     "steamCount": 553,
     "steamPercent": 26.7,
-    "totalPlayers": 2071
+    "totalPlayers": 2070
   },
   "fetchInfo": {
     "totalApiCalls": 537,
     "failedFetches": 0,
-    "duration": "1859.9s"
+    "duration": "1867.5s"
   },
   "squads": [
     {
       "name": "CAESAR",
-      "count": 168,
+      "count": 167,
       "memberStats": {
-        "avgKillsELO": 1631.8483333333338,
-        "avgGamesELO": 1726.1267857142857,
-        "avgLevel": 197.73214285714286,
+        "avgKillsELO": 1632.4825149700603,
+        "avgGamesELO": 1729.0056287425145,
+        "avgLevel": 198.35329341317365,
         "steamCount": 46,
-        "totalMembers": 168
+        "totalMembers": 167
       },
       "members": [
         {
@@ -78,9 +78,9 @@
           "level": 36
         },
         {
-          "uid": "684fc06fbfea71875dce1150",
-          "name": "MR.WOLF",
-          "level": 95
+          "uid": "6698bdf3d142af601f50256a",
+          "name": "[BOT] Ashla",
+          "level": 637
         },
         {
           "uid": "666228d8d142afd34de86ff7",
@@ -91,11 +91,6 @@
           "uid": "63023adfbfea716c59438773",
           "name": "Twix",
           "level": 112
-        },
-        {
-          "uid": "6698bdf3d142af601f50256a",
-          "name": "[BOT] Ashla",
-          "level": 636
         },
         {
           "uid": "6702a682bfea718268f9eb67",
@@ -323,14 +318,14 @@
           "level": 44
         },
         {
-          "uid": "61001439d142af0562757152",
-          "name": "Bones*Brigade",
-          "level": 924
-        },
-        {
           "uid": "61224ba6d142af422a7260b8",
           "name": "theEuropean",
           "level": 113
+        },
+        {
+          "uid": "61001439d142af0562757152",
+          "name": "Bones*Brigade",
+          "level": 924
         },
         {
           "uid": "60513ee6bfea71105a740fed",
@@ -1131,9 +1126,9 @@
       "name": "UMS",
       "count": 43,
       "memberStats": {
-        "avgKillsELO": 1732.33534883721,
-        "avgGamesELO": 1836.4627906976743,
-        "avgLevel": 341.06976744186045,
+        "avgKillsELO": 1732.3304651162796,
+        "avgGamesELO": 1836.217441860465,
+        "avgLevel": 341.09302325581393,
         "steamCount": 23,
         "totalMembers": 43
       },
@@ -1231,7 +1226,7 @@
         {
           "uid": "676b6337bfea71147b77dc09",
           "name": "IRO HAPI",
-          "level": 340
+          "level": 341
         },
         {
           "uid": "6738da0fd142afab42146d8c",
@@ -2507,8 +2502,8 @@
       "name": "APG",
       "count": 27,
       "memberStats": {
-        "avgKillsELO": 1685.0107407407404,
-        "avgGamesELO": 1737.2988888888892,
+        "avgKillsELO": 1684.8903703703702,
+        "avgGamesELO": 1737.198888888889,
         "avgLevel": 164.4814814814815,
         "steamCount": 8,
         "totalMembers": 27
@@ -3059,9 +3054,9 @@
       "name": "AI",
       "count": 21,
       "memberStats": {
-        "avgKillsELO": 1827.6899999999998,
-        "avgGamesELO": 2098.449047619047,
-        "avgLevel": 605.8095238095239,
+        "avgKillsELO": 1828.5971428571424,
+        "avgGamesELO": 2099.585238095238,
+        "avgLevel": 605.8571428571429,
         "steamCount": 19,
         "totalMembers": 21
       },
@@ -3129,7 +3124,7 @@
         {
           "uid": "6449c8acd142afb66d07f776",
           "name": "Invis 101",
-          "level": 851
+          "level": 852
         },
         {
           "uid": "66151fc2d142afb50e946204",
@@ -7317,13 +7312,18 @@
       "name": "EXP",
       "count": 6,
       "memberStats": {
-        "avgKillsELO": 1659.0183333333334,
-        "avgGamesELO": 1451.2383333333366,
-        "avgLevel": 236.66666666666666,
+        "avgKillsELO": 1660.743333333333,
+        "avgGamesELO": 1472.92166666667,
+        "avgLevel": 238.5,
         "steamCount": 2,
         "totalMembers": 6
       },
       "members": [
+        {
+          "uid": "68a3743fbfea7183082ffb46",
+          "name": "ggggyezy1",
+          "level": 90
+        },
         {
           "uid": "687632ecbfea717569ebb1b9",
           "name": "koreancat",
@@ -7333,11 +7333,6 @@
           "uid": "676f8728bfea71516a77dc0b",
           "name": "KnifeMan",
           "level": 266
-        },
-        {
-          "uid": "68a3743fbfea7183082ffb46",
-          "name": "ggggyezy1",
-          "level": 79
         },
         {
           "uid": "68166d9cbfea719b132d3431",
@@ -9736,14 +9731,14 @@
       },
       "members": [
         {
+          "uid": "6066ee13bfea712508be2642",
+          "name": "‍‍‍‍️",
+          "level": 183
+        },
+        {
           "uid": "684851d1d142affd49bf0880",
           "name": "NullPoint",
           "level": 31
-        },
-        {
-          "uid": "6066ee13bfea712508be2642",
-          "name": "iambetter",
-          "level": 183
         },
         {
           "uid": "636df071d142afac7889139d",
@@ -10202,22 +10197,22 @@
       "name": ">:3",
       "count": 2,
       "memberStats": {
-        "avgKillsELO": 1834.34,
-        "avgGamesELO": 2472.375,
-        "avgLevel": 737.5,
+        "avgKillsELO": 1840.885,
+        "avgGamesELO": 2483.325,
+        "avgLevel": 738,
         "steamCount": 2,
         "totalMembers": 2
       },
       "members": [
         {
+          "uid": "5eb0087ebfea716b7f95775d",
+          "name": "Lordess of Death",
+          "level": 675
+        },
+        {
           "uid": "64a28cf4fd3c7a9637f86a85",
           "name": "walenty",
           "level": 801
-        },
-        {
-          "uid": "5eb0087ebfea716b7f95775d",
-          "name": ">:3",
-          "level": 674
         }
       ]
     },
