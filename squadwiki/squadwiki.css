@@ -1,0 +1,375 @@
+/* ============================================
+   WAR BROKERS SQUAD DATABASE — Shared Styles
+   ============================================ */
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #1a1a2e;
+  color: #d4d4dc;
+  line-height: 1.65;
+  font-size: 15.5px;
+}
+
+a {
+  color: #7eb8da;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+  color: #a8d8f0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* --- Layout Shell --- */
+.site-header {
+  background-color: #0f0f1a;
+  border-bottom: 1px solid #2a2a40;
+  padding: 14px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.site-header .inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.site-header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e0e0e8;
+  letter-spacing: 0.5px;
+}
+.site-header .logo span {
+  color: #c0392b;
+}
+.site-header nav a {
+  color: #a0a0b0;
+  margin-left: 22px;
+  font-size: 14px;
+}
+.site-header nav a:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.page-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+/* --- Main Index Page --- */
+.index-hero {
+  text-align: center;
+  padding: 48px 0 32px;
+  border-bottom: 1px solid #2a2a40;
+  margin-bottom: 32px;
+}
+.index-hero h1 {
+  font-size: 32px;
+  color: #eee;
+  margin-bottom: 8px;
+}
+.index-hero p {
+  color: #8888a0;
+  font-size: 15px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.squad-list-section h2 {
+  font-size: 20px;
+  color: #ccc;
+  border-bottom: 1px solid #2a2a40;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.squad-list {
+  list-style: none;
+}
+.squad-list li {
+  border-bottom: 1px solid #1f1f34;
+}
+.squad-list li a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.squad-list li a:hover {
+  background-color: #22223a;
+  text-decoration: none;
+}
+.squad-list .squad-name {
+  font-weight: 600;
+  font-size: 15.5px;
+  color: #7eb8da;
+}
+.squad-list .squad-years {
+  font-size: 13px;
+  color: #6a6a80;
+  white-space: nowrap;
+}
+
+.squad-list-section + .squad-list-section {
+  margin-top: 36px;
+}
+
+/* --- Squad Template Page --- */
+
+/* Title Block */
+.squad-title-block {
+  background-color: #12122a;
+  border: 1px solid #2a2a40;
+  border-left: 4px solid #c0392b;
+  border-radius: 4px;
+  padding: 28px 32px;
+  margin-bottom: 36px;
+}
+.squad-title-block h1 {
+  font-size: 30px;
+  color: #f0f0f5;
+  margin-bottom: 4px;
+}
+.squad-title-block .squad-tenure {
+  font-size: 15px;
+  color: #7a7a94;
+  font-style: italic;
+}
+
+/* Table of Contents */
+.toc {
+  background-color: #14142c;
+  border: 1px solid #2a2a40;
+  border-radius: 4px;
+  padding: 18px 24px;
+  margin-bottom: 36px;
+  display: inline-block;
+  min-width: 260px;
+}
+.toc-title {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8888a0;
+  margin-bottom: 10px;
+}
+.toc ol {
+  list-style: decimal;
+  padding-left: 20px;
+}
+.toc ol li {
+  margin-bottom: 5px;
+}
+.toc ol li a {
+  font-size: 14px;
+  color: #7eb8da;
+}
+
+/* Content Sections */
+.squad-section {
+  margin-bottom: 36px;
+}
+.squad-section h2 {
+  font-size: 22px;
+  color: #e0e0e8;
+  border-bottom: 2px solid #2a2a40;
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+}
+.squad-section h3 {
+  font-size: 17px;
+  color: #c0c0d0;
+  margin-bottom: 8px;
+  margin-top: 18px;
+}
+.squad-section p,
+.squad-section ul,
+.squad-section ol {
+  margin-bottom: 12px;
+}
+.squad-section ul,
+.squad-section ol {
+  padding-left: 24px;
+}
+.squad-section ul li,
+.squad-section ol li {
+  margin-bottom: 4px;
+}
+
+/* Leader List */
+.leader-list {
+  list-style: none;
+  padding-left: 0;
+}
+.leader-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid #1f1f34;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.leader-list .leader-name {
+  font-weight: 600;
+  color: #e0e0e8;
+}
+.leader-list .leader-tenure {
+  font-size: 13px;
+  color: #6a6a80;
+}
+
+/* Squad War History Table */
+.war-table-wrapper {
+  overflow-x: auto;
+}
+.war-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.war-table th,
+.war-table td {
+  text-align: left;
+  padding: 10px 14px;
+  border: 1px solid #2a2a40;
+}
+.war-table thead th {
+  background-color: #0f0f1a;
+  color: #aaa;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+.war-table tbody tr:nth-child(even) {
+  background-color: #16162e;
+}
+.war-table tbody tr:hover {
+  background-color: #1e1e38;
+}
+.war-result-win {
+  color: #27ae60;
+  font-weight: 700;
+}
+.war-result-loss {
+  color: #c0392b;
+  font-weight: 700;
+}
+.war-result-draw {
+  color: #f39c12;
+  font-weight: 700;
+}
+
+/* Image Gallery */
+.image-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+.image-gallery figure {
+  background-color: #12122a;
+  border: 1px solid #2a2a40;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.image-gallery figure img {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  background-color: #1a1a30;
+}
+.image-gallery figcaption {
+  padding: 8px 12px;
+  font-size: 12.5px;
+  color: #8888a0;
+  text-align: center;
+}
+
+/* Infobox (optional right sidebar on wide screens) */
+.squad-content-layout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+.squad-main-content {
+  flex: 1;
+  min-width: 0;
+}
+.squad-infobox {
+  width: 260px;
+  flex-shrink: 0;
+  background-color: #12122a;
+  border: 1px solid #2a2a40;
+  border-radius: 4px;
+  padding: 18px;
+  font-size: 13.5px;
+}
+.squad-infobox .infobox-header {
+  font-weight: 700;
+  font-size: 15px;
+  color: #e0e0e8;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #c0392b;
+  margin-bottom: 12px;
+}
+.squad-infobox dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 12px;
+}
+.squad-infobox dt {
+  color: #8888a0;
+  font-weight: 600;
+}
+.squad-infobox dd {
+  color: #d4d4dc;
+}
+
+@media (max-width: 720px) {
+  .squad-content-layout {
+    flex-direction: column-reverse;
+  }
+  .squad-infobox {
+    width: 100%;
+  }
+}
+
+/* --- Footer --- */
+.site-footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 12.5px;
+  color: #4a4a60;
+  border-top: 1px solid #1f1f34;
+  margin-top: 48px;
+}
+
+/* --- Utilities --- */
+.muted { color: #6a6a80; }
+.small { font-size: 13px; }
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
