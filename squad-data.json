@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-26T13:58:04.821Z",
+  "lastUpdated": "2026-03-27T03:16:38.006Z",
   "statistics": {
     "totalSquads": 536,
     "activeSquads": 254,
@@ -9,16 +9,16 @@
   },
   "overallStats": {
     "avgKillsELO": 1637,
-    "avgGamesELO": 1735.06,
+    "avgGamesELO": 1735.05,
     "avgLevel": 160.69,
     "steamCount": 554,
     "steamPercent": 26.8,
     "totalPlayers": 2071
   },
   "fetchInfo": {
-    "totalApiCalls": 539,
-    "failedFetches": 1,
-    "duration": "1884.3s"
+    "totalApiCalls": 537,
+    "failedFetches": 0,
+    "duration": "1848.6s"
   },
   "squads": [
     {
@@ -173,14 +173,14 @@
           "level": 39
         },
         {
-          "uid": "673a629ebfea71d407743721",
-          "name": "Hobbessss",
-          "level": 77
-        },
-        {
           "uid": "63e31323d142af2b1d9c8b8e",
           "name": " shirlierod x CZ",
           "level": 73
+        },
+        {
+          "uid": "673a629ebfea71d407743721",
+          "name": "Hobbessss",
+          "level": 77
         },
         {
           "uid": "6255db0fbfea712866ac94c8",
@@ -2507,7 +2507,7 @@
       "name": "APG",
       "count": 27,
       "memberStats": {
-        "avgKillsELO": 1684.8903703703702,
+        "avgKillsELO": 1684.8866666666665,
         "avgGamesELO": 1737.198888888889,
         "avgLevel": 164.4814814814815,
         "steamCount": 8,
@@ -2655,8 +2655,8 @@
       "name": "SOF",
       "count": 26,
       "memberStats": {
-        "avgKillsELO": 1647.9134615384614,
-        "avgGamesELO": 1535.1665384615385,
+        "avgKillsELO": 1648.1288461538463,
+        "avgGamesELO": 1534.8296153846156,
         "avgLevel": 101.65384615384616,
         "steamCount": 4,
         "totalMembers": 26
@@ -3059,7 +3059,7 @@
       "name": "AI",
       "count": 21,
       "memberStats": {
-        "avgKillsELO": 1828.0233333333333,
+        "avgKillsELO": 1828.11,
         "avgGamesELO": 2101.1376190476185,
         "avgLevel": 605.952380952381,
         "steamCount": 19,
