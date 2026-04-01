@@ -1,33 +1,28 @@
 name: Track Player Count
-
 on:
   schedule:
     # Runs every 30 minutes
     - cron: '*/30 * * * *'
   workflow_dispatch: # Manual trigger for testing
-
 permissions:
   contents: write
-
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 jobs:
   fetch-data:
     runs-on: ubuntu-latest
-
     steps:
       # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
-
       # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-
+          node-version: '24'
       # 3️⃣ Run the player count fetch
       - name: Run player count fetch
         run: node fetch-player-count.js
-
       # 4️⃣ Check if file changed
       - name: Check if file changed
         id: changed
@@ -37,7 +32,6 @@ jobs:
           else
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
-
       # 5️⃣ Commit and push changes (only if file changed)
       - name: Commit and push changes
         if: steps.changed.outputs.changed == 'true'
