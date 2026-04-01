@@ -282,11 +282,14 @@ img {
 /* Image Gallery */
 .image-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 16px;
   margin-top: 12px;
 }
 .image-gallery figure {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   background-color: #12122a;
   border: 1px solid #2a2a40;
   border-radius: 4px;
@@ -294,9 +297,8 @@ img {
 }
 .image-gallery figure img {
   width: 100%;
+  height: auto;
   display: block;
-  aspect-ratio: 16/10;
-  object-fit: cover;
   background-color: #1a1a30;
 }
 .image-gallery figcaption {
@@ -353,6 +355,9 @@ img {
   }
   .squad-infobox {
     width: 100%;
+  }
+  .image-gallery {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 }
 
