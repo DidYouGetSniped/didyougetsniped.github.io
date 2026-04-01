@@ -8,7 +8,7 @@ export const TRACKED_UIDS = [
     { uid: '62a4f957d142afdd4f5f41e9', label: 'Tarkin'},
     { uid: '610bbd0ad142af1276e5ebbc', label: 'ProJelly' },
     { uid: '614cdc8bd142af3e0f3f8370', label: 'Iffypedia' },
-// { uid: 'REPLACE_WITH_REAL_UID_6', label: 'Player Six'     },
+    { uid: '61d0e22dbfea713d68ae6a2c', label: 'Gettysburg'  },
 // { uid: 'REPLACE_WITH_REAL_UID_7', label: 'Player Seven'   },
 // { uid: 'REPLACE_WITH_REAL_UID_8', label: 'Player Eight'   },
 // { uid: 'REPLACE_WITH_REAL_UID_9', label: 'Player Nine'    },
