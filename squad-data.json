@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-01T14:15:41.425Z",
+  "lastUpdated": "2026-04-02T03:12:22.345Z",
   "statistics": {
     "totalSquads": 536,
     "activeSquads": 254,
@@ -8,26 +8,26 @@
     "averageMembers": 7.06
   },
   "overallStats": {
-    "avgKillsELO": 1637.12,
-    "avgGamesELO": 1734.45,
-    "avgLevel": 160.69,
+    "avgKillsELO": 1637.1,
+    "avgGamesELO": 1734.46,
+    "avgLevel": 160.7,
     "steamCount": 554,
     "steamPercent": 26.7,
     "totalPlayers": 2074
   },
   "fetchInfo": {
-    "totalApiCalls": 549,
-    "failedFetches": 7,
-    "duration": "1905.4s"
+    "totalApiCalls": 537,
+    "failedFetches": 0,
+    "duration": "1857.5s"
   },
   "squads": [
     {
       "name": "CAESAR",
       "count": 168,
       "memberStats": {
-        "avgKillsELO": 1631.5367261904764,
-        "avgGamesELO": 1724.5629166666663,
-        "avgLevel": 196.80357142857142,
+        "avgKillsELO": 1631.4437500000004,
+        "avgGamesELO": 1724.5841666666663,
+        "avgLevel": 196.8095238095238,
         "steamCount": 46,
         "totalMembers": 168
       },
@@ -235,7 +235,7 @@
         {
           "uid": "680785eebfea712853b49454",
           "name": "Rusa bro (SL)",
-          "level": 92
+          "level": 93
         },
         {
           "uid": "65709ad6d142af097c677ba7",
@@ -1131,9 +1131,9 @@
       "name": "UMS",
       "count": 44,
       "memberStats": {
-        "avgKillsELO": 1733.4193181818189,
-        "avgGamesELO": 1820.7259090909085,
-        "avgLevel": 339.15909090909093,
+        "avgKillsELO": 1733.430454545455,
+        "avgGamesELO": 1821.009545454545,
+        "avgLevel": 339.27272727272725,
         "steamCount": 24,
         "totalMembers": 44
       },
@@ -1201,7 +1201,7 @@
         {
           "uid": "62851011d142af6b06f11cdd",
           "name": "Guest94303",
-          "level": 460
+          "level": 463
         },
         {
           "uid": "66a40a70bfea71882cb26819",
@@ -1226,7 +1226,7 @@
         {
           "uid": "676b6337bfea71147b77dc09",
           "name": "IRO HAPI",
-          "level": 355
+          "level": 357
         },
         {
           "uid": "6738da0fd142afab42146d8c",
@@ -2655,9 +2655,9 @@
       "name": "APG",
       "count": 25,
       "memberStats": {
-        "avgKillsELO": 1678.7112,
+        "avgKillsELO": 1678.644,
         "avgGamesELO": 1720.2599999999998,
-        "avgLevel": 150.12,
+        "avgLevel": 150.2,
         "steamCount": 6,
         "totalMembers": 25
       },
@@ -2720,7 +2720,7 @@
         {
           "uid": "60d08b15d142afee4b1dfabe",
           "name": "Did You Get Sniped?",
-          "level": 1181
+          "level": 1183
         },
         {
           "uid": "635bd6d5bfea71495e58c6c4",
@@ -3054,9 +3054,9 @@
       "name": "AI",
       "count": 21,
       "memberStats": {
-        "avgKillsELO": 1828.7685714285715,
-        "avgGamesELO": 2099.4861904761906,
-        "avgLevel": 607.4285714285714,
+        "avgKillsELO": 1828.2076190476191,
+        "avgGamesELO": 2099.5271428571427,
+        "avgLevel": 607.6666666666666,
         "steamCount": 19,
         "totalMembers": 21
       },
@@ -3064,12 +3064,12 @@
         {
           "uid": "61c96865bfea71b512ae69db",
           "name": "J0NATHAN !-",
-          "level": 1155
+          "level": 1156
         },
         {
           "uid": "6449c8acd142afb66d07f776",
           "name": "Invis 101",
-          "level": 868
+          "level": 872
         },
         {
           "uid": "5db4e469d142af99078b4568",
@@ -9071,9 +9071,9 @@
       "name": ">:3",
       "count": 3,
       "memberStats": {
-        "avgKillsELO": 1840.61,
-        "avgGamesELO": 2367.763333333334,
-        "avgLevel": 589,
+        "avgKillsELO": 1838.8466666666666,
+        "avgGamesELO": 2365.8366666666666,
+        "avgLevel": 591,
         "steamCount": 3,
         "totalMembers": 3
       },
@@ -9081,17 +9081,17 @@
         {
           "uid": "5bb89344fd3c7aad01680c47",
           "name": "Brothers to Arms",
-          "level": 291
-        },
-        {
-          "uid": "5eb0087ebfea716b7f95775d",
-          "name": "Lordess of Death",
-          "level": 675
+          "level": 297
         },
         {
           "uid": "64a28cf4fd3c7a9637f86a85",
           "name": "walenty",
           "level": 801
+        },
+        {
+          "uid": "5eb0087ebfea716b7f95775d",
+          "name": "Lordess of Death",
+          "level": 675
         }
       ]
     },
