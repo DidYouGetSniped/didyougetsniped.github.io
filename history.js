@@ -1,4 +1,4 @@
-import { calculatePerformanceScore } from '/bpr.js';
+import { calculatePerformanceScore, roundPerformanceScore } from '/bpr.js';
 
 // history.js
 // ─────────────────────────────────────────────────────────────────────────────
@@ -174,13 +174,13 @@ function resolveSeriesValues(snapshots, descriptor) {
 
 function getSnapshotBpr(snapshot) {
     if (snapshot.bpr !== undefined && snapshot.bpr !== null) {
-        return Number(snapshot.bpr);
+        return roundPerformanceScore(snapshot.bpr);
     }
 
     const topKillsPercent = 100 - Number(snapshot.killsPercentile || 0);
     const topGamesPercent = 100 - Number(snapshot.gamesPercentile || 0);
 
-    return calculatePerformanceScore(
+    return roundPerformanceScore(calculatePerformanceScore(
         Number(snapshot.totalKills || 0),
         Number(snapshot.totalDamageDealt || 0),
         Number(snapshot.totalDeaths || 0),
@@ -190,7 +190,7 @@ function getSnapshotBpr(snapshot) {
         Number(snapshot.totalGames || 0),
         Number(snapshot.selfDestructs || 0),
         Number(snapshot.xp || 0)
-    );
+    ));
 }
 
 function seriesLabel(descriptor) {

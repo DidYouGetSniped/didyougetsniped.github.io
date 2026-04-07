@@ -25,3 +25,11 @@ export function calculatePerformanceScore(totalKills, damageDealt, totalDeaths, 
         return null;
     }
 }
+
+export function roundPerformanceScore(score) {
+    if (score === null || score === undefined) {
+        return null;
+    }
+
+    return Number(Number(score).toFixed(3));
+}

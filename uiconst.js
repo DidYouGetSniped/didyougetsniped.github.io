@@ -1,7 +1,7 @@
 import { getJoinDateFromUID } from '/utils.js';
 import { generateWeaponStarsHTML } from '/weaponlogic.js';
 import { generateVehicleStarsHTML } from '/vehiclelogic.js';
-import { calculatePerformanceScore } from '/bpr.js';
+import { calculatePerformanceScore, roundPerformanceScore } from '/bpr.js';
 
 function generateRowsHTML(data, sortByCount) {
     if (!data || Object.keys(data).length === 0) {
@@ -131,7 +131,8 @@ for (const weaponName in data.weaponStats) {
         totalSelfDestructs,
         data.xp || 0
     );
-    const performanceScoreDisplay = performanceScore !== null ? performanceScore.toFixed(3) : 'N/A';
+    const roundedPerformanceScore = roundPerformanceScore(performanceScore);
+    const performanceScoreDisplay = roundedPerformanceScore !== null ? roundedPerformanceScore.toFixed(3) : 'N/A';
 
     return {
     weaponKillsData, weaponStarsHTML, vehicleStarsHTML, weaponStatsHTML, vehicleKillsStatsHTML, deathStatsHTML, winsStatsHTML, lossesStatsHTML,
