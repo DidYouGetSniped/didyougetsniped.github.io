@@ -11,7 +11,7 @@ import fs   from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { TRACKED_UIDS } from './tracked-uids.js';
-import { calculatePerformanceScore } from '../bpr.js';
+import { calculatePerformanceScore, roundPerformanceScore } from '../bpr.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -146,8 +146,8 @@ function buildSnapshot(date, player, killsPct, gamesPct, xpPct) {
     const totalGames  = totalWins + totalLosses;
 
     const totalHeadshots    = sumFiltered(raw.headshots     || {}, IGNORED_WEAPON_CODES);
-    const totalDamageDealt  = sumFiltered(raw.damage_dealt  || {}, IGNORED_WEAPON_CODES);
-    const totalDamageReceived = sumFiltered(raw.damage_received || {}, IGNORED_WEAPON_CODES);
+    const totalDamageDealt  = sumValues(raw.damage_dealt || {});
+    const totalDamageReceived = sumValues(raw.damage_received || {});
 
     const totalShotsFiredUnzoomed = sumFiltered(raw.shots_fired_unzoomed || {}, IGNORED_WEAPON_CODES);
     const totalShotsFiredZoomed   = sumFiltered(raw.shots_fired_zoomed   || {}, IGNORED_WEAPON_CODES);
@@ -157,7 +157,7 @@ function buildSnapshot(date, player, killsPct, gamesPct, xpPct) {
     const totalShotsHit   = totalShotsHitUnzoomed   + totalShotsHitZoomed;
     const topKillsPercent = 100 - Number(killsPct || 0);
     const topGamesPercent = 100 - Number(gamesPct || 0);
-    const bpr = calculatePerformanceScore(
+    const bpr = roundPerformanceScore(calculatePerformanceScore(
         totalKills,
         totalDamageDealt,
         totalDeaths,
@@ -167,7 +167,7 @@ function buildSnapshot(date, player, killsPct, gamesPct, xpPct) {
         totalGames,
         selfDestructs,
         raw.xp || 0
-    );
+    ));
 
     // ── Per-weapon detailed stats (named, ignored codes excluded) ────────────
     // Build a map of weapon name → { kills, deaths, headshots, damageDealt,
