@@ -1,3 +1,5 @@
+import { calculatePerformanceScore } from '/bpr.js';
+
 // history.js
 // ─────────────────────────────────────────────────────────────────────────────
 // Provides the "📅 Historical Stats" panel injected into wbinfo player profiles.
@@ -38,6 +40,7 @@ const WEAPON_SUBFIELDS = [
 
 // ── Top-level metrics (non-weapon) ────────────────────────────────────────────
 const TOP_METRICS = [
+    { key: 'bpr',                 label: 'BPR'                   },
     { key: 'kdr',                 label: 'K/D Ratio'            },
     { key: 'killsELO',            label: 'Kills ELO'            },
     { key: 'gamesELO',            label: 'Games ELO'            },
@@ -67,6 +70,7 @@ const TOP_METRICS = [
 // higher: false → green when B < A
 // higher: null  → no colour coding
 const COMPARE_STATS = [
+    { key: 'bpr',                 label: 'BPR',                  fmt: v => v == null ? 'N/A' : Number(v).toFixed(3), higher: true  },
     { key: 'nick',                label: 'Username',             fmt: v => String(v ?? '—'),                       higher: null  },
     { key: 'level',               label: 'Level',                fmt: v => Number(v).toLocaleString(),             higher: true  },
     { key: 'xp',                  label: 'XP',                   fmt: v => Number(v).toLocaleString(),             higher: true  },
@@ -151,7 +155,7 @@ async function fetchSnapshots(uid) {
 function resolveSeriesValues(snapshots, descriptor) {
     return snapshots.map(s => {
         if (descriptor.type === 'top') {
-            const v = s[descriptor.key];
+            const v = descriptor.key === 'bpr' ? getSnapshotBpr(s) : s[descriptor.key];
             return v !== undefined && v !== null ? Number(v) : null;
         }
         if (descriptor.type === 'weapon') {
@@ -166,6 +170,27 @@ function resolveSeriesValues(snapshots, descriptor) {
         }
         return null;
     });
+}
+
+function getSnapshotBpr(snapshot) {
+    if (snapshot.bpr !== undefined && snapshot.bpr !== null) {
+        return Number(snapshot.bpr);
+    }
+
+    const topKillsPercent = 100 - Number(snapshot.killsPercentile || 0);
+    const topGamesPercent = 100 - Number(snapshot.gamesPercentile || 0);
+
+    return calculatePerformanceScore(
+        Number(snapshot.totalKills || 0),
+        Number(snapshot.totalDamageDealt || 0),
+        Number(snapshot.totalDeaths || 0),
+        Number(snapshot.totalDamageReceived || 0),
+        topKillsPercent / 100,
+        topGamesPercent / 100,
+        Number(snapshot.totalGames || 0),
+        Number(snapshot.selfDestructs || 0),
+        Number(snapshot.xp || 0)
+    );
 }
 
 function seriesLabel(descriptor) {
@@ -324,8 +349,8 @@ function renderCompareTable(pid, snapA, snapB) {
     // ── Top-level stats ────────────────────────────────────────────────────
     let html = sectionHeader('📊 Overall Stats');
     html += COMPARE_STATS.map(stat => {
-        const vA = snapA[stat.key];
-        const vB = snapB[stat.key];
+        const vA = stat.key === 'bpr' ? getSnapshotBpr(snapA) : snapA[stat.key];
+        const vB = stat.key === 'bpr' ? getSnapshotBpr(snapB) : snapB[stat.key];
         return makeRow(stat.label, vA, vB, stat.higher, stat.fmt);
     }).join('');
 

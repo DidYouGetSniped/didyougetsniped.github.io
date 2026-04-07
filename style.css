@@ -638,13 +638,13 @@ body::before {
 }
 
 .stats-data-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-    gap: 0px 30px; 
+    column-width: 300px;
+    column-gap: 30px;
 }
 
 .stats-data-grid .stat-row { 
     padding: 8px 0; 
+    break-inside: avoid;
 }
 
 .weapon-stats-header { 
@@ -1033,8 +1033,8 @@ h1 {
     }
     
     .stats-data-grid {
-        grid-template-columns: 1fr;
-        gap: 0;
+        columns: 1;
+        column-gap: 0;
     }
     
     .weapon-stats-header {

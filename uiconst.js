@@ -1,35 +1,7 @@
 import { getJoinDateFromUID } from '/utils.js';
 import { generateWeaponStarsHTML } from '/weaponlogic.js';
 import { generateVehicleStarsHTML } from '/vehiclelogic.js';
-
-function calculatePerformanceScore(total_kills, damage_dealt, total_deaths, damage_received, kills_elo_rank, games_elo_rank, total_games, num_self_destructs, xp) {
-    try {
-        if (total_deaths === 0 || damage_received === 0 || kills_elo_rank === 0 || games_elo_rank === 0 || total_games === 0) {
-            console.error("Performance Score Calculation Error: One or more required stats are zero.", { total_deaths, damage_received, kills_elo_rank, games_elo_rank, total_games });
-            return null;
-        }
-        const self_destruct_percentage = num_self_destructs / total_deaths;
-        const combat_ratio = (total_kills * damage_dealt) / (total_deaths * damage_received);
-        const kills_elo_bonus = Math.pow(1 / kills_elo_rank, 1 / 4) / 6.2;
-        const factor_a = Math.sqrt(combat_ratio) + kills_elo_bonus;
-        const avg_damage_impact = damage_dealt / (8250 * total_games);
-        const games_elo_bonus = Math.pow(1 / games_elo_rank, 1 / 4) / 13.2;
-        const resilience = (damage_received * (1 - self_destruct_percentage)) / (660 * total_deaths);
-        const factor_b = avg_damage_impact + games_elo_bonus + resilience;
-        const core_performance_score = Math.sqrt(factor_a * factor_b);
-        const experience_bonus = Math.pow(xp, 1 / 4) / 62;
-        const base_score = core_performance_score + experience_bonus;
-        const overall_score = base_score * 100;
-        if (isNaN(overall_score) || !isFinite(overall_score)) {
-            console.error("Performance Score result is NaN or Infinite. Check inputs.", { total_kills, damage_dealt, total_deaths, damage_received, kills_elo_rank, games_elo_rank, total_games, num_self_destructs, xp });
-            return null;
-        }
-        return overall_score;
-    } catch (e) {
-        console.error("An unexpected error occurred during performance score calculation:", e);
-        return null;
-    }
-}
+import { calculatePerformanceScore } from '/bpr.js';
 
 function generateRowsHTML(data, sortByCount) {
     if (!data || Object.keys(data).length === 0) {
