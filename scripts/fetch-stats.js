@@ -11,6 +11,7 @@ import fs   from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { TRACKED_UIDS } from './tracked-uids.js';
+import { calculatePerformanceScore } from '../bpr.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -142,6 +143,7 @@ function buildSnapshot(date, player, killsPct, gamesPct, xpPct) {
 
     const totalWins   = sumValues(raw.wins   || {});
     const totalLosses = sumValues(raw.losses || {});
+    const totalGames  = totalWins + totalLosses;
 
     const totalHeadshots    = sumFiltered(raw.headshots     || {}, IGNORED_WEAPON_CODES);
     const totalDamageDealt  = sumFiltered(raw.damage_dealt  || {}, IGNORED_WEAPON_CODES);
@@ -153,6 +155,19 @@ function buildSnapshot(date, player, killsPct, gamesPct, xpPct) {
     const totalShotsHitZoomed     = sumFiltered(raw.shots_hit_zoomed     || {}, IGNORED_WEAPON_CODES);
     const totalShotsFired = totalShotsFiredUnzoomed + totalShotsFiredZoomed;
     const totalShotsHit   = totalShotsHitUnzoomed   + totalShotsHitZoomed;
+    const topKillsPercent = 100 - Number(killsPct || 0);
+    const topGamesPercent = 100 - Number(gamesPct || 0);
+    const bpr = calculatePerformanceScore(
+        totalKills,
+        totalDamageDealt,
+        totalDeaths,
+        totalDamageReceived,
+        topKillsPercent / 100,
+        topGamesPercent / 100,
+        totalGames,
+        selfDestructs,
+        raw.xp || 0
+    );
 
     // ── Per-weapon detailed stats (named, ignored codes excluded) ────────────
     // Build a map of weapon name → { kills, deaths, headshots, damageDealt,
@@ -216,6 +231,7 @@ function buildSnapshot(date, player, killsPct, gamesPct, xpPct) {
         killsPercentile: killsPct,
         gamesPercentile: gamesPct,
         xpPercentile:    xpPct,
+        bpr,
 
         // Kill / death summary
         totalKills,
@@ -226,7 +242,7 @@ function buildSnapshot(date, player, killsPct, gamesPct, xpPct) {
         selfDestructs,
 
         // Games
-        totalGames:  totalWins + totalLosses,
+        totalGames,
         totalWins,
         totalLosses,
 
