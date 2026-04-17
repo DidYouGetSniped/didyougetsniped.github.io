@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-17T03:26:43.785Z",
+  "lastUpdated": "2026-04-17T13:58:30.061Z",
   "statistics": {
     "totalSquads": 533,
     "activeSquads": 253,
@@ -8,26 +8,26 @@
     "averageMembers": 7.09
   },
   "overallStats": {
-    "avgKillsELO": 1639.17,
-    "avgGamesELO": 1734.79,
+    "avgKillsELO": 1639.14,
+    "avgGamesELO": 1734.76,
     "avgLevel": 163.55,
     "steamCount": 557,
     "steamPercent": 26.9,
     "totalPlayers": 2074
   },
   "fetchInfo": {
-    "totalApiCalls": 539,
+    "totalApiCalls": 537,
     "failedFetches": 1,
-    "duration": "1879.5s"
+    "duration": "1852.3s"
   },
   "squads": [
     {
       "name": "CAESAR",
       "count": 168,
       "memberStats": {
-        "avgKillsELO": 1632.0523214285718,
-        "avgGamesELO": 1720.044345238095,
-        "avgLevel": 199.14285714285714,
+        "avgKillsELO": 1632.1011904761908,
+        "avgGamesELO": 1720.17625,
+        "avgLevel": 199.14880952380952,
         "steamCount": 46,
         "totalMembers": 168
       },
@@ -530,7 +530,7 @@
         {
           "uid": "5f856195bfea71e453fba71f",
           "name": "_Random guy",
-          "level": 1066
+          "level": 1067
         },
         {
           "uid": "606d7730bfea71fb7889a0c8",
@@ -1998,8 +1998,8 @@
       "name": "PAIN",
       "count": 36,
       "memberStats": {
-        "avgKillsELO": 1687.8008333333337,
-        "avgGamesELO": 1746.7866666666664,
+        "avgKillsELO": 1686.9741666666669,
+        "avgGamesELO": 1745.958611111111,
         "avgLevel": 273.94444444444446,
         "steamCount": 25,
         "totalMembers": 36
@@ -2349,9 +2349,9 @@
       "name": "FISH",
       "count": 29,
       "memberStats": {
-        "avgKillsELO": 1701.6679310344828,
-        "avgGamesELO": 1831.090689655172,
-        "avgLevel": 418.58620689655174,
+        "avgKillsELO": 1701.3600000000001,
+        "avgGamesELO": 1831.7396551724132,
+        "avgLevel": 418.62068965517244,
         "steamCount": 17,
         "totalMembers": 29
       },
@@ -2449,7 +2449,7 @@
         {
           "uid": "5f2f9ee9bfea71685aa1e3f2",
           "name": "DEEBS",
-          "level": 3479
+          "level": 3480
         },
         {
           "uid": "61afbb8ebfea71e041a13654",
@@ -2926,13 +2926,28 @@
       "name": "AI",
       "count": 24,
       "memberStats": {
-        "avgKillsELO": 1843.5145833333327,
-        "avgGamesELO": 2141.195833333333,
-        "avgLevel": 617.8333333333334,
+        "avgKillsELO": 1842.1970833333326,
+        "avgGamesELO": 2138.61,
+        "avgLevel": 618,
         "steamCount": 22,
         "totalMembers": 24
       },
       "members": [
+        {
+          "uid": "614cdc8bd142af3e0f3f8370",
+          "name": "iffy is bad",
+          "level": 938
+        },
+        {
+          "uid": "66151fc2d142afb50e946204",
+          "name": "Automaton",
+          "level": 403
+        },
+        {
+          "uid": "61c96865bfea71b512ae69db",
+          "name": "J0NATHAN !!",
+          "level": 1217
+        },
         {
           "uid": "6449c8acd142afb66d07f776",
           "name": "Invis 101",
@@ -2944,24 +2959,9 @@
           "level": 300
         },
         {
-          "uid": "61c96865bfea71b512ae69db",
-          "name": "J0NATHAN !!",
-          "level": 1215
-        },
-        {
-          "uid": "614cdc8bd142af3e0f3f8370",
-          "name": "i will have your elo",
-          "level": 937
-        },
-        {
           "uid": "5ea0725cbfea71f973046cf9",
           "name": "Kindness",
           "level": 477
-        },
-        {
-          "uid": "66151fc2d142afb50e946204",
-          "name": "Automaton",
-          "level": 402
         },
         {
           "uid": "618d996ad142af99678e1a60",
@@ -5125,13 +5125,18 @@
       "name": "TheEnd",
       "count": 13,
       "memberStats": {
-        "avgKillsELO": 1766.8184615384614,
-        "avgGamesELO": 1710.5892307692307,
+        "avgKillsELO": 1766.8769230769233,
+        "avgGamesELO": 1709.6346153846155,
         "avgLevel": 142.3846153846154,
         "steamCount": 7,
         "totalMembers": 13
       },
       "members": [
+        {
+          "uid": "66eeb2c2d142af7514c7d0ee",
+          "name": "OdonTheGoat",
+          "level": 331
+        },
         {
           "uid": "5f9845ecd142af6e60f077b2",
           "name": "Sp00kyRuby",
@@ -5146,11 +5151,6 @@
           "uid": "64ef343dd142afe30d880909",
           "name": "Crusader_Minerva",
           "level": 120
-        },
-        {
-          "uid": "66eeb2c2d142af7514c7d0ee",
-          "name": "OdonTheGoat",
-          "level": 331
         },
         {
           "uid": "672954d6d142af9b1a72511a",
