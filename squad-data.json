@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-17T13:58:30.061Z",
+  "lastUpdated": "2026-04-18T03:16:51.401Z",
   "statistics": {
     "totalSquads": 533,
     "activeSquads": 253,
@@ -9,16 +9,16 @@
   },
   "overallStats": {
     "avgKillsELO": 1639.14,
-    "avgGamesELO": 1734.76,
-    "avgLevel": 163.55,
+    "avgGamesELO": 1734.77,
+    "avgLevel": 163.56,
     "steamCount": 557,
     "steamPercent": 26.9,
     "totalPlayers": 2074
   },
   "fetchInfo": {
-    "totalApiCalls": 537,
-    "failedFetches": 1,
-    "duration": "1852.3s"
+    "totalApiCalls": 534,
+    "failedFetches": 0,
+    "duration": "1832.7s"
   },
   "squads": [
     {
@@ -1131,9 +1131,9 @@
       "name": "UMS",
       "count": 44,
       "memberStats": {
-        "avgKillsELO": 1736.7015909090912,
-        "avgGamesELO": 1822.003409090909,
-        "avgLevel": 345.40909090909093,
+        "avgKillsELO": 1736.8577272727273,
+        "avgGamesELO": 1823.0277272727274,
+        "avgLevel": 345.47727272727275,
         "steamCount": 24,
         "totalMembers": 44
       },
@@ -1226,7 +1226,7 @@
         {
           "uid": "676b6337bfea71147b77dc09",
           "name": "IRO HAPI",
-          "level": 373
+          "level": 376
         },
         {
           "uid": "650cf097bfea71807bb89892",
@@ -1998,9 +1998,9 @@
       "name": "PAIN",
       "count": 36,
       "memberStats": {
-        "avgKillsELO": 1686.9741666666669,
-        "avgGamesELO": 1745.958611111111,
-        "avgLevel": 273.94444444444446,
+        "avgKillsELO": 1687.1375,
+        "avgGamesELO": 1746.0191666666665,
+        "avgLevel": 274.02777777777777,
         "steamCount": 25,
         "totalMembers": 36
       },
@@ -2023,7 +2023,7 @@
         {
           "uid": "66328878bfea712422bf4383",
           "name": "Mota",
-          "level": 454
+          "level": 457
         },
         {
           "uid": "609422a3bfea719c3dd7d620",
@@ -2926,13 +2926,23 @@
       "name": "AI",
       "count": 24,
       "memberStats": {
-        "avgKillsELO": 1842.1970833333326,
-        "avgGamesELO": 2138.61,
-        "avgLevel": 618,
+        "avgKillsELO": 1842.2724999999994,
+        "avgGamesELO": 2137.6983333333333,
+        "avgLevel": 618.1666666666666,
         "steamCount": 22,
         "totalMembers": 24
       },
       "members": [
+        {
+          "uid": "6449c8acd142afb66d07f776",
+          "name": "Invis 101",
+          "level": 920
+        },
+        {
+          "uid": "61cabdb3d142af6353744888",
+          "name": "iffypedia",
+          "level": 303
+        },
         {
           "uid": "614cdc8bd142af3e0f3f8370",
           "name": "iffy is bad",
@@ -2947,16 +2957,6 @@
           "uid": "61c96865bfea71b512ae69db",
           "name": "J0NATHAN !!",
           "level": 1217
-        },
-        {
-          "uid": "6449c8acd142afb66d07f776",
-          "name": "Invis 101",
-          "level": 919
-        },
-        {
-          "uid": "61cabdb3d142af6353744888",
-          "name": "iffypedia",
-          "level": 300
         },
         {
           "uid": "5ea0725cbfea71f973046cf9",
@@ -5125,27 +5125,27 @@
       "name": "TheEnd",
       "count": 13,
       "memberStats": {
-        "avgKillsELO": 1766.8769230769233,
-        "avgGamesELO": 1709.6346153846155,
-        "avgLevel": 142.3846153846154,
+        "avgKillsELO": 1766.1153846153845,
+        "avgGamesELO": 1709.5269230769231,
+        "avgLevel": 142.53846153846155,
         "steamCount": 7,
         "totalMembers": 13
       },
       "members": [
         {
+          "uid": "683b3a41fd3c7a23732c51a2",
+          "name": "Soldier9245",
+          "level": 176
+        },
+        {
           "uid": "66eeb2c2d142af7514c7d0ee",
           "name": "OdonTheGoat",
-          "level": 331
+          "level": 332
         },
         {
           "uid": "5f9845ecd142af6e60f077b2",
           "name": "Sp00kyRuby",
           "level": 247
-        },
-        {
-          "uid": "683b3a41fd3c7a23732c51a2",
-          "name": "Soldier9245",
-          "level": 175
         },
         {
           "uid": "64ef343dd142afe30d880909",
