@@ -120,15 +120,34 @@ document.addEventListener('DOMContentLoaded', () => {
         hour12: fmtSelect.value === '12'
     }).format(new Date(t * 1000));
 
+    function normalizeMemberData(member, playerData = null) {
+        const resolvedUid = playerData?.uid || member?.uid || '';
+        const resolvedNick = playerData?.nick || member?.nick || member?.name || resolvedUid || 'Unknown';
+        const resolvedLevel = playerData?.level ?? member?.level ?? 0;
+
+        return {
+            uid: resolvedUid,
+            nick: resolvedNick,
+            time: Number.isFinite(playerData?.time) ? playerData.time : null,
+            level: resolvedLevel,
+            xp: playerData?.xp ?? 0,
+            killsELO: playerData?.killsELO ?? 0,
+            gamesELO: playerData?.gamesELO ?? 0,
+            coins: playerData?.coins ?? 0,
+            steam: playerData?.steam ?? false
+        };
+    }
+
     function fillTable() {
         tbody.innerHTML = '';
         const now = Date.now() / 1000 | 0;
         data.forEach(p => {
+            const hasLastPlayed = Number.isFinite(p.time);
             const tr = document.createElement('tr');
             tr.innerHTML = `<td><a href="https://didyougetsniped.github.io/wbinfo?uid=${p.uid}" target="_blank">${p.nick}</a></td>
                             <td>${p.uid}</td>
-                            <td>${fmtDate(p.time)}</td>
-                            <td>${diff(now - p.time)} ago</td>
+                            <td>${hasLastPlayed ? fmtDate(p.time) : 'Unavailable'}</td>
+                            <td>${hasLastPlayed ? `${diff(now - p.time)} ago` : 'Unavailable'}</td>
                             <td>${p.level || 0}</td>
                             <td>${(p.xp || 0).toLocaleString()}</td>
                             <td>${(p.killsELO || 0).toFixed(2)}</td>
@@ -150,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gE = 0,
             coins = 0;
         data.forEach(p => {
-            if (now - p.time > th) inactive++;
+            if (Number.isFinite(p.time) && now - p.time > th) inactive++;
             if (p.steam) steam++;
             xp += p.xp || 0;
             lvl += p.level || 0;
@@ -382,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cached = getCachedPlayer(member.uid);
                 if (cached) {
                     console.log(`Cache hit for ${member.nick}`);
-                    return cached;
+                    return normalizeMemberData(member, cached);
                 }
                 
                 try {
@@ -399,12 +418,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (playerRes.ok) {
                         const playerData = await playerRes.json();
                         setCachedPlayer(member.uid, playerData);
-                        return playerData;
+                        return normalizeMemberData(member, playerData);
                     }
-                    return null;
+                    console.warn(`Falling back to squad member data for UID ${member.uid} after getPlayer returned ${playerRes.status}`);
+                    return normalizeMemberData(member);
                 } catch (err) {
                     console.warn(`Failed to fetch details for UID ${member.uid}`, err);
-                    return null;
+                    return normalizeMemberData(member);
                 }
             });
             
@@ -487,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Use batched fetching
             const memberDetails = await fetchPlayersBatched(members);
-            data = memberDetails.filter(Boolean);
+            data = memberDetails.filter(member => member && member.uid);
 
             if (!data.length) {
                 alert('Could not fetch details for any squad members.');
