@@ -4,6 +4,19 @@ import { copyToClipboard, extractUID, formatDateTime, getJoinDateFromUID, timeAg
 import { renderPlayerInfo, renderSearchResults, displayMessage, updateMetaTags, resetMetaTags } from '/ui.js';
 import { applyRawOverrides, applyProcessedOverrides, applyPercentileOverrides } from '/custom-stats.js';
 import { setupHistoricalMount } from '/history.js';
+import {
+    MAX_COMPARE_PLAYERS,
+    addComparisonPlayer,
+    clearComparisonPlayers,
+    createComparisonEntry,
+    getDefaultComparisonOptions,
+    loadComparisonPlayers,
+    queueComparisonCharts,
+    removeComparisonPlayer,
+    renderComparisonBin,
+    renderComparisonDashboard,
+    saveComparisonPlayers
+} from '/comparison.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const rateLimitChannel = new BroadcastChannel('war-brokers-rate-limit');
@@ -24,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPlayerdata = null;
     let rawPlayerData = null;
     let percentilesData = null;
+    let comparisonPlayers = loadComparisonPlayers();
+    let comparisonOptions = getDefaultComparisonOptions();
 
     let sortByKills = true, sortByDeaths = true, sortByVehicleKills = true, sortByWins = true, sortByLosses = true;
     
@@ -36,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const timeFormatSelect = document.getElementById('time-format');
     const loader = document.getElementById('loader');
     const messageContainer = document.getElementById('message-container');
+    const comparisonSection = document.getElementById('comparison-section');
     const playerInfoContainer = document.getElementById('player-info');
 
     rateLimitChannel.onmessage = (event) => {
@@ -183,6 +199,60 @@ document.addEventListener('DOMContentLoaded', () => {
         timeAgoInterval = setInterval(updateTimeAgoDisplays, 30000);
 
         setupHistoricalMount(currentPlayerUID); 
+        updateCompareButtonState();
+    }
+
+    function renderComparisonState() {
+        if (!comparisonSection) return;
+
+        comparisonSection.innerHTML = `
+            ${renderComparisonBin(comparisonPlayers)}
+            ${renderComparisonDashboard(comparisonPlayers, comparisonOptions)}
+        `;
+
+        queueComparisonCharts(comparisonPlayers, comparisonOptions);
+        updateCompareButtonState();
+    }
+
+    function updateCompareButtonState() {
+        const compareButton = playerInfoContainer.querySelector('[data-compare-current]');
+        if (!compareButton) return;
+
+        const label = compareButton.querySelector('.compare-label');
+        const alreadyAdded = comparisonPlayers.some(player => String(player.uid) === String(currentPlayerUID));
+        const isFull = comparisonPlayers.length >= MAX_COMPARE_PLAYERS;
+
+        compareButton.classList.toggle('is-added', alreadyAdded);
+        compareButton.disabled = alreadyAdded || (!alreadyAdded && isFull);
+
+        if (label) {
+            label.textContent = alreadyAdded ? 'In Compare' : (isFull ? 'Bin Full' : 'Compare');
+        }
+    }
+
+    function persistComparisonPlayers(nextPlayers) {
+        comparisonPlayers = nextPlayers;
+        saveComparisonPlayers(comparisonPlayers);
+        renderComparisonState();
+    }
+
+    function addCurrentPlayerToComparison() {
+        if (!currentPlayerUID || !currentPlayerdata || !rawPlayerData || !percentilesData) {
+            displayMessage(messageContainer, 'Load a player before adding them to comparison.', 'info');
+            return;
+        }
+
+        const entry = createComparisonEntry(currentPlayerUID, currentPlayerdata, rawPlayerData, percentilesData);
+        const result = addComparisonPlayer(comparisonPlayers, entry);
+
+        if (result.status === 'full') {
+            displayMessage(messageContainer, `Comparison bin is full. Remove a player before adding another.`, 'info');
+            updateCompareButtonState();
+            return;
+        }
+
+        persistComparisonPlayers(result.players);
+        displayMessage(messageContainer, result.status === 'updated' ? 'Comparison data updated.' : 'Player added to comparison.', 'info');
     }
 
     function updateDisplayedDates() {
@@ -210,7 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
         playerInfoContainer.addEventListener('click', (e) => {
             const target = e.target;
 
-            if (target.closest('.search-result-item')) {
+            if (target.closest('[data-compare-current]')) {
+                addCurrentPlayerToComparison();
+            } else if (target.closest('.search-result-item')) {
                 uidInput.value = target.closest('.search-result-item').dataset.uid;
                 fetchPlayerInfo();
             } else if (target.matches('[data-copy]')) {
@@ -222,6 +294,37 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (target.id === 'wins-sort-toggle') { sortByWins = target.checked; displayFullPlayerInfo(); }
             else if (target.id === 'losses-sort-toggle') { sortByLosses = target.checked; displayFullPlayerInfo(); }
         });
+
+        if (comparisonSection) {
+            comparisonSection.addEventListener('click', (e) => {
+                const removeButton = e.target.closest('[data-compare-remove]');
+                const openButton = e.target.closest('[data-compare-open]');
+                const clearButton = e.target.closest('[data-compare-clear]');
+
+                if (removeButton) {
+                    persistComparisonPlayers(removeComparisonPlayer(comparisonPlayers, removeButton.dataset.compareRemove));
+                } else if (openButton) {
+                    uidInput.value = openButton.dataset.compareOpen;
+                    fetchPlayerInfo();
+                } else if (clearButton) {
+                    clearComparisonPlayers();
+                    comparisonPlayers = [];
+                    renderComparisonState();
+                }
+            });
+
+            comparisonSection.addEventListener('change', (e) => {
+                const target = e.target;
+                const optionKey = target.dataset.compareOption;
+                if (!optionKey) return;
+
+                comparisonOptions = {
+                    ...comparisonOptions,
+                    [optionKey]: target.value
+                };
+                renderComparisonState();
+            });
+        }
 
         window.addEventListener('popstate', (event) => {
             const { uid, name } = event.state || {};
@@ -238,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function initialize() {
         setRandomBackground();
         setupEventListeners();
+        renderComparisonState();
         timezoneSelect.value = 'local';
 
         const urlParams = new URLSearchParams(window.location.search);

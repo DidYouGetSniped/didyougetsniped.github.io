@@ -461,10 +461,16 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
 
     return `
         <div class="player-header">
-            <div class="player-name-details">
-                <div class="player-name">${data.nick || 'Unknown Player'}${specialLogoHTML}</div>
-                <div class="player-uid">UID: ${data.uid}</div>
-                ${biographyHTML}
+            <div class="player-header-main">
+                <div class="player-name-details">
+                    <div class="player-name">${data.nick || 'Unknown Player'}${specialLogoHTML}</div>
+                    <div class="player-uid">UID: ${data.uid}</div>
+                    ${biographyHTML}
+                </div>
+                <button type="button" class="btn-compare-add" data-compare-current title="Add this player to comparison" aria-label="Add this player to comparison">
+                    <span class="compare-plus" aria-hidden="true">+</span>
+                    <span class="compare-label">Compare</span>
+                </button>
             </div>
         </div>
         <div class="stats-grid">
