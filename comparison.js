@@ -25,35 +25,35 @@ const CHART_TEXT = '#f8fafc';
 const metricDefinitions = [
     { id: 'bpr', label: 'BPR', category: 'Ratings', format: 'decimal3', get: model => toNumber(model.consts.performanceScoreDisplay) },
     { id: 'killsELO', label: 'Kills ELO', category: 'Ratings', format: 'decimal2', get: model => model.data.killsELO },
-    { id: 'killsRank', label: 'Kills ELO Rank', category: 'Ratings', format: 'rankPercent', get: model => model.consts.topKillsPercent },
+    { id: 'killsRank', label: 'Kills ELO Rank', category: 'Ratings', format: 'rankPercent', direction: 'lower', get: model => model.consts.topKillsPercent },
     { id: 'gamesELO', label: 'Games ELO', category: 'Ratings', format: 'decimal2', get: model => model.data.gamesELO },
-    { id: 'gamesRank', label: 'Games ELO Rank', category: 'Ratings', format: 'rankPercent', get: model => model.consts.topGamesPercent },
-    { id: 'xpRank', label: 'XP Rank', category: 'Ratings', format: 'rankPercent', get: model => model.consts.topXpPercent },
+    { id: 'gamesRank', label: 'Games ELO Rank', category: 'Ratings', format: 'rankPercent', direction: 'lower', get: model => model.consts.topGamesPercent },
+    { id: 'xpRank', label: 'XP Rank', category: 'Ratings', format: 'rankPercent', direction: 'lower', get: model => model.consts.topXpPercent },
 
     { id: 'level', label: 'Level', category: 'Profile', format: 'number', get: model => model.data.level },
     { id: 'xp', label: 'XP', category: 'Profile', format: 'number', get: model => model.data.xp },
     { id: 'coins', label: 'Coins', category: 'Profile', format: 'number', get: model => model.data.coins },
     { id: 'totalGames', label: 'Total Games', category: 'Profile', format: 'number', get: model => model.consts.totalGames },
     { id: 'totalWins', label: 'Total Wins', category: 'Profile', format: 'number', get: model => model.consts.totalWins },
-    { id: 'totalLosses', label: 'Total Losses', category: 'Profile', format: 'number', get: model => model.consts.totalLosses },
+    { id: 'totalLosses', label: 'Total Losses', category: 'Profile', format: 'number', direction: 'lower', get: model => model.consts.totalLosses },
     { id: 'winRate', label: 'Win Rate', category: 'Profile', format: 'percent', get: model => percentage(model.consts.totalWins, model.consts.totalGames) },
 
     { id: 'kdr', label: 'K/D Ratio', category: 'Combat', format: 'decimal3', get: model => model.data.kdr },
     { id: 'totalKills', label: 'Total Kills', category: 'Combat', format: 'number', get: model => model.consts.totalKills },
-    { id: 'totalDeaths', label: 'Total Deaths', category: 'Combat', format: 'number', get: model => model.consts.totalDeaths },
+    { id: 'totalDeaths', label: 'Total Deaths', category: 'Combat', format: 'number', direction: 'lower', get: model => model.consts.totalDeaths },
     { id: 'weaponKillsTotal', label: 'Weapon Kills', category: 'Combat', format: 'number', get: model => model.consts.weaponKillsTotal },
     { id: 'vehicleKillsTotal', label: 'Vehicle Kills', category: 'Combat', format: 'number', get: model => model.consts.vehicleKillsTotal },
     { id: 'killsPerGame', label: 'Kills per Game', category: 'Combat', format: 'decimal2', get: model => model.consts.killsPerGame },
-    { id: 'deathsPerGame', label: 'Deaths per Game', category: 'Combat', format: 'decimal2', get: model => model.consts.deathsPerGame },
+    { id: 'deathsPerGame', label: 'Deaths per Game', category: 'Combat', format: 'decimal2', direction: 'lower', get: model => model.consts.deathsPerGame },
     { id: 'weaponKillsPerVehicleKill', label: 'Weapon Kills per Vehicle Kill', category: 'Combat', format: 'decimal2', get: model => model.consts.weaponKillsPerVehicleKill },
 
     { id: 'damageDealt', label: 'Damage Dealt', category: 'Damage', format: 'number', get: model => model.consts.totalDamageDealt },
-    { id: 'damageReceived', label: 'Damage Received', category: 'Damage', format: 'number', get: model => model.consts.totalDamageReceived },
+    { id: 'damageReceived', label: 'Damage Received', category: 'Damage', format: 'number', direction: 'lower', get: model => model.consts.totalDamageReceived },
     { id: 'damageRatio', label: 'Damage Dealt per Received', category: 'Damage', format: 'decimal2', get: model => model.consts.damageRatio },
     { id: 'damagePerKill', label: 'Damage Dealt per Kill', category: 'Damage', format: 'decimal2', get: model => model.consts.damagePerKill },
-    { id: 'damagePerDeath', label: 'Damage Received per Death', category: 'Damage', format: 'decimal2', get: model => model.consts.damagePerDeath },
+    { id: 'damagePerDeath', label: 'Damage Received per Death', category: 'Damage', format: 'decimal2', direction: 'lower', get: model => model.consts.damagePerDeath },
     { id: 'damagePerGame', label: 'Damage Dealt per Game', category: 'Damage', format: 'number', get: model => model.consts.damagePerGame },
-    { id: 'damageReceivedPerGame', label: 'Damage Received per Game', category: 'Damage', format: 'number', get: model => model.consts.damageReceivedPerGame },
+    { id: 'damageReceivedPerGame', label: 'Damage Received per Game', category: 'Damage', format: 'number', direction: 'lower', get: model => model.consts.damageReceivedPerGame },
     { id: 'damagePerJump', label: 'Damage Dealt per Jump', category: 'Damage', format: 'decimal2', get: model => model.consts.damagePerJump },
 
     { id: 'headshots', label: 'Headshots', category: 'Accuracy', format: 'number', get: model => model.consts.totalHeadshots },
@@ -72,17 +72,17 @@ const metricDefinitions = [
     { id: 'missiles', label: 'Missiles Launched', category: 'Extra', format: 'number', get: model => model.consts.scudsLaunched },
     { id: 'missilesPerGame', label: 'Missiles per Game', category: 'Extra', format: 'decimal2', get: model => model.consts.missilesPerGame },
     { id: 'missilesPerMLGame', label: 'Missiles per Missile Launch Game', category: 'Extra', format: 'decimal2', get: model => model.consts.missilesPerMissileLaunchGame },
-    { id: 'selfDestructs', label: 'Self Destructs', category: 'Extra', format: 'number', get: model => model.consts.totalSelfDestructs },
-    { id: 'selfDestructsPerGame', label: 'Self Destructs per Game', category: 'Extra', format: 'decimal2', get: model => model.consts.selfDestructsPerGame },
-    { id: 'selfDestructPct', label: 'Self Destruct % of Deaths', category: 'Extra', format: 'percent', get: model => model.consts.selfDestructPercentage }
+    { id: 'selfDestructs', label: 'Self Destructs', category: 'Extra', format: 'number', direction: 'lower', get: model => model.consts.totalSelfDestructs },
+    { id: 'selfDestructsPerGame', label: 'Self Destructs per Game', category: 'Extra', format: 'decimal2', direction: 'lower', get: model => model.consts.selfDestructsPerGame },
+    { id: 'selfDestructPct', label: 'Self Destruct % of Deaths', category: 'Extra', format: 'percent', direction: 'lower', get: model => model.consts.selfDestructPercentage }
 ];
 
 const weaponStatDefinitions = [
     { id: 'kills', label: 'Kills', format: 'number' },
-    { id: 'deaths', label: 'Deaths', format: 'number' },
+    { id: 'deaths', label: 'Deaths', format: 'number', direction: 'lower' },
     { id: 'headshots', label: 'Headshots', format: 'number' },
     { id: 'damage', label: 'Damage Dealt', format: 'number' },
-    { id: 'damageReceived', label: 'Damage Received', format: 'number' },
+    { id: 'damageReceived', label: 'Damage Received', format: 'number', direction: 'lower' },
     { id: 'kdr', label: 'K/D', format: 'decimal3' },
     { id: 'accuracy', label: 'Accuracy', format: 'percent' },
     { id: 'headshotRate', label: 'Headshot Rate', format: 'percent' },
@@ -101,7 +101,8 @@ const categoryDefinitions = {
             const statKey = getWeaponStat(options.weaponStat).id;
             return toNumber(model.data.weaponStats?.[name]?.[statKey]);
         },
-        getFormat: options => getWeaponStat(options.weaponStat).format
+        getFormat: options => getWeaponStat(options.weaponStat).format,
+        getDirection: options => getWeaponStat(options.weaponStat).direction || 'higher'
     },
     vehicles: {
         label: 'Vehicles',
@@ -115,7 +116,8 @@ const categoryDefinitions = {
         itemLabel: 'Cause',
         getNames: model => Object.keys(model.data.deaths || {}),
         getValue: (model, name) => toNumber(model.data.deaths?.[name]),
-        getFormat: () => 'number'
+        getFormat: () => 'number',
+        getDirection: () => 'lower'
     },
     wins: {
         label: 'Wins',
@@ -129,11 +131,12 @@ const categoryDefinitions = {
         itemLabel: 'Game Mode',
         getNames: model => Object.keys(model.data.losses || {}),
         getValue: (model, name) => toNumber(model.data.losses?.[name]),
-        getFormat: () => 'number'
+        getFormat: () => 'number',
+        getDirection: () => 'lower'
     }
 };
 
-const radarMetricIds = ['bpr', 'kdr', 'winRate', 'killsPerGame', 'accuracyBoth', 'damageRatio', 'gamesELO'];
+const radarMetricIds = ['bpr', 'kdr', 'winRate', 'killsPerGame', 'deathsPerGame', 'accuracyBoth', 'damageRatio', 'killsRank', 'gamesRank', 'xpRank', 'damageReceivedPerGame'];
 const chartRegistry = {};
 
 export function getDefaultComparisonOptions() {
@@ -416,9 +419,9 @@ function renderMetricTable(models) {
         }
 
         const values = models.map(model => toNumber(metric.get(model)));
-        const highest = getHighestValue(values);
+        const bestValue = getBestValue(values, metric.direction);
         const cells = values.map(value => {
-            const isLeader = highest !== null && value !== null && value === highest;
+            const isLeader = isBestValue(value, bestValue);
             return `<td class="${isLeader ? 'comparison-leader' : ''}">${formatValue(value, metric.format)}</td>`;
         }).join('');
 
@@ -450,6 +453,7 @@ function renderMetricTable(models) {
 function renderCategoryTable(models, options) {
     const category = getCategory(options.category);
     const format = category.getFormat(options);
+    const direction = getCategoryDirection(category, options);
     const rows = getCategoryRows(models, options);
 
     if (!rows.length) {
@@ -458,9 +462,9 @@ function renderCategoryTable(models, options) {
 
     const playerHeaders = models.map(model => `<th>${escapeHTML(displayName(model))}</th>`).join('');
     const body = rows.map(row => {
-        const highest = getHighestValue(row.values);
+        const bestValue = getBestValue(row.values, direction);
         const cells = row.values.map(value => {
-            const isLeader = highest !== null && value !== null && value === highest;
+            const isLeader = isBestValue(value, bestValue);
             return `<td class="${isLeader ? 'comparison-leader' : ''}">${formatValue(value, format)}</td>`;
         }).join('');
 
@@ -549,10 +553,8 @@ function drawRadarChart(models) {
     if (!canvas) return;
 
     const metrics = radarMetricIds.map(getMetric);
-    const maxByMetric = metrics.map(metric => {
-        const max = Math.max(...models.map(model => toNumber(metric.get(model)) || 0));
-        return max > 0 ? max : 1;
-    });
+    const rawValuesByMetric = metrics.map(metric => models.map(model => toNumber(metric.get(model))));
+    const scoreValuesByMetric = rawValuesByMetric.map((values, metricIndex) => normalizeForRadar(values, metrics[metricIndex].direction));
 
     destroyComparisonChart('radar');
     chartRegistry.radar = new window.Chart(canvas.getContext('2d'), {
@@ -563,10 +565,7 @@ function drawRadarChart(models) {
                 const color = CHART_COLORS[index % CHART_COLORS.length];
                 return {
                     label: displayName(model),
-                    data: metrics.map((metric, metricIndex) => {
-                        const value = toNumber(metric.get(model)) || 0;
-                        return Math.round((value / maxByMetric[metricIndex]) * 100);
-                    }),
+                    data: metrics.map((metric, metricIndex) => scoreValuesByMetric[metricIndex][index]),
                     borderColor: color,
                     backgroundColor: withAlpha(color, 0.18),
                     pointBackgroundColor: color,
@@ -582,7 +581,12 @@ function drawRadarChart(models) {
                 },
                 tooltip: {
                     callbacks: {
-                        label: context => `${context.dataset.label}: ${context.raw}%`
+                        label: context => {
+                            const metric = metrics[context.dataIndex];
+                            const model = models[context.datasetIndex];
+                            const rawValue = toNumber(metric.get(model));
+                            return `${context.dataset.label}: ${context.raw}% score (${formatValue(rawValue, metric.format)})`;
+                        }
                     }
                 }
             },
@@ -609,7 +613,11 @@ function drawCategoryChart(models, options) {
 
     const category = getCategory(options.category);
     const format = category.getFormat(options);
-    const rows = getCategoryRows(models, options).slice(0, 10);
+    const rows = getCategoryRows(models, options);
+    const frame = canvas.closest('.comparison-chart-frame');
+    if (frame) {
+        frame.style.height = `${Math.max(420, Math.min(1800, rows.length * 34 + 120))}px`;
+    }
 
     destroyComparisonChart('category');
     chartRegistry.category = new window.Chart(canvas.getContext('2d'), {
@@ -736,6 +744,14 @@ function getWeaponStat(id) {
     return weaponStatDefinitions.find(stat => stat.id === id) || weaponStatDefinitions[0];
 }
 
+function getCategoryDirection(category, options) {
+    if (typeof category.getDirection === 'function') {
+        return category.getDirection(options);
+    }
+
+    return 'higher';
+}
+
 function displayName(model) {
     return model.data.nick || model.uid || 'Unknown';
 }
@@ -759,10 +775,38 @@ function toNumber(value) {
     return null;
 }
 
-function getHighestValue(values) {
+function getBestValue(values, direction = 'higher') {
     const numbers = values.filter(value => value !== null && Number.isFinite(value));
     if (!numbers.length) return null;
-    return Math.max(...numbers);
+
+    return direction === 'lower' ? Math.min(...numbers) : Math.max(...numbers);
+}
+
+function isBestValue(value, bestValue) {
+    return bestValue !== null && value !== null && Number.isFinite(value) && value === bestValue;
+}
+
+function normalizeForRadar(values, direction = 'higher') {
+    const cleanValues = values.map(value => value !== null && Number.isFinite(value) ? value : null);
+    const numbers = cleanValues.filter(value => value !== null);
+
+    if (!numbers.length) return cleanValues.map(() => 0);
+
+    const best = direction === 'lower' ? Math.min(...numbers) : Math.max(...numbers);
+
+    return cleanValues.map(value => {
+        if (value === null) return 0;
+
+        if (direction === 'lower') {
+            if (value === best) return 100;
+            if (best <= 0) return 0;
+            return Math.max(0, Math.min(100, Math.round((best / value) * 100)));
+        }
+
+        if (best <= 0) return 0;
+        const normalized = (value / best) * 100;
+        return Math.max(0, Math.min(100, Math.round(normalized)));
+    });
 }
 
 function formatValue(value, format = 'number') {
