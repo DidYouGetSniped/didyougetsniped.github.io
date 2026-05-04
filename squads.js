@@ -100,15 +100,21 @@ document.addEventListener('DOMContentLoaded', () => {
         hour12: fmtSelect.value === '12'
     }).format(new Date(t * 1000));
 
+    function normalizeLastPlayedTime(value) {
+        const timestamp = Number(value);
+        return Number.isFinite(timestamp) && timestamp > 0 ? Math.floor(timestamp) : null;
+    }
+
     function normalizeMemberData(member, playerData = null) {
         const resolvedUid = playerData?.uid || member?.uid || '';
         const resolvedNick = playerData?.nick || member?.nick || member?.name || resolvedUid || 'Unknown';
         const resolvedLevel = playerData?.level ?? member?.level ?? 0;
+        const resolvedTime = normalizeLastPlayedTime(playerData?.time);
 
         return {
             uid: resolvedUid,
             nick: resolvedNick,
-            time: Number.isFinite(playerData?.time) ? playerData.time : null,
+            time: resolvedTime,
             level: resolvedLevel,
             xp: playerData?.xp ?? 0,
             killsELO: playerData?.killsELO ?? 0,
@@ -418,27 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return results;
     }
 
-    async function recoverMissingPlayerData(memberDetails) {
-        const recoveredDetails = [...memberDetails];
-
-        for (let i = 0; i < recoveredDetails.length; i++) {
-            const member = recoveredDetails[i];
-            if (Number.isFinite(member?.time)) {
-                continue;
-            }
-
-            try {
-                await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
-                const { data: playerData } = await fetchPlayerByUid(member.uid);
-                recoveredDetails[i] = normalizeMemberData(member, playerData);
-            } catch (err) {
-                console.warn(`Second-pass recovery failed for UID ${member?.uid}`, err);
-            }
-        }
-
-        return recoveredDetails;
-    }
-
     async function fetchSquadData(squadName) {
         // Rate limit check happens in background
         
@@ -498,10 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             progressBar.update(0, members.length, 'Starting batch fetch...');
 
-            // Use batched fetching
-            const memberDetails = await fetchPlayersBatched(members);
-            const recoveredDetails = await recoverMissingPlayerData(memberDetails);
-            data = recoveredDetails.filter(member => member && member.uid);
+            data = (await fetchPlayersBatched(members)).filter(member => member && member.uid);
 
             if (!data.length) {
                 alert('Could not fetch details for any squad members.');
