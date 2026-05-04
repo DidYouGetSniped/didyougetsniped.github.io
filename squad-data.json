@@ -1,33 +1,33 @@
 {
-  "lastUpdated": "2026-05-03T13:51:08.451Z",
+  "lastUpdated": "2026-05-04T04:07:31.349Z",
   "statistics": {
     "totalSquads": 536,
     "activeSquads": 254,
     "emptySquads": 282,
-    "totalMembers": 2084,
-    "averageMembers": 7.09
+    "totalMembers": 2092,
+    "averageMembers": 7.13
   },
   "overallStats": {
-    "avgKillsELO": 1639.41,
-    "avgGamesELO": 1732.46,
-    "avgLevel": 164.86,
-    "steamCount": 561,
-    "steamPercent": 26.9,
-    "totalPlayers": 2084
+    "avgKillsELO": 1639.65,
+    "avgGamesELO": 1731.58,
+    "avgLevel": 164.9,
+    "steamCount": 567,
+    "steamPercent": 27.1,
+    "totalPlayers": 2092
   },
   "fetchInfo": {
     "totalApiCalls": 537,
     "failedFetches": 0,
-    "duration": "1871.6s"
+    "duration": "1857.8s"
   },
   "squads": [
     {
       "name": "CAESAR",
       "count": 169,
       "memberStats": {
-        "avgKillsELO": 1632.9904142011837,
-        "avgGamesELO": 1717.9546153846154,
-        "avgLevel": 197.58579881656806,
+        "avgKillsELO": 1632.9144378698227,
+        "avgGamesELO": 1718.0010650887573,
+        "avgLevel": 197.59171597633136,
         "steamCount": 46,
         "totalMembers": 169
       },
@@ -405,7 +405,7 @@
         {
           "uid": "62dc1fcdbfea71046ed93d00",
           "name": "HIMARS",
-          "level": 492
+          "level": 493
         },
         {
           "uid": "6424257ed142af8d0f717738",
@@ -1128,224 +1128,6 @@
       ]
     },
     {
-      "name": "UMS",
-      "count": 41,
-      "memberStats": {
-        "avgKillsELO": 1739.8097560975611,
-        "avgGamesELO": 1833.57756097561,
-        "avgLevel": 363.8780487804878,
-        "steamCount": 24,
-        "totalMembers": 41
-      },
-      "members": [
-        {
-          "uid": "64e1e44efd3c7a854a8bb66d",
-          "name": "who i am",
-          "level": 197
-        },
-        {
-          "uid": "66fdd103d142af6e119ae446",
-          "name": "Sirkxpture",
-          "level": 77
-        },
-        {
-          "uid": "609bbc20d142af8c792027fc",
-          "name": "GiveMeSoup",
-          "level": 192
-        },
-        {
-          "uid": "620454e0bfea71e7451e5dfa",
-          "name": "fuud",
-          "level": 36
-        },
-        {
-          "uid": "6672966dbfea71933f85a3d9",
-          "name": "Sorairo",
-          "level": 635
-        },
-        {
-          "uid": "67fb3282bfea71ec1bca8bd1",
-          "name": "Recoil",
-          "level": 130
-        },
-        {
-          "uid": "6645f5add142af6e50e0f212",
-          "name": "EzFinomVolt!",
-          "level": 178
-        },
-        {
-          "uid": "66f43085bfea71191256594e",
-          "name": "IM_ARTIC",
-          "level": 163
-        },
-        {
-          "uid": "66c62f0cd142afda75a92f87",
-          "name": "AtoZ",
-          "level": 28
-        },
-        {
-          "uid": "6727e70cbfea7165404bbf76",
-          "name": "rust.",
-          "level": 302
-        },
-        {
-          "uid": "66b10398bfea71266167f654",
-          "name": "Diamond_Fire",
-          "level": 231
-        },
-        {
-          "uid": "62851011d142af6b06f11cdd",
-          "name": "Guest94303",
-          "level": 468
-        },
-        {
-          "uid": "66a40a70bfea71882cb26819",
-          "name": "SpetsnazGRU",
-          "level": 147
-        },
-        {
-          "uid": "5f335a82bfea717134a1e493",
-          "name": "MyPenguinMoggsU",
-          "level": 694
-        },
-        {
-          "uid": "672ed7b2bfea71ac0a4bbf84",
-          "name": "HARUSAME",
-          "level": 297
-        },
-        {
-          "uid": "61c8a75ed142af61537444ee",
-          "name": "Acel",
-          "level": 208
-        },
-        {
-          "uid": "676b6337bfea71147b77dc09",
-          "name": "Q.Q.Q.X.",
-          "level": 395
-        },
-        {
-          "uid": "6738da0fd142afab42146d8c",
-          "name": "Major Winters",
-          "level": 131
-        },
-        {
-          "uid": "63ece3a2d142afdc1e69d91a",
-          "name": "Hoang-steel wall",
-          "level": 853
-        },
-        {
-          "uid": "5f767665d142afbb6510301e",
-          "name": "Agent Gun Down",
-          "level": 349
-        },
-        {
-          "uid": "672f5f5abfea71043a4bbf50",
-          "name": "Commander X",
-          "level": 99
-        },
-        {
-          "uid": "67f4cfefd142afd618295a83",
-          "name": "NOT YAP",
-          "level": 426
-        },
-        {
-          "uid": "5fb01822d142af763ceaf2a2",
-          "name": "Mr. DEATH",
-          "level": 565
-        },
-        {
-          "uid": "61bd49e9bfea714a1efe82fc",
-          "name": "low cortisol",
-          "level": 879
-        },
-        {
-          "uid": "66e660b1d142afdb54ebb5ff",
-          "name": "stop nades",
-          "level": 309
-        },
-        {
-          "uid": "65594e76fe3c7ab303fbd6d5",
-          "name": "thePapaspaget",
-          "level": 126
-        },
-        {
-          "uid": "658a0016d142af367bdad846",
-          "name": "IneedbettrFPS!-",
-          "level": 330
-        },
-        {
-          "uid": "6484dbc3d142af01608f2bdf",
-          "name": "Froggy",
-          "level": 1824
-        },
-        {
-          "uid": "5c7f004dd142afa86e682d2a",
-          "name": "KKillzStorm",
-          "level": 334
-        },
-        {
-          "uid": "5ede5b67bfea71e74833575b",
-          "name": "ma77are",
-          "level": 683
-        },
-        {
-          "uid": "5f7dd0eebfea7159353380c0",
-          "name": "Superdeath",
-          "level": 510
-        },
-        {
-          "uid": "5c89d3fdbfea71667133ecb8",
-          "name": "almond",
-          "level": 74
-        },
-        {
-          "uid": "6402e130d142afd9110c32ae",
-          "name": "sp2wind",
-          "level": 125
-        },
-        {
-          "uid": "62625454bfea718319f9bb2f",
-          "name": "MaverickWest",
-          "level": 967
-        },
-        {
-          "uid": "627b0d92d142afc82a05dfeb",
-          "name": "HaHa, Made you look",
-          "level": 62
-        },
-        {
-          "uid": "62a32ffbbfea71cf7f905057",
-          "name": "Tekita",
-          "level": 91
-        },
-        {
-          "uid": "649228fcbfea718124fe50c7",
-          "name": "spiz",
-          "level": 403
-        },
-        {
-          "uid": "61314465bfea711a3f11ef16",
-          "name": "Technoblade",
-          "level": 196
-        },
-        {
-          "uid": "65c4c21cfe3c7aa13586ddad",
-          "name": "M2.",
-          "level": 681
-        },
-        {
-          "uid": "600b1596bfea718477bd47ec",
-          "name": "AnimeGirl",
-          "level": 193
-        },
-        {
-          "uid": "65b99682d142af8101fc7025",
-          "name": "bts_supplements",
-          "level": 331
-        }
-      ]
-    },
-    {
       "name": "^_^AURA",
       "count": 41,
       "memberStats": {
@@ -1560,6 +1342,219 @@
           "uid": "660294a7d142af6261492dd0",
           "name": "Kernkraft",
           "level": 48
+        }
+      ]
+    },
+    {
+      "name": "UMS",
+      "count": 40,
+      "memberStats": {
+        "avgKillsELO": 1740.9980000000003,
+        "avgGamesELO": 1842.5840000000003,
+        "avgLevel": 368.9,
+        "steamCount": 24,
+        "totalMembers": 40
+      },
+      "members": [
+        {
+          "uid": "64e1e44efd3c7a854a8bb66d",
+          "name": "who i am",
+          "level": 197
+        },
+        {
+          "uid": "66fdd103d142af6e119ae446",
+          "name": "Sirkxpture",
+          "level": 77
+        },
+        {
+          "uid": "609bbc20d142af8c792027fc",
+          "name": "GiveMeSoup",
+          "level": 192
+        },
+        {
+          "uid": "620454e0bfea71e7451e5dfa",
+          "name": "fuud",
+          "level": 36
+        },
+        {
+          "uid": "6672966dbfea71933f85a3d9",
+          "name": "Sorairo",
+          "level": 635
+        },
+        {
+          "uid": "67fb3282bfea71ec1bca8bd1",
+          "name": "Recoil",
+          "level": 130
+        },
+        {
+          "uid": "6645f5add142af6e50e0f212",
+          "name": "EzFinomVolt!",
+          "level": 178
+        },
+        {
+          "uid": "66c62f0cd142afda75a92f87",
+          "name": "AtoZ",
+          "level": 28
+        },
+        {
+          "uid": "6727e70cbfea7165404bbf76",
+          "name": "rust.",
+          "level": 302
+        },
+        {
+          "uid": "66b10398bfea71266167f654",
+          "name": "Diamond_Fire",
+          "level": 231
+        },
+        {
+          "uid": "62851011d142af6b06f11cdd",
+          "name": "Guest94303",
+          "level": 468
+        },
+        {
+          "uid": "66a40a70bfea71882cb26819",
+          "name": "SpetsnazGRU",
+          "level": 147
+        },
+        {
+          "uid": "5f335a82bfea717134a1e493",
+          "name": "MyPenguinMoggsU",
+          "level": 694
+        },
+        {
+          "uid": "672ed7b2bfea71ac0a4bbf84",
+          "name": "HARUSAME",
+          "level": 297
+        },
+        {
+          "uid": "61c8a75ed142af61537444ee",
+          "name": "Acel",
+          "level": 208
+        },
+        {
+          "uid": "676b6337bfea71147b77dc09",
+          "name": "Q.Q.Q.X.",
+          "level": 395
+        },
+        {
+          "uid": "6738da0fd142afab42146d8c",
+          "name": "Major Winters",
+          "level": 131
+        },
+        {
+          "uid": "63ece3a2d142afdc1e69d91a",
+          "name": "Hoang-steel wall",
+          "level": 853
+        },
+        {
+          "uid": "5f767665d142afbb6510301e",
+          "name": "Agent Gun Down",
+          "level": 349
+        },
+        {
+          "uid": "672f5f5abfea71043a4bbf50",
+          "name": "Commander X",
+          "level": 99
+        },
+        {
+          "uid": "67f4cfefd142afd618295a83",
+          "name": "NOT YAP",
+          "level": 426
+        },
+        {
+          "uid": "5fb01822d142af763ceaf2a2",
+          "name": "Mr. DEATH",
+          "level": 565
+        },
+        {
+          "uid": "61bd49e9bfea714a1efe82fc",
+          "name": "low cortisol",
+          "level": 879
+        },
+        {
+          "uid": "66e660b1d142afdb54ebb5ff",
+          "name": "stop nades",
+          "level": 309
+        },
+        {
+          "uid": "65594e76fe3c7ab303fbd6d5",
+          "name": "thePapaspaget",
+          "level": 126
+        },
+        {
+          "uid": "658a0016d142af367bdad846",
+          "name": "IneedbettrFPS!-",
+          "level": 330
+        },
+        {
+          "uid": "6484dbc3d142af01608f2bdf",
+          "name": "Froggy",
+          "level": 1824
+        },
+        {
+          "uid": "5c7f004dd142afa86e682d2a",
+          "name": "KKillzStorm",
+          "level": 334
+        },
+        {
+          "uid": "5ede5b67bfea71e74833575b",
+          "name": "ma77are",
+          "level": 683
+        },
+        {
+          "uid": "5f7dd0eebfea7159353380c0",
+          "name": "Superdeath",
+          "level": 510
+        },
+        {
+          "uid": "5c89d3fdbfea71667133ecb8",
+          "name": "almond",
+          "level": 74
+        },
+        {
+          "uid": "6402e130d142afd9110c32ae",
+          "name": "sp2wind",
+          "level": 125
+        },
+        {
+          "uid": "62625454bfea718319f9bb2f",
+          "name": "MaverickWest",
+          "level": 967
+        },
+        {
+          "uid": "627b0d92d142afc82a05dfeb",
+          "name": "HaHa, Made you look",
+          "level": 62
+        },
+        {
+          "uid": "62a32ffbbfea71cf7f905057",
+          "name": "Tekita",
+          "level": 91
+        },
+        {
+          "uid": "649228fcbfea718124fe50c7",
+          "name": "spiz",
+          "level": 403
+        },
+        {
+          "uid": "61314465bfea711a3f11ef16",
+          "name": "Technoblade",
+          "level": 196
+        },
+        {
+          "uid": "65c4c21cfe3c7aa13586ddad",
+          "name": "M2.",
+          "level": 681
+        },
+        {
+          "uid": "600b1596bfea718477bd47ec",
+          "name": "AnimeGirl",
+          "level": 193
+        },
+        {
+          "uid": "65b99682d142af8101fc7025",
+          "name": "bts_supplements",
+          "level": 331
         }
       ]
     },
@@ -1978,9 +1973,9 @@
       "name": "PAIN",
       "count": 38,
       "memberStats": {
-        "avgKillsELO": 1687.9494736842105,
-        "avgGamesELO": 1742.6447368421052,
-        "avgLevel": 280.63157894736844,
+        "avgKillsELO": 1687.2128947368421,
+        "avgGamesELO": 1744.0923684210525,
+        "avgLevel": 280.7368421052632,
         "steamCount": 27,
         "totalMembers": 38
       },
@@ -2068,7 +2063,7 @@
         {
           "uid": "63342f45bfea71ae42a8ccfd",
           "name": "William the Buster",
-          "level": 186
+          "level": 187
         },
         {
           "uid": "5f01b720bfea712452481d0c",
@@ -2136,14 +2131,14 @@
           "level": 243
         },
         {
-          "uid": "652590b9fd3c7a6860d01367",
-          "name": "Kitty",
-          "level": 255
-        },
-        {
           "uid": "610bbd0ad142af1276e5ebbc",
           "name": "Professional Baiter",
           "level": 606
+        },
+        {
+          "uid": "652590b9fd3c7a6860d01367",
+          "name": "Kitty",
+          "level": 258
         },
         {
           "uid": "64cf8924fd3c7ade59326c2c",
@@ -2497,9 +2492,9 @@
       "name": "SOF",
       "count": 26,
       "memberStats": {
-        "avgKillsELO": 1650.8023076923077,
-        "avgGamesELO": 1495.008461538462,
-        "avgLevel": 105.84615384615384,
+        "avgKillsELO": 1650.7134615384616,
+        "avgGamesELO": 1494.8346153846157,
+        "avgLevel": 105.96153846153847,
         "steamCount": 3,
         "totalMembers": 26
       },
@@ -2617,7 +2612,7 @@
         {
           "uid": "68d68cbebfea71d32ed0dc45",
           "name": "september jp",
-          "level": 107
+          "level": 108
         },
         {
           "uid": "6916f4c7d142af6466b52f1b",
@@ -2627,7 +2622,7 @@
         {
           "uid": "69b1b8d2bfea71e854f82e03",
           "name": "Bis_CzE",
-          "level": 49
+          "level": 51
         },
         {
           "uid": "68bfc94dd142af297bbeea99",
@@ -2640,9 +2635,9 @@
       "name": "APG",
       "count": 25,
       "memberStats": {
-        "avgKillsELO": 1678.7779999999998,
-        "avgGamesELO": 1718.3792,
-        "avgLevel": 150.76,
+        "avgKillsELO": 1679.1068,
+        "avgGamesELO": 1714.5107999999998,
+        "avgLevel": 150.88,
         "steamCount": 6,
         "totalMembers": 25
       },
@@ -2675,7 +2670,7 @@
         {
           "uid": "63b46c1fd142af776d17177a",
           "name": "General G",
-          "level": 84
+          "level": 85
         },
         {
           "uid": "680d3266fd3c7a9c5f3bd734",
@@ -2705,7 +2700,7 @@
         {
           "uid": "6611a904bfea716f17fc8a56",
           "name": "Player 99 BEAST",
-          "level": 103
+          "level": 104
         },
         {
           "uid": "635bd6d5bfea71495e58c6c4",
@@ -2725,7 +2720,7 @@
         {
           "uid": "60d08b15d142afee4b1dfabe",
           "name": "Did You Get Sniped?",
-          "level": 1190
+          "level": 1191
         },
         {
           "uid": "615602dfbfea71c07f196ecc",
@@ -2916,9 +2911,9 @@
       "name": "AI",
       "count": 24,
       "memberStats": {
-        "avgKillsELO": 1852.4754166666662,
-        "avgGamesELO": 2137.5454166666664,
-        "avgLevel": 625,
+        "avgKillsELO": 1851.8870833333328,
+        "avgGamesELO": 2135.33625,
+        "avgLevel": 625.1666666666666,
         "steamCount": 22,
         "totalMembers": 24
       },
@@ -2976,7 +2971,7 @@
         {
           "uid": "614cdc8bd142af3e0f3f8370",
           "name": "iffypedia",
-          "level": 948
+          "level": 950
         },
         {
           "uid": "5fb961e0d142af8b4885c87d",
@@ -2991,11 +2986,11 @@
         {
           "uid": "6449c8acd142afb66d07f776",
           "name": "Invis 101",
-          "level": 941
+          "level": 943
         },
         {
           "uid": "66151fc2d142afb50e946204",
-          "name": "Automaton",
+          "name": "Autogenic",
           "level": 425
         },
         {
@@ -4373,13 +4368,18 @@
       "name": "TheEnd",
       "count": 16,
       "memberStats": {
-        "avgKillsELO": 1756.1537500000002,
-        "avgGamesELO": 1728.5737500000002,
-        "avgLevel": 150.8125,
+        "avgKillsELO": 1756.8956250000003,
+        "avgGamesELO": 1726.3206250000003,
+        "avgLevel": 150.875,
         "steamCount": 8,
         "totalMembers": 16
       },
       "members": [
+        {
+          "uid": "5bb89344fd3c7aad01680c47",
+          "name": "Brothers to Arms",
+          "level": 330
+        },
         {
           "uid": "66eeb2c2d142af7514c7d0ee",
           "name": "OdonTheGoat",
@@ -4404,11 +4404,6 @@
           "uid": "650cf097bfea71807bb89892",
           "name": "Iridescent",
           "level": 111
-        },
-        {
-          "uid": "5bb89344fd3c7aad01680c47",
-          "name": "Brothers to Arms",
-          "level": 329
         },
         {
           "uid": "65586c80d142afba4e13acb8",
@@ -6011,6 +6006,64 @@
       ]
     },
     {
+      "name": "Code",
+      "count": 9,
+      "memberStats": {
+        "avgKillsELO": 1711.8533333333335,
+        "avgGamesELO": 1589.04,
+        "avgLevel": 219.66666666666666,
+        "steamCount": 6,
+        "totalMembers": 9
+      },
+      "members": [
+        {
+          "uid": "6238aa77d142af9b5ec5bb1c",
+          "name": "killed in cold blood",
+          "level": 186
+        },
+        {
+          "uid": "610e15b1d142afd67ce5f513",
+          "name": "ABCBA",
+          "level": 783
+        },
+        {
+          "uid": "691a1c8efe3c7ad8356c6bf0",
+          "name": "Farmerguy43",
+          "level": 38
+        },
+        {
+          "uid": "6950c9a4fe3c7a62261bfd7c",
+          "name": "Throne Warden",
+          "level": 25
+        },
+        {
+          "uid": "68a501f5fe3c7af240ff7ced",
+          "name": "LokiStormbringer",
+          "level": 65
+        },
+        {
+          "uid": "67e245aabfea71485ea45e00",
+          "name": "9000000000000000 Ghz",
+          "level": 97
+        },
+        {
+          "uid": "66f43085bfea71191256594e",
+          "name": "IM_ARTIC",
+          "level": 168
+        },
+        {
+          "uid": "69bcb128fd3c7a9d283a1438",
+          "name": "TimeIsUp!",
+          "level": 42
+        },
+        {
+          "uid": "65678ce4d142afa30c420bab",
+          "name": "oopsie",
+          "level": 573
+        }
+      ]
+    },
+    {
       "name": "FIGHTERS",
       "count": 9,
       "memberStats": {
@@ -6420,7 +6473,7 @@
       "name": "VSU",
       "count": 9,
       "memberStats": {
-        "avgKillsELO": 1838.8422222222225,
+        "avgKillsELO": 1838.6622222222225,
         "avgGamesELO": 1952.131111111111,
         "avgLevel": 211.44444444444446,
         "steamCount": 5,
@@ -7551,6 +7604,49 @@
       ]
     },
     {
+      "name": "RAGE",
+      "count": 6,
+      "memberStats": {
+        "avgKillsELO": 1634.8616666666667,
+        "avgGamesELO": 1492.2233333333368,
+        "avgLevel": 151.33333333333334,
+        "steamCount": 2,
+        "totalMembers": 6
+      },
+      "members": [
+        {
+          "uid": "6607b1f5fe3c7a8877d8cc6b",
+          "name": "Trust me bro",
+          "level": 51
+        },
+        {
+          "uid": "68a3d7c2bfea71cf092ffb4d",
+          "name": "My home",
+          "level": 147
+        },
+        {
+          "uid": "673df89fbfea71457474372b",
+          "name": "CagaMel",
+          "level": 243
+        },
+        {
+          "uid": "648fd121bfea7112596746a0",
+          "name": "AdjectiveNoun",
+          "level": 87
+        },
+        {
+          "uid": "684fc06fbfea71875dce1150",
+          "name": "Commando.",
+          "level": 118
+        },
+        {
+          "uid": "5cd09a54d142afbc24f9ee35",
+          "name": "AH-64 Apache",
+          "level": 262
+        }
+      ]
+    },
+    {
       "name": "WPN",
       "count": 6,
       "memberStats": {
@@ -8433,13 +8529,18 @@
       "name": "BOT",
       "count": 4,
       "memberStats": {
-        "avgKillsELO": 1715.96,
-        "avgGamesELO": 2093.185,
+        "avgKillsELO": 1716.4799999999998,
+        "avgGamesELO": 2094.7375,
         "avgLevel": 613.75,
         "steamCount": 4,
         "totalMembers": 4
       },
       "members": [
+        {
+          "uid": "609aa68ed142afe952202c5c",
+          "name": "EpicEfeathers",
+          "level": 189
+        },
         {
           "uid": "5e57527efe3c7acc73342809",
           "name": "EncryptR_",
@@ -8449,11 +8550,6 @@
           "uid": "61615f38d142af62453c6a90",
           "name": "Zorka",
           "level": 453
-        },
-        {
-          "uid": "609aa68ed142afe952202c5c",
-          "name": "EpicEfeathers",
-          "level": 189
         },
         {
           "uid": "5ec4663ffe3c7a1624b60bd5",
@@ -8789,39 +8885,6 @@
           "uid": "5bf55d65d142af1c1bfe580e",
           "name": "Sasha[RU$]",
           "level": 119
-        }
-      ]
-    },
-    {
-      "name": "RAGE",
-      "count": 4,
-      "memberStats": {
-        "avgKillsELO": 1623.6750000000002,
-        "avgGamesELO": 1619.54,
-        "avgLevel": 177.25,
-        "steamCount": 0,
-        "totalMembers": 4
-      },
-      "members": [
-        {
-          "uid": "684fc06fbfea71875dce1150",
-          "name": "Commando.",
-          "level": 118
-        },
-        {
-          "uid": "5cd09a54d142afbc24f9ee35",
-          "name": "AH-64 Apache",
-          "level": 262
-        },
-        {
-          "uid": "648fd121bfea7112596746a0",
-          "name": "AdjectiveNoun",
-          "level": 87
-        },
-        {
-          "uid": "673df89fbfea71457474372b",
-          "name": "CagaMel",
-          "level": 242
         }
       ]
     },
@@ -9233,8 +9296,8 @@
       "name": "BoA",
       "count": 3,
       "memberStats": {
-        "avgKillsELO": 1784.7066666666667,
-        "avgGamesELO": 2337.4733333333334,
+        "avgKillsELO": 1781.256666666667,
+        "avgGamesELO": 2330.28,
         "avgLevel": 442.3333333333333,
         "steamCount": 3,
         "totalMembers": 3
@@ -10513,29 +10576,6 @@
           "uid": "605ea229bfea711d57c0ad62",
           "name": "Sheriff]Pain",
           "level": 55
-        }
-      ]
-    },
-    {
-      "name": "Code",
-      "count": 2,
-      "memberStats": {
-        "avgKillsELO": 1691.8600000000001,
-        "avgGamesELO": 1564.3249999999998,
-        "avgLevel": 307.5,
-        "steamCount": 2,
-        "totalMembers": 2
-      },
-      "members": [
-        {
-          "uid": "69bcb128fd3c7a9d283a1438",
-          "name": "TimeIsUp!",
-          "level": 42
-        },
-        {
-          "uid": "65678ce4d142afa30c420bab",
-          "name": "oopsie",
-          "level": 573
         }
       ]
     },
@@ -12895,9 +12935,9 @@
       "name": "BAD",
       "count": 1,
       "memberStats": {
-        "avgKillsELO": 1881.61,
-        "avgGamesELO": 2456.99,
-        "avgLevel": 1231,
+        "avgKillsELO": 1903.69,
+        "avgGamesELO": 2452.03,
+        "avgLevel": 1234,
         "steamCount": 1,
         "totalMembers": 1
       },
@@ -12905,7 +12945,7 @@
         {
           "uid": "5e58763cfd3c7a8156a29b63",
           "name": "FRIEND",
-          "level": 1231
+          "level": 1234
         }
       ]
     },
@@ -15397,9 +15437,9 @@
       "name": "Pilot",
       "count": 1,
       "memberStats": {
-        "avgKillsELO": 1745.72,
-        "avgGamesELO": 1911.55,
-        "avgLevel": 194,
+        "avgKillsELO": 1755.56,
+        "avgGamesELO": 1917.72,
+        "avgLevel": 197,
         "steamCount": 0,
         "totalMembers": 1
       },
@@ -15407,7 +15447,7 @@
         {
           "uid": "6772dc69bfea71274927fc60",
           "name": "Omis9811",
-          "level": 194
+          "level": 197
         }
       ]
     },
@@ -16027,9 +16067,9 @@
       "name": "STATUS",
       "count": 1,
       "memberStats": {
-        "avgKillsELO": 1925.97,
-        "avgGamesELO": 2703.42,
-        "avgLevel": 360,
+        "avgKillsELO": 1930.1,
+        "avgGamesELO": 2698.3,
+        "avgLevel": 361,
         "steamCount": 0,
         "totalMembers": 1
       },
@@ -16037,7 +16077,7 @@
         {
           "uid": "6532b027bfea71b138b98d0a",
           "name": "Torture_2016",
-          "level": 360
+          "level": 361
         }
       ]
     },
