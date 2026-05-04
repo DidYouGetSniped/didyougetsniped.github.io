@@ -142,25 +142,48 @@ async function fetchData(url, options = {}, errorValue = null) {
         return { data: cachedData, fromCache: true };
     }
 
-    try {
-        const response = await fetch(url, options);
-        if (!response.ok) {
-            if (errorValue !== null) {
-                console.warn(`API request to ${url} failed with status ${response.status}. Returning default value.`);
-                return { data: errorValue, fromCache: false };
+    const maxAttempts = 3;
+    const baseDelayMs = 350;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                const shouldRetry = response.status === 429 || response.status >= 500;
+                if (shouldRetry && attempt < maxAttempts) {
+                    const retryAfterHeader = response.headers.get('Retry-After');
+                    const retryAfterSeconds = retryAfterHeader ? parseFloat(retryAfterHeader) : 0;
+                    const delayMs = Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
+                        ? retryAfterSeconds * 1000
+                        : baseDelayMs * attempt;
+                    await new Promise(resolve => setTimeout(resolve, delayMs));
+                    continue;
+                }
+
+                if (errorValue !== null) {
+                    console.warn(`API request to ${url} failed with status ${response.status}. Returning default value.`);
+                    return { data: errorValue, fromCache: false };
+                }
+                throw new Error(`API request to ${url} failed with status ${response.status}`);
             }
-            throw new Error(`API request to ${url} failed with status ${response.status}`);
+
+            const data = await response.json();
+
+            // Cache the successful response
+            setCache(cacheKey, data);
+
+            return { data, fromCache: false };
+        } catch (error) {
+            const isLastAttempt = attempt === maxAttempts;
+            if (!isLastAttempt) {
+                await new Promise(resolve => setTimeout(resolve, baseDelayMs * attempt));
+                continue;
+            }
+
+            console.error(`Error fetching from ${url}:`, error);
+            if (errorValue !== null) return { data: errorValue, fromCache: false };
+            throw error;
         }
-        const data = await response.json();
-        
-        // Cache the successful response
-        setCache(cacheKey, data);
-        
-        return { data, fromCache: false };
-    } catch (error) {
-        console.error(`Error fetching from ${url}:`, error);
-        if (errorValue !== null) return { data: errorValue, fromCache: false };
-        throw error;
     }
 }
 
@@ -330,4 +353,23 @@ export async function searchPlayerByName(query) {
         fromCache: searchResult.fromCache
     };
 
+}
+
+export async function fetchPlayerByUid(uid) {
+    if (isBlacklisted(uid)) {
+        throw new Error('Access to this player is restricted. Join the Support Server.');
+    }
+
+    const playerUrl = `${API_BASE_URL}/getPlayer?uid=${uid}`;
+    const playerResult = await fetchData(playerUrl);
+
+    if (!playerResult.data) {
+        throw new Error('Player data not found or API error.');
+    }
+
+    if (isBlacklisted(playerResult.data.uid)) {
+        throw new Error('Access to this player is restricted. Join the Support Server.');
+    }
+
+    return playerResult;
 }

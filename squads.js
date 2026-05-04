@@ -1,6 +1,7 @@
 import { setRandomBackground } from './background.js';
 import { squadDB } from './squaddb.js';
 import { progressBar } from './progressbar.js';
+import { fetchPlayerByUid } from './api.js';
 
 // Squad wars data will be loaded dynamically
 let squadWarsData = {};
@@ -43,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const fmtSelect = document.getElementById('time-format');
     const squadDisplaySection = document.getElementById('squad-display-section');
     const squadNameDisplay = document.getElementById('squad-name-display');
+    const memberCountDisplay = document.getElementById('member-count-display');
+    const memberCountValue = document.getElementById('member-count-value');
     const squadDiscordLink = document.getElementById('squad-discord-link');
     const squadBio = document.getElementById('squad-bio');
     const badge = document.getElementById('status-badge');
@@ -64,29 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const RATE_LIMIT_WINDOW_MS = 60 * 1000;
     const BATCH_SIZE = 3; // Process 3 requests at a time
     const BATCH_DELAY = 500; // 500ms delay between batches
-
-    // Simple cache for player data
-    const playerCache = new Map();
-    const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-
-    function getCachedPlayer(uid) {
-        const cached = playerCache.get(uid);
-        if (!cached) return null;
-        
-        if (Date.now() - cached.timestamp > CACHE_TTL) {
-            playerCache.delete(uid);
-            return null;
-        }
-        
-        return cached.data;
-    }
-
-    function setCachedPlayer(uid, data) {
-        playerCache.set(uid, {
-            data,
-            timestamp: Date.now()
-        });
-    }
 
     // Cleanup old timestamps periodically
     setInterval(() => {
@@ -397,13 +377,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Fetch batch with caching
             const batchPromises = batch.map(async (member) => {
-                // Check cache first
-                const cached = getCachedPlayer(member.uid);
-                if (cached) {
-                    console.log(`Cache hit for ${member.nick}`);
-                    return normalizeMemberData(member, cached);
-                }
-                
                 try {
                     // Track request
                     requestTimestamps.push(Date.now());
@@ -413,17 +386,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         payload: { requests: requestTimestamps }
                     });
                     // UI update removed
-                    
-                    const playerRes = await fetch(`https://wbapi.wbpjs.com/players/getPlayer?uid=${member.uid}`);
-                    if (playerRes.ok) {
-                        const playerData = await playerRes.json();
-                        setCachedPlayer(member.uid, playerData);
-                        return normalizeMemberData(member, playerData);
+
+                    const { data: playerData, fromCache } = await fetchPlayerByUid(member.uid);
+                    if (fromCache) {
+                        console.log(`Cache hit for ${member.nick || member.name || member.uid}`);
                     }
-                    console.warn(`Falling back to squad member data for UID ${member.uid} after getPlayer returned ${playerRes.status}`);
-                    return normalizeMemberData(member);
+
+                    return normalizeMemberData(member, playerData);
                 } catch (err) {
-                    console.warn(`Failed to fetch details for UID ${member.uid}`, err);
+                    console.warn(`Falling back to squad member data for UID ${member.uid}`, err);
                     return normalizeMemberData(member);
                 }
             });
@@ -445,6 +416,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         return results;
+    }
+
+    async function recoverMissingPlayerData(memberDetails) {
+        const recoveredDetails = [...memberDetails];
+
+        for (let i = 0; i < recoveredDetails.length; i++) {
+            const member = recoveredDetails[i];
+            if (Number.isFinite(member?.time)) {
+                continue;
+            }
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
+                const { data: playerData } = await fetchPlayerByUid(member.uid);
+                recoveredDetails[i] = normalizeMemberData(member, playerData);
+            } catch (err) {
+                console.warn(`Second-pass recovery failed for UID ${member?.uid}`, err);
+            }
+        }
+
+        return recoveredDetails;
     }
 
     async function fetchSquadData(squadName) {
@@ -479,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchBtn.disabled = true;
         fetchBtn.textContent = 'Fetching...';
         squadDisplaySection.style.display = 'none';
+        memberCountDisplay.style.display = 'none';
         squadDiscordLink.style.display = 'none';
         squadBio.style.display = 'none';
         warHistorySection.style.display = 'none';
@@ -507,7 +500,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Use batched fetching
             const memberDetails = await fetchPlayersBatched(members);
-            data = memberDetails.filter(member => member && member.uid);
+            const recoveredDetails = await recoverMissingPlayerData(memberDetails);
+            data = recoveredDetails.filter(member => member && member.uid);
 
             if (!data.length) {
                 alert('Could not fetch details for any squad members.');
@@ -517,6 +511,8 @@ document.addEventListener('DOMContentLoaded', () => {
             progressBar.update(members.length, members.length, 'Done!');
 
             squadNameDisplay.textContent = squad;
+            memberCountValue.textContent = members.length.toLocaleString();
+            memberCountDisplay.style.display = 'inline-flex';
 
             const squadInfo = squadDB[squad];
             if (squadInfo) {

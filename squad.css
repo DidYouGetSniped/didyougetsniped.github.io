@@ -176,6 +176,31 @@ body::before {
     gap: 15px;
 }
 
+.member-count-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.member-count-label {
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.78);
+    font-weight: 700;
+}
+
+.member-count-value {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
 .squad-discord-logo { 
     height: 35px;
     width: auto;
@@ -514,6 +539,11 @@ body::before {
   /* Player hero area */
   .player-header { padding: 18px; }
   .player-name { font-size: 1.7em; }
+  .member-count-banner {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
   .squad-discord-logo { height: 28px; }
   .squad-bio { font-size: 0.95em; }
   .status-badge { font-size: 1em; padding: 10px 14px; }
