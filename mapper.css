@@ -762,6 +762,18 @@ h1 .title-sub {
     letter-spacing: 1px;
 }
 
+#output .mapper-error {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--red);
+    background: rgba(255, 55, 55, 0.08);
+    border: 1px solid rgba(255, 55, 55, 0.35);
+    border-left: 4px solid var(--red);
+    padding: 14px 20px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+}
+
 /* ============ MODAL / POPUP ============ */
 #grayout {
     display: none;

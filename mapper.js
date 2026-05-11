@@ -414,8 +414,8 @@ function pre_data(gameid, alertid, signid, playersid) {
 
     let select_game = game.options[game.selectedIndex].text;
     let select_alert = alert.checked;
-    let select_sign = sign.options[sign.selectedIndex].text
-    let select_players = players.options[players.selectedIndex].text
+    let select_sign = sign.value;
+    let select_players = players.value;
 
     if (select_sign == "Greater") {
         select_sign = true;
@@ -425,7 +425,7 @@ function pre_data(gameid, alertid, signid, playersid) {
 
     vars["playalert"] = select_alert;
     vars["game"] = select_game;
-    vars["players"] = [select_sign, parseInt(select_players)];
+    vars["players"] = [select_sign, parseInt(select_players, 10)];
 }
 
 function collect_data(id) {
@@ -543,49 +543,94 @@ loadparas();
 let endpoint = 303;
 let minguess = 289;
 let maxnumguess = 20;
+let corsFallbackActive = false;
+const scanIntervalSeconds = 10;
 
-async function fetch_server_data(region) {
-    try {
-        let failed = 1;
-        let serverdata = [];
-        let count = 0;
+const serverOrigin = "https://store1.warbrokers.io";
+const corsFallbacks = [
+    (url) => "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url),
+];
 
-        while (failed) {
-            if (count == maxnumguess) {
-                console.error("Something went wrong. Please contact the developer. ")
-                break;
-            }
+function serverListUrl(region) {
+    return serverOrigin + "/" + endpoint + "/server_list.php?location=" + encodeURIComponent(region);
+}
 
-            const response = await fetch("https://store1.warbrokers.io/" + endpoint + "//server_list.php?location="+region);
+function looksMissingEndpoint(text) {
+    return !text || /file not found/i.test(text);
+}
 
-            if (response.status == 404) {
-                console.log("Endpoint: /" + endpoint + "//server_list.php returned 404. Retrying ...")
+function looksLikeServerList(text) {
+    return /^\d+(,|$)/.test((text || "").trim());
+}
 
-                if (count < 1) {
-                    endpoint = minguess;
+async function fetch_server_text(url) {
+    const fallbackUrls = corsFallbacks.map(fallback => fallback(url));
+    const urls = corsFallbackActive ? fallbackUrls : [url, ...fallbackUrls];
+    let lastError = null;
+
+    for (let i = 0; i < urls.length; i++) {
+        const usingFallback = urls[i] !== url;
+
+        try {
+            const response = await fetch(urls[i], { cache: "no-store" });
+            const text = await response.text();
+
+            if (response.status == 404 || looksMissingEndpoint(text)) {
+                if (usingFallback) {
+                    corsFallbackActive = true;
                 }
 
-                endpoint += 1;
-                count += 1;
-
-                console.log("Trying: " + endpoint);
-                continue;
+                return { missing: true, text };
             }
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error("Server list request failed with status " + response.status + ".");
             }
 
-            failed = 0;
+            if (usingFallback) {
+                corsFallbackActive = true;
+            }
 
-            serverdata = response.text().then(data => data.split(","+region+","));
+            return { missing: false, text };
+        } catch (error) {
+            lastError = error;
+            if (!usingFallback) {
+                console.warn("Direct War Brokers server-list request failed; trying CORS fallback.", error);
+            }
+        }
+    }
+
+    throw lastError || new Error("Unable to fetch the War Brokers server list.");
+}
+
+async function fetch_server_data(region) {
+    let count = 0;
+
+    while (count < maxnumguess) {
+        const result = await fetch_server_text(serverListUrl(region));
+
+        if (result.missing) {
+            console.log("Endpoint /" + endpoint + "/server_list.php returned no server list. Retrying...");
+
+            if (count == 0) {
+                endpoint = minguess;
+            } else {
+                endpoint += 1;
+            }
+
+            count += 1;
+            console.log("Trying endpoint: " + endpoint);
+            continue;
         }
 
-        return serverdata;
+        if (!looksLikeServerList(result.text)) {
+            throw new Error("War Brokers returned an unexpected server-list format for " + region + ".");
+        }
+
+        return result.text.trim().split("," + region + ",");
     }
-    catch (error) {
-        console.error(error);
-    }
+
+    throw new Error("Unable to find the current War Brokers server-list endpoint.");
 }
 
 function set_data(game, players, mode, map, location) {
@@ -808,6 +853,29 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+    }[char]));
+}
+
+function setScanSummary(id, check, secondsUntilNextScan = null) {
+    let message = "Found " + check + " match" + (check == 1 ? "." : "es.");
+
+    if (!check && secondsUntilNextScan != null) {
+        message += " Searching again in " + secondsUntilNextScan + " second" + (secondsUntilNextScan == 1 ? "." : "s.");
+    }
+
+    const summary = document.getElementById(id).querySelector(".match-summary");
+    if (summary) {
+        summary.textContent = message;
+    }
+}
+
 function wb_mapper(id, status, button) {
 (async () => {
     try {
@@ -830,18 +898,18 @@ function wb_mapper(id, status, button) {
 
             for (let i=0; i<settings[4].length; i++) {
                 const server_data = await fetch_server_data(settings[4][i]);
-                const wb_map = game_check(server_data, settings, settings[4][i]);
 
-                if (server_data == []) {
-                    document.getElementById(status).innerHTML = "ERROR — please contact the developer";
-                    break;
+                if (!Array.isArray(server_data)) {
+                    throw new Error("No server data returned for " + settings[4][i] + ".");
                 }
+
+                const wb_map = game_check(server_data, settings, settings[4][i]);
 
                 check += wb_map[0];
                 str_output += wb_map[1];
             }
 
-            str_output += "</ul><div class='match-summary'>— Found " + check + " match" + (check == 1 ? "." : "es.") + "</div>";
+            str_output += "</ul><div class='match-summary'></div>";
 
             document.getElementById(id).innerHTML = str_output;
 
@@ -865,20 +933,31 @@ function wb_mapper(id, status, button) {
             }
 
             document.getElementById(status).innerHTML = "SCANNING...";
+            setScanSummary(id, check, scanIntervalSeconds);
 
-            // Wait 30 seconds — DO NOT CHANGE THE 60, OR YOUR BROWSER WILL CRASH
-            for (let i=0; i<60; i++) {
-                await delay(500)
+            // Poll every 10 seconds. Keep the loop split so stop clicks are responsive.
+            for (let i=scanIntervalSeconds; i>0; i--) {
+                await delay(1000);
                 if (vars["stop"]) {
                     document.getElementById(status).innerHTML = "STOPPED";
                     document.getElementById(button).disabled = false;
                     console.log("Stopped.");
                     return;
                 }
+
+                setScanSummary(id, check, i - 1);
             }
         }
     } catch (error) {
-        console.error('Error in fetchData:', error);
+        console.error('Error in mapper:', error);
+
+        document.getElementById(status).innerHTML = "ERROR";
+        document.getElementById(id).innerHTML = "<div class='mapper-error'>" + escapeHTML(error.message || "Unable to fetch server data.") + "</div>";
+
+        const scanButton = document.getElementById(button);
+        scanButton.value = "start";
+        scanButton.disabled = false;
+        scanButton.querySelector('.btn-text').textContent = "\u25B6 INITIATE SCAN";
     }
 })();
 }
