@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const resolvedUid = playerData?.uid || member?.uid || '';
         const resolvedNick = playerData?.nick || member?.nick || member?.name || resolvedUid || 'Unknown';
         const resolvedLevel = playerData?.level ?? member?.level ?? 0;
-        const resolvedTime = normalizeLastPlayedTime(playerData?.time);
+        const resolvedTime = normalizeLastPlayedTime(playerData?.time ?? member?.time);
 
         return {
             uid: resolvedUid,
