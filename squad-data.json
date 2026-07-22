@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-21T14:31:29.583Z",
+  "lastUpdated": "2026-07-22T03:30:43.364Z",
   "statistics": {
     "totalSquads": 533,
     "activeSquads": 253,
@@ -8,17 +8,17 @@
     "averageMembers": 7.26
   },
   "overallStats": {
-    "avgKillsELO": 1642.24,
-    "avgGamesELO": 1722.28,
+    "avgKillsELO": 1642.26,
+    "avgGamesELO": 1722.35,
     "avgLevel": 168.89,
     "steamCount": 596,
     "steamPercent": 28.1,
     "totalPlayers": 2118
   },
   "fetchInfo": {
-    "totalApiCalls": 536,
+    "totalApiCalls": 537,
     "failedFetches": 1,
-    "duration": "1850.2s"
+    "duration": "2154.9s"
   },
   "squads": [
     {
@@ -1572,9 +1572,9 @@
       "name": "UMS",
       "count": 39,
       "memberStats": {
-        "avgKillsELO": 1746.9094871794875,
-        "avgGamesELO": 1802.0933333333342,
-        "avgLevel": 379.28205128205127,
+        "avgKillsELO": 1747.375897435898,
+        "avgGamesELO": 1802.3117948717957,
+        "avgLevel": 379.35897435897436,
         "steamCount": 24,
         "totalMembers": 39
       },
@@ -1647,7 +1647,7 @@
         {
           "uid": "676b6337bfea71147b77dc09",
           "name": "百円猫2525",
-          "level": 543
+          "level": 545
         },
         {
           "uid": "63ece3a2d142afdc1e69d91a",
@@ -1752,7 +1752,7 @@
         {
           "uid": "649228fcbfea718124fe50c7",
           "name": "spiz",
-          "level": 458
+          "level": 459
         },
         {
           "uid": "61314465bfea711a3f11ef16",
@@ -2635,9 +2635,9 @@
       "name": "SOF",
       "count": 27,
       "memberStats": {
-        "avgKillsELO": 1677.2955555555557,
-        "avgGamesELO": 1484.5622222222223,
-        "avgLevel": 136.55555555555554,
+        "avgKillsELO": 1678.0040740740742,
+        "avgGamesELO": 1487.3096296296294,
+        "avgLevel": 136.66666666666666,
         "steamCount": 7,
         "totalMembers": 27
       },
@@ -2673,14 +2673,14 @@
           "level": 678
         },
         {
+          "uid": "66114de8d142afa85a06976a",
+          "name": "Tempura-JP",
+          "level": 505
+        },
+        {
           "uid": "67c1549ed142af304d7b3f7d",
           "name": "へ野　もへ次郎",
           "level": 203
-        },
-        {
-          "uid": "66114de8d142afa85a06976a",
-          "name": "Tempura-JP",
-          "level": 504
         },
         {
           "uid": "6600ae14d142afde5cef7fe5",
@@ -2690,7 +2690,7 @@
         {
           "uid": "67dd137abfea712a445c07d9",
           "name": "oiyan(YouTube)",
-          "level": 76
+          "level": 77
         },
         {
           "uid": "679aa64dd142af7340b641e9",
@@ -2765,7 +2765,7 @@
         {
           "uid": "69b1b8d2bfea71e854f82e03",
           "name": "Bis_CzE",
-          "level": 111
+          "level": 112
         },
         {
           "uid": "68bfc94dd142af297bbeea99",
@@ -3167,18 +3167,13 @@
       "name": "AI",
       "count": 21,
       "memberStats": {
-        "avgKillsELO": 1823.7985714285705,
-        "avgGamesELO": 2065.616666666667,
-        "avgLevel": 610.0952380952381,
+        "avgKillsELO": 1824.513809523809,
+        "avgGamesELO": 2067.1042857142857,
+        "avgLevel": 610.1428571428571,
         "steamCount": 19,
         "totalMembers": 21
       },
       "members": [
-        {
-          "uid": "621711c2bfea71be1707d801",
-          "name": "bourne_",
-          "level": 638
-        },
         {
           "uid": "61c96865bfea71b512ae69db",
           "name": "tell me how to snipe",
@@ -3188,6 +3183,11 @@
           "uid": "6449c8acd142afb66d07f776",
           "name": "Invis 101",
           "level": 1044
+        },
+        {
+          "uid": "621711c2bfea71be1707d801",
+          "name": "bourne_",
+          "level": 639
         },
         {
           "uid": "5c2015a6d142af7d36b9e2cd",
@@ -4491,22 +4491,22 @@
       "name": "Best",
       "count": 15,
       "memberStats": {
-        "avgKillsELO": 1669.51,
-        "avgGamesELO": 1718.7039999999995,
+        "avgKillsELO": 1669.7326666666668,
+        "avgGamesELO": 1720.6846666666663,
         "avgLevel": 127.93333333333334,
         "steamCount": 3,
         "totalMembers": 15
       },
       "members": [
         {
-          "uid": "652fe93abfea717754b98d1b",
-          "name": "Happy B-Day USA",
-          "level": 473
-        },
-        {
           "uid": "676596d4d142af4f3862b722",
           "name": "Crazy Tra!n",
           "level": 339
+        },
+        {
+          "uid": "652fe93abfea717754b98d1b",
+          "name": "Happy B-Day USA",
+          "level": 473
         },
         {
           "uid": "65a6a1ecd142af957041785e",
