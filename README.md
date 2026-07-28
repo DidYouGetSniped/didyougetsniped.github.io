@@ -1,7 +1,7 @@
 # Did You Get Sniped?'s War Brokers Tools
 
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fdidyougetsniped.github.io)](https://didyougetsniped.github.io)
-[![Discord](https://img.shields.io/badge/Discord-Join%20Server-7289da?logo=discord&logoColor=white)](https://discord.gg/NuST4n4sWt)
+[![Discord](https://img.shields.io/badge/Discord-Join%20Discord-7289da?logo=discord&logoColor=white)](https://discord.com/users/1476955236726866000)
 
 A comprehensive website for [War Brokers](https://warbrokers.io), featuring player stats, squad analytics, performance ratings, and more.
 
@@ -21,7 +21,6 @@ A comprehensive website for [War Brokers](https://warbrokers.io), featuring play
 - **Member Analysis**: Track average levels, ELO ratings, and activity
 - **Squad Browser**: Browse all squads with sorting and filtering
 - **Squad Count Tracker**: Monitor squad sizes and activity levels
-- **Squad Inviter**: Streamlined tool for inviting players to your squad
 
 ### Player Count Tracker
 - **Real-time Monitoring**: Track online player counts over time
@@ -94,7 +93,6 @@ Custom achievement tracking for:
 |-- wbinfo.html                    # Player stats page
 |-- squads.html                    # Squad stats page
 |-- squadcount.html                # Squad count tracker
-|-- squadinviter.html              # Squad invitation tool
 |-- player-tracker.html            # Player count tracker
 |-- updates.html                   # Changelog
 |-- warbrokers_mapper.html         # Mapper page
@@ -202,7 +200,7 @@ All game data is accessed through Pomp's War Brokers API. This project is provid
 ## 🔗 Links
 
 - **Website**: [didyougetsniped.github.io](https://didyougetsniped.github.io)
-- **Discord**: [Join Support Server](https://discord.gg/NuST4n4sWt)
+- **Discord**: [Join on Discord](https://discord.com/users/1476955236726866000)
 - **YouTube**: [@DidYouGetSniped](https://youtube.com/@DidYouGetSniped)
 - **War Brokers**: [warbrokers.io](https://warbrokers.io)
 - **War Brokers Wiki**: [war-brokers.fandom.com](https://war-brokers.fandom.com/wiki/War_Brokers_Wiki)
