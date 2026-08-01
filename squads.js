@@ -119,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
             xp: playerData?.xp ?? 0,
             killsELO: playerData?.killsELO ?? 0,
             gamesELO: playerData?.gamesELO ?? 0,
-            coins: playerData?.coins ?? 0,
             steam: playerData?.steam ?? false
         };
     }
@@ -138,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             <td>${(p.xp || 0).toLocaleString()}</td>
                             <td>${(p.killsELO || 0).toFixed(2)}</td>
                             <td>${(p.gamesELO || 0).toFixed(2)}</td>
-                            <td>${(p.coins || 0).toLocaleString()}</td>
                             <td>${p.steam ? 'Yes' : 'No'}</td>`;
             tbody.appendChild(tr);
         });
@@ -152,8 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             xp = 0,
             lvl = 0,
             kE = 0,
-            gE = 0,
-            coins = 0;
+            gE = 0;
         data.forEach(p => {
             if (Number.isFinite(p.time) && now - p.time > th) inactive++;
             if (p.steam) steam++;
@@ -161,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
             lvl += p.level || 0;
             kE += p.killsELO || 0;
             gE += p.gamesELO || 0;
-            coins += p.coins || 0;
         });
         const total = data.length,
             inPct = total > 0 ? inactive / total : 0;
@@ -173,9 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const avgKillsELO = total > 0 ? (kE / total).toFixed(2) : 0;
         const avgGamesELO = total > 0 ? (gE / total).toFixed(2) : 0;
         const steamPct = total > 0 ? (steam / total * 100).toFixed(1) : 0;
-        const avgCoins = total > 0 ? (coins / total).toLocaleString(undefined, {
-            maximumFractionDigits: 0
-        }) : '0';
 
         statsGrid.innerHTML = `
             <div class="stat-card"><div class="stat-row"><span class="stat-label">Average Level</span><span class="stat-value">${avgLevel}</span></div></div>
@@ -184,8 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="stat-card"><div class="stat-row"><span class="stat-label">Players with Steam</span><span class="stat-value">${steamPct}%</span></div></div>
             <div class="stat-card"><div class="stat-row"><span class="stat-label">Total Level</span><span class="stat-value">${lvl.toLocaleString()}</span></div></div>
             <div class="stat-card"><div class="stat-row"><span class="stat-label">Total XP</span><span class="stat-value">${xp.toLocaleString()}</span></div></div>
-            <div class="stat-card"><div class="stat-row"><span class="stat-label">Total Coins</span><span class="stat-value">${coins.toLocaleString()}</span></div></div>
-            <div class="stat-card"><div class="stat-row"><span class="stat-label">Average Coins</span><span class="stat-value">${avgCoins}</span></div></div>
         `;
         statsGrid.style.display = 'grid';
     }

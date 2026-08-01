@@ -483,7 +483,6 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
                 <div class="stat-row"><span class="stat-label">Squad:</span>${data.squad?`<a class="stat-value" href="/squads.html?squad=${data.squad}">${data.squad}</a>`:`<span class="stat-value">None</span>`}</div>
                 <div class="stat-row"><span class="stat-label">Steam:</span><span class="${steamHighlightClass}">${steamText}</span></div>
                 <div class="stat-row"><span class="stat-label">Total Games Played:</span><span class="stat-value">${consts.totalGames.toLocaleString()}</span></div>
-                <div class="stat-row"><span class="stat-label">Coins:</span><span class="stat-value">${(data.coins || 0).toLocaleString()}</span></div>
                 <div class="stat-row"><span class="stat-label">Join Date:</span>
                     <div class="stat-value-container">
                         <span id="join-date-full"><span class="stat-value" id="join-date">${formatDateTime(joinTimestamp, timeZone, timeFormat)}</span> <span class="time-ago" id="join-date-ago">${timeAgo(joinTimestamp)}</span></span>

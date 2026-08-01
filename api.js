@@ -286,7 +286,15 @@ function processPlayerData(rawPlayerData) {
     delete processed.shots_hit_unzoomed;
     delete processed.shots_hit_zoomed;
     delete processed.headshots;
+    delete processed.coins;
     return processed;
+}
+
+function sanitizePlayerData(playerData) {
+    if (!playerData) return playerData;
+    const sanitized = { ...playerData };
+    delete sanitized.coins;
+    return sanitized;
 }
 
 export async function fetchFullPlayerData(uid) {
@@ -300,7 +308,8 @@ export async function fetchFullPlayerData(uid) {
         throw new Error('Player data not found or API error.');
     }
 
-    const playerData = processPlayerData(playerResult.data);
+    const sanitizedRawPlayerData = sanitizePlayerData(playerResult.data);
+    const playerData = processPlayerData(sanitizedRawPlayerData);
 
     const [killsResult, gamesResult, xpResult] = await Promise.all([
         fetchData(killsPercentileUrl, {}, 0),
@@ -316,7 +325,7 @@ export async function fetchFullPlayerData(uid) {
     const allFromCache = playerResult.fromCache && killsResult.fromCache && gamesResult.fromCache && xpResult.fromCache;
 
     return { 
-        rawPlayerData: playerResult.data, 
+        rawPlayerData: sanitizedRawPlayerData, 
         playerData, 
         killsPercentile: killsResult.data, 
         gamesPercentile: gamesResult.data, 
@@ -344,5 +353,8 @@ export async function fetchPlayerByUid(uid) {
         throw new Error('Player data not found or API error.');
     }
 
-    return playerResult;
+    return {
+        ...playerResult,
+        data: sanitizePlayerData(playerResult.data)
+    };
 }

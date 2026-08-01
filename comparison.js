@@ -32,7 +32,6 @@ const metricDefinitions = [
 
     { id: 'level', label: 'Level', category: 'Profile', format: 'number', get: model => model.data.level },
     { id: 'xp', label: 'XP', category: 'Profile', format: 'number', get: model => model.data.xp },
-    { id: 'coins', label: 'Coins', category: 'Profile', format: 'number', get: model => model.data.coins },
     { id: 'totalGames', label: 'Total Games', category: 'Profile', format: 'number', get: model => model.consts.totalGames },
     { id: 'totalWins', label: 'Total Wins', category: 'Profile', format: 'number', get: model => model.consts.totalWins },
     { id: 'totalLosses', label: 'Total Losses', category: 'Profile', format: 'number', direction: 'lower', get: model => model.consts.totalLosses },

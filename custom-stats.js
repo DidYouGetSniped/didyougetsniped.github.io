@@ -17,7 +17,6 @@ const CUSTOM_PLAYER_STATS = {
             nick: '',
             level: 0,
             xp: 0,
-            coins: 0,
             squad: '',
             steam: false,
             killsELO: 0,
