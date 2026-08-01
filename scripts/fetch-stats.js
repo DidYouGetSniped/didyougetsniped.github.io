@@ -219,7 +219,6 @@ function buildSnapshot(date, player, killsPct, gamesPct, xpPct) {
         nick:  raw.nick  || 'Unknown',
         level: raw.level || 0,
         xp:    raw.xp    || 0,
-        coins: raw.coins || 0,
         squad: raw.squad || null,
         steam: raw.steam === true,
 
