@@ -19,11 +19,11 @@ import { calculateDisplayConstants } from './uiconst.js';
 })();
 
 // Dark-only color constants
-const TEXT_COLOR = '#ffffff';
-const CHART_BORDER = '#0f172a';
-const CTRL_BG = '#161a23';
-const CTRL_BG_SUBTLE = '#1f2736';
-const CTRL_BORDER = '#3b3f4a';
+const TEXT_COLOR = '#ECE9E2';
+const CHART_BORDER = 'rgba(237, 234, 227, 0.12)';
+const CTRL_BG = '#1c1b18';
+const CTRL_BG_SUBTLE = '#24221e';
+const CTRL_BORDER = 'rgba(237, 234, 227, 0.24)';
 
 const T_TABLE = {1:100,2:500,3:1500,4:3000,5:5000,6:11000,7:18000,8:27000,9:37000,10:48000,11:60000,12:73000,13:87000,14:102000,15:117000,16:132000,17:147000,18:162000,19:177000,20:192000,21:207000,22:222000};
 
@@ -79,9 +79,9 @@ function buildLegendForChart(chart, container, sortMode) {
     container.innerHTML = items.map(it => {
         const opacity = chart.getDataVisibility(it.i) ? 1 : 0.4;
         return `
-            <button data-idx="${it.i}" class="legend-item" style="display:inline-flex;align-items:center;gap:8px;padding:4px 8px;border-radius:6px;border:1px solid rgba(0,0,0,.12);background:transparent;color:${textColor};-webkit-text-fill-color:${textColor};opacity:${opacity};cursor:pointer;overflow:visible;">
-                <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${it.color};flex:0 0 auto;"></span>
-                <span class="legend-text" style="white-space:nowrap;color:${textColor};-webkit-text-fill-color:${textColor};">${it.label}</span>
+            <button data-idx="${it.i}" class="legend-item" style="--legend-color:${it.color};opacity:${opacity};">
+                <span class="legend-swatch"></span>
+                <span class="legend-text">${it.label}</span>
             </button>
         `;
     }).join('');
@@ -211,9 +211,9 @@ function renderChartWithLegend(canvas, dataObj, legendEl, sortSelect, resetBtn, 
             const opacity = isVis ? 1 : 0.4;
             const decoration = isVis ? 'none' : 'line-through';
             return `
-                <button data-idx="${it.i}" class="legend-item" style="display:inline-flex;align-items:center;gap:8px;padding:4px 8px;border-radius:6px;border:1px solid rgba(0,0,0,.12);background:transparent;color:${textColor};-webkit-text-fill-color:${textColor};opacity:${opacity};cursor:pointer;overflow:visible;">
-                    <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${it.color};flex:0 0 auto;"></span>
-                    <span class="legend-text" style="white-space:nowrap;color:${textColor};-webkit-text-fill-color:${textColor};text-decoration:${decoration};">${it.label}</span>
+                <button data-idx="${it.i}" class="legend-item" style="--legend-color:${it.color};opacity:${opacity};">
+                    <span class="legend-swatch"></span>
+                    <span class="legend-text" style="text-decoration:${decoration};">${it.label}</span>
                 </button>
             `;
         }).join('');
@@ -336,8 +336,8 @@ export function renderPlayerInfo(data, rawData, percentiles, sortStates, timePre
     const lp = levelProgress(lvl, lifetimeXp);
     const levelProgressHTML = `
         <div class="stat-row" style="flex-direction:column;align-items:flex-start;gap:6px;margin-top:6px;">
-            <div style="width:100%;height:8px;background:#2e3340;border-radius:4px;overflow:hidden;">
-                <div style="height:100%;width:${lp.percent}%;background:linear-gradient(90deg,#0ea5e9,#22c55e);"></div>
+            <div class="level-progress-track">
+                <div class="level-progress-fill" style="width:${lp.percent}%;"></div>
             </div>
             <span class="stat-value">${lp.percent.toFixed(2)}% complete</span>
         </div>
