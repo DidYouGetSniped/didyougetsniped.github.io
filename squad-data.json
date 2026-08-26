@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-08-26T02:40:20.344Z",
+  "lastUpdated": "2026-08-26T14:03:30.089Z",
   "statistics": {
-    "totalSquads": 582,
+    "totalSquads": 583,
     "activeSquads": 0,
-    "emptySquads": 582,
+    "emptySquads": 583,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1165,
-    "failedFetches": 582,
-    "duration": "3912.7s"
+    "totalApiCalls": 1167,
+    "failedFetches": 583,
+    "duration": "3935.0s"
   },
   "squads": [
     {
@@ -879,7 +879,7 @@
     {
       "name": {
         "squad": "CAESAR",
-        "memberCount": 200
+        "memberCount": 201
       },
       "count": 0,
       "memberStats": null,
@@ -1050,7 +1050,7 @@
     {
       "name": {
         "squad": "CROSS",
-        "memberCount": 22
+        "memberCount": 23
       },
       "count": 0,
       "memberStats": null,
@@ -3543,7 +3543,7 @@
     {
       "name": {
         "squad": "PTSD",
-        "memberCount": 1
+        "memberCount": 3
       },
       "count": 0,
       "memberStats": null,
@@ -3831,7 +3831,7 @@
     {
       "name": {
         "squad": "RU$",
-        "memberCount": 3
+        "memberCount": 4
       },
       "count": 0,
       "memberStats": null,
@@ -4246,6 +4246,15 @@
       "name": {
         "squad": "SOAR",
         "memberCount": 2
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "SOB",
+        "memberCount": 1
       },
       "count": 0,
       "memberStats": null,
