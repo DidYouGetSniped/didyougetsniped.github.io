@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-08-31T05:42:44.463Z",
+  "lastUpdated": "2026-08-31T20:03:06.777Z",
   "statistics": {
-    "totalSquads": 582,
+    "totalSquads": 583,
     "activeSquads": 0,
-    "emptySquads": 582,
+    "emptySquads": 583,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1165,
-    "failedFetches": 582,
-    "duration": "3913.6s"
+    "totalApiCalls": 1167,
+    "failedFetches": 583,
+    "duration": "3928.5s"
   },
   "squads": [
     {
@@ -716,6 +716,15 @@
     },
     {
       "name": {
+        "squad": "Bizias",
+        "memberCount": 1
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
         "squad": "BLAST",
         "memberCount": 39
       },
@@ -1041,7 +1050,7 @@
     {
       "name": {
         "squad": "CROSS",
-        "memberCount": 18
+        "memberCount": 19
       },
       "count": 0,
       "memberStats": null,
@@ -2670,7 +2679,7 @@
     {
       "name": {
         "squad": "LEGION",
-        "memberCount": 56
+        "memberCount": 57
       },
       "count": 0,
       "memberStats": null,
@@ -4677,7 +4686,7 @@
     {
       "name": {
         "squad": "TheEnd",
-        "memberCount": 25
+        "memberCount": 26
       },
       "count": 0,
       "memberStats": null,
