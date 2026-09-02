@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-09-02T04:47:26.042Z",
+  "lastUpdated": "2026-09-02T17:20:23.497Z",
   "statistics": {
-    "totalSquads": 583,
+    "totalSquads": 584,
     "activeSquads": 0,
-    "emptySquads": 583,
+    "emptySquads": 584,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1167,
-    "failedFetches": 583,
-    "duration": "3938.7s"
+    "totalApiCalls": 1169,
+    "failedFetches": 584,
+    "duration": "3928.9s"
   },
   "squads": [
     {
@@ -879,7 +879,7 @@
     {
       "name": {
         "squad": "CAESAR",
-        "memberCount": 201
+        "memberCount": 202
       },
       "count": 0,
       "memberStats": null,
@@ -4975,6 +4975,15 @@
       "name": {
         "squad": "VIETNAM",
         "memberCount": 7
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "Virtues",
+        "memberCount": 1
       },
       "count": 0,
       "memberStats": null,
