@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>War Brokers Player Count Tracker</title>
+    <title>Player Tracker | Did You Get Sniped</title>
     <link rel="stylesheet" href="playercounttracker.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
@@ -627,8 +627,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const labels = filtered.map(d => formatTimestamp(d.timestamp));
         const data = filtered.map(d => d.players);
 
-        let backgroundColor = 'rgba(0, 255, 157, 0.1)';
-        let borderColor = '#00ff9d';
+        let backgroundColor = 'rgba(201, 161, 90, 0.12)';
+        let borderColor = '#C9A15A';
         let tension = 0.4;
 
         const chartType = chartTypeSelect.value;
@@ -651,10 +651,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     tension: tension,
                     pointRadius: 3,
                     pointBackgroundColor: borderColor,
-                    pointBorderColor: '#0a0e1a',
+                    pointBorderColor: '#161512',
                     pointBorderWidth: 2,
                     pointHoverRadius: 6,
-                    pointHoverBackgroundColor: '#00ff9d',
+                    pointHoverBackgroundColor: '#E0BD82',
                     pointHoverBorderColor: '#fff',
                     pointHoverBorderWidth: 2
                 }]
@@ -665,20 +665,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: 'rgba(10, 14, 26, 0.95)',
-                        titleColor: '#00ff9d',
-                        bodyColor: '#fff',
-                        borderColor: '#00ff9d',
+                        backgroundColor: 'rgba(28, 27, 24, 0.96)',
+                        titleColor: '#E0BD82',
+                        bodyColor: '#ECE9E2',
+                        borderColor: '#C9A15A',
                         borderWidth: 1,
                         padding: 12,
                         titleFont: {
                             size: 13,
                             weight: 'bold',
-                            family: 'Rajdhani'
+                            family: 'IBM Plex Mono'
                         },
                         bodyFont: {
                             size: 12,
-                            family: 'Rajdhani'
+                            family: 'Space Grotesk'
                         },
                         callbacks: {
                             title: (context) => {
@@ -703,21 +703,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     x: {
                         grid: { 
                             display: showGridCheckbox.checked, 
-                            color: 'rgba(0, 255, 157, 0.1)' 
+                            color: 'rgba(237, 234, 227, 0.10)' 
                         },
                         ticks: { 
-                            color: '#00ff9d', 
-                            font: { size: 11, family: 'Rajdhani', weight: '500' } 
+                            color: '#9C968A', 
+                            font: { size: 11, family: 'IBM Plex Mono', weight: '500' } 
                         }
                     },
                     y: {
                         grid: { 
                             display: showGridCheckbox.checked, 
-                            color: 'rgba(0, 255, 157, 0.1)' 
+                            color: 'rgba(237, 234, 227, 0.10)' 
                         },
                         ticks: { 
-                            color: '#00ff9d', 
-                            font: { size: 11, family: 'Rajdhani', weight: '500' } 
+                            color: '#9C968A', 
+                            font: { size: 11, family: 'IBM Plex Mono', weight: '500' } 
                         },
                         beginAtZero: true
                     }
