@@ -279,35 +279,6 @@ img {
   font-weight: 700;
 }
 
-/* Image Gallery */
-.image-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-  margin-top: 12px;
-}
-.image-gallery figure {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  background-color: #12122a;
-  border: 1px solid #2a2a40;
-  border-radius: 4px;
-  overflow: hidden;
-}
-.image-gallery figure img {
-  width: 100%;
-  height: auto;
-  display: block;
-  background-color: #1a1a30;
-}
-.image-gallery figcaption {
-  padding: 8px 12px;
-  font-size: 12.5px;
-  color: #8888a0;
-  text-align: center;
-}
-
 /* Infobox (optional right sidebar on wide screens) */
 .squad-content-layout {
   display: flex;
@@ -355,9 +326,6 @@ img {
   }
   .squad-infobox {
     width: 100%;
-  }
-  .image-gallery {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 }
 
