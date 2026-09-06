@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-09-06T04:49:26.646Z",
+  "lastUpdated": "2026-09-06T16:16:34.497Z",
   "statistics": {
-    "totalSquads": 584,
+    "totalSquads": 585,
     "activeSquads": 0,
-    "emptySquads": 584,
+    "emptySquads": 585,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1169,
-    "failedFetches": 584,
-    "duration": "3934.8s"
+    "totalApiCalls": 1171,
+    "failedFetches": 585,
+    "duration": "3937.7s"
   },
   "squads": [
     {
@@ -4650,6 +4650,15 @@
     {
       "name": {
         "squad": "THAI",
+        "memberCount": 1
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "THE",
         "memberCount": 1
       },
       "count": 0,
