@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-09-09T04:58:21.796Z",
+  "lastUpdated": "2026-09-09T17:19:26.218Z",
   "statistics": {
-    "totalSquads": 585,
+    "totalSquads": 586,
     "activeSquads": 0,
-    "emptySquads": 585,
+    "emptySquads": 586,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1171,
-    "failedFetches": 585,
-    "duration": "3936.4s"
+    "totalApiCalls": 1173,
+    "failedFetches": 586,
+    "duration": "3955.8s"
   },
   "squads": [
     {
@@ -1050,7 +1050,7 @@
     {
       "name": {
         "squad": "CROSS",
-        "memberCount": 21
+        "memberCount": 19
       },
       "count": 0,
       "memberStats": null,
@@ -3272,6 +3272,15 @@
     },
     {
       "name": {
+        "squad": "PARAMONT",
+        "memberCount": 1
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
         "squad": "Patate",
         "memberCount": 2
       },
@@ -3597,7 +3606,7 @@
     {
       "name": {
         "squad": "RAGE",
-        "memberCount": 78
+        "memberCount": 79
       },
       "count": 0,
       "memberStats": null,
@@ -4983,7 +4992,7 @@
     {
       "name": {
         "squad": "VIETNAM",
-        "memberCount": 7
+        "memberCount": 8
       },
       "count": 0,
       "memberStats": null,
