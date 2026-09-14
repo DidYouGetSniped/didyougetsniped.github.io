@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-09-13T16:58:02.432Z",
+  "lastUpdated": "2026-09-14T05:13:31.711Z",
   "statistics": {
-    "totalSquads": 586,
+    "totalSquads": 588,
     "activeSquads": 0,
-    "emptySquads": 586,
+    "emptySquads": 588,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1173,
-    "failedFetches": 586,
-    "duration": "3957.3s"
+    "totalApiCalls": 1177,
+    "failedFetches": 588,
+    "duration": "3951.0s"
   },
   "squads": [
     {
@@ -1031,6 +1031,15 @@
     },
     {
       "name": {
+        "squad": "Corelli",
+        "memberCount": 2
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
         "squad": "Corgi",
         "memberCount": 4
       },
@@ -1411,6 +1420,15 @@
       "name": {
         "squad": "EK",
         "memberCount": 30
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "ElBlock",
+        "memberCount": 1
       },
       "count": 0,
       "memberStats": null,
