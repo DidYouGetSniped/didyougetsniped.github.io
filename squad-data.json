@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-09-18T17:10:01.066Z",
+  "lastUpdated": "2026-09-19T04:58:53.620Z",
   "statistics": {
-    "totalSquads": 587,
+    "totalSquads": 586,
     "activeSquads": 0,
-    "emptySquads": 587,
+    "emptySquads": 586,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1175,
-    "failedFetches": 587,
-    "duration": "3880.0s"
+    "totalApiCalls": 1173,
+    "failedFetches": 586,
+    "duration": "3959.9s"
   },
   "squads": [
     {
@@ -3498,7 +3498,7 @@
     {
       "name": {
         "squad": "PRIME",
-        "memberCount": 2
+        "memberCount": 3
       },
       "count": 0,
       "memberStats": null,
@@ -4786,15 +4786,6 @@
       "name": {
         "squad": "TotNA",
         "memberCount": 4
-      },
-      "count": 0,
-      "memberStats": null,
-      "members": []
-    },
-    {
-      "name": {
-        "squad": "TPC",
-        "memberCount": 1
       },
       "count": 0,
       "memberStats": null,
