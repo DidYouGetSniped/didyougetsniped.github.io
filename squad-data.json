@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-09-22T05:09:38.087Z",
+  "lastUpdated": "2026-09-22T17:41:36.664Z",
   "statistics": {
-    "totalSquads": 586,
+    "totalSquads": 587,
     "activeSquads": 0,
-    "emptySquads": 586,
+    "emptySquads": 587,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1173,
-    "failedFetches": 586,
-    "duration": "3948.0s"
+    "totalApiCalls": 1175,
+    "failedFetches": 587,
+    "duration": "3959.6s"
   },
   "squads": [
     {
@@ -2939,6 +2939,15 @@
     },
     {
       "name": {
+        "squad": "mmx",
+        "memberCount": 1
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
         "squad": "MOMO",
         "memberCount": 1
       },
@@ -5136,7 +5145,7 @@
     {
       "name": {
         "squad": "WoH",
-        "memberCount": 3
+        "memberCount": 2
       },
       "count": 0,
       "memberStats": null,
