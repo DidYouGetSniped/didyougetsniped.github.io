@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-09-24T05:01:31.238Z",
+  "lastUpdated": "2026-09-24T17:54:05.464Z",
   "statistics": {
-    "totalSquads": 587,
+    "totalSquads": 588,
     "activeSquads": 0,
-    "emptySquads": 587,
+    "emptySquads": 588,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1175,
-    "failedFetches": 587,
-    "duration": "3954.4s"
+    "totalApiCalls": 1177,
+    "failedFetches": 588,
+    "duration": "3958.7s"
   },
   "squads": [
     {
@@ -340,6 +340,15 @@
       "name": {
         "squad": "America",
         "memberCount": 2
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "amir",
+        "memberCount": 1
       },
       "count": 0,
       "memberStats": null,
@@ -3615,7 +3624,7 @@
     {
       "name": {
         "squad": "RAGE",
-        "memberCount": 80
+        "memberCount": 81
       },
       "count": 0,
       "memberStats": null,
@@ -4992,7 +5001,7 @@
     {
       "name": {
         "squad": "VIETNAM",
-        "memberCount": 9
+        "memberCount": 7
       },
       "count": 0,
       "memberStats": null,
