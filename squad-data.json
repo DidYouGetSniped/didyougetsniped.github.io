@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-09-26T05:20:40.262Z",
+  "lastUpdated": "2026-09-26T17:09:39.584Z",
   "statistics": {
-    "totalSquads": 588,
+    "totalSquads": 589,
     "activeSquads": 0,
-    "emptySquads": 588,
+    "emptySquads": 589,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1177,
-    "failedFetches": 588,
-    "duration": "3956.8s"
+    "totalApiCalls": 1179,
+    "failedFetches": 589,
+    "duration": "3969.1s"
   },
   "squads": [
     {
@@ -3228,7 +3228,7 @@
     {
       "name": {
         "squad": "ORDER",
-        "memberCount": 15
+        "memberCount": 14
       },
       "count": 0,
       "memberStats": null,
@@ -4208,6 +4208,15 @@
     },
     {
       "name": {
+        "squad": "Slayers",
+        "memberCount": 1
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
         "squad": "SLIME",
         "memberCount": 1
       },
@@ -5001,7 +5010,7 @@
     {
       "name": {
         "squad": "VIETNAM",
-        "memberCount": 7
+        "memberCount": 8
       },
       "count": 0,
       "memberStats": null,
