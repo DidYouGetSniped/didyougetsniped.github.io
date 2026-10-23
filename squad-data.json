@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-10-23T05:06:09.283Z",
+  "lastUpdated": "2026-10-23T17:50:04.310Z",
   "statistics": {
-    "totalSquads": 587,
+    "totalSquads": 588,
     "activeSquads": 0,
-    "emptySquads": 587,
+    "emptySquads": 588,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1175,
-    "failedFetches": 587,
-    "duration": "3949.8s"
+    "totalApiCalls": 1177,
+    "failedFetches": 588,
+    "duration": "3954.3s"
   },
   "squads": [
     {
@@ -3183,6 +3183,15 @@
     {
       "name": {
         "squad": "OGz",
+        "memberCount": 1
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "OINK",
         "memberCount": 1
       },
       "count": 0,
