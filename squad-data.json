@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-26T19:34:17.201Z",
+  "lastUpdated": "2026-10-27T05:25:03.416Z",
   "statistics": {
     "totalSquads": 587,
     "activeSquads": 0,
@@ -18,7 +18,7 @@
   "fetchInfo": {
     "totalApiCalls": 1175,
     "failedFetches": 587,
-    "duration": "3954.1s"
+    "duration": "3955.9s"
   },
   "squads": [
     {
@@ -1050,7 +1050,7 @@
     {
       "name": {
         "squad": "CROSS",
-        "memberCount": 21
+        "memberCount": 22
       },
       "count": 0,
       "memberStats": null,
@@ -1366,6 +1366,15 @@
       "name": {
         "squad": "Eclipse",
         "memberCount": 4
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "ECO",
+        "memberCount": 1
       },
       "count": 0,
       "memberStats": null,
@@ -2813,15 +2822,6 @@
     },
     {
       "name": {
-        "squad": "MASTER",
-        "memberCount": 1
-      },
-      "count": 0,
-      "memberStats": null,
-      "members": []
-    },
-    {
-      "name": {
         "squad": "Maun",
         "memberCount": 13
       },
@@ -3255,7 +3255,7 @@
     {
       "name": {
         "squad": "PAIN",
-        "memberCount": 57
+        "memberCount": 56
       },
       "count": 0,
       "memberStats": null,
@@ -4488,7 +4488,7 @@
     {
       "name": {
         "squad": "STRIKER",
-        "memberCount": 4
+        "memberCount": 3
       },
       "count": 0,
       "memberStats": null,
