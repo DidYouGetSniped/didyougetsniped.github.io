@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-10-27T18:49:25.726Z",
+  "lastUpdated": "2026-10-28T05:55:28.008Z",
   "statistics": {
-    "totalSquads": 587,
+    "totalSquads": 588,
     "activeSquads": 0,
-    "emptySquads": 587,
+    "emptySquads": 588,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1175,
-    "failedFetches": 587,
-    "duration": "3947.7s"
+    "totalApiCalls": 1177,
+    "failedFetches": 588,
+    "duration": "3951.0s"
   },
   "squads": [
     {
@@ -105,6 +105,15 @@
     {
       "name": {
         "squad": "279VN",
+        "memberCount": 1
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": ">:3",
         "memberCount": 1
       },
       "count": 0,
