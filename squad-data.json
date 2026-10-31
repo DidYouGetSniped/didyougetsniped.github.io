@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-10-31T05:53:12.900Z",
+  "lastUpdated": "2026-10-31T18:08:03.274Z",
   "statistics": {
-    "totalSquads": 593,
+    "totalSquads": 595,
     "activeSquads": 0,
-    "emptySquads": 593,
+    "emptySquads": 595,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1187,
-    "failedFetches": 593,
-    "duration": "3993.6s"
+    "totalApiCalls": 1191,
+    "failedFetches": 595,
+    "duration": "4015.7s"
   },
   "squads": [
     {
@@ -123,6 +123,15 @@
     {
       "name": {
         "squad": "3.O",
+        "memberCount": 1
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "404",
         "memberCount": 1
       },
       "count": 0,
@@ -1059,7 +1068,7 @@
     {
       "name": {
         "squad": "CROSS",
-        "memberCount": 24
+        "memberCount": 26
       },
       "count": 0,
       "memberStats": null,
@@ -3336,7 +3345,7 @@
     {
       "name": {
         "squad": "PCrewAUS",
-        "memberCount": 26
+        "memberCount": 27
       },
       "count": 0,
       "memberStats": null,
@@ -3642,7 +3651,7 @@
     {
       "name": {
         "squad": "RAGE",
-        "memberCount": 82
+        "memberCount": 83
       },
       "count": 0,
       "memberStats": null,
@@ -4749,7 +4758,7 @@
     {
       "name": {
         "squad": "TheEnd",
-        "memberCount": 23
+        "memberCount": 22
       },
       "count": 0,
       "memberStats": null,
@@ -4804,6 +4813,15 @@
       "name": {
         "squad": "TopHat",
         "memberCount": 3
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "TOPHAT2",
+        "memberCount": 1
       },
       "count": 0,
       "memberStats": null,
@@ -5028,7 +5046,7 @@
     {
       "name": {
         "squad": "VIETNAM",
-        "memberCount": 10
+        "memberCount": 11
       },
       "count": 0,
       "memberStats": null,
