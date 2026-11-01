@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-10-31T18:08:03.274Z",
+  "lastUpdated": "2026-11-01T18:53:03.485Z",
   "statistics": {
-    "totalSquads": 595,
+    "totalSquads": 596,
     "activeSquads": 0,
-    "emptySquads": 595,
+    "emptySquads": 596,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1191,
-    "failedFetches": 595,
-    "duration": "4015.7s"
+    "totalApiCalls": 1193,
+    "failedFetches": 596,
+    "duration": "4010.4s"
   },
   "squads": [
     {
@@ -662,6 +662,15 @@
     },
     {
       "name": {
+        "squad": "BEAMX",
+        "memberCount": 1
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
         "squad": "BEAST",
         "memberCount": 3
       },
@@ -1068,7 +1077,7 @@
     {
       "name": {
         "squad": "CROSS",
-        "memberCount": 26
+        "memberCount": 27
       },
       "count": 0,
       "memberStats": null,
@@ -1653,7 +1662,7 @@
     {
       "name": {
         "squad": "FISH",
-        "memberCount": 33
+        "memberCount": 34
       },
       "count": 0,
       "memberStats": null,
@@ -2769,7 +2778,7 @@
     {
       "name": {
         "squad": "Lotus",
-        "memberCount": 5
+        "memberCount": 4
       },
       "count": 0,
       "memberStats": null,
@@ -3291,7 +3300,7 @@
     {
       "name": {
         "squad": "PAIN",
-        "memberCount": 56
+        "memberCount": 57
       },
       "count": 0,
       "memberStats": null,
@@ -3651,7 +3660,7 @@
     {
       "name": {
         "squad": "RAGE",
-        "memberCount": 83
+        "memberCount": 84
       },
       "count": 0,
       "memberStats": null,
