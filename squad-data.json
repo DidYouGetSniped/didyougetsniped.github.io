@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-11-07T06:24:08.925Z",
+  "lastUpdated": "2026-11-07T18:43:40.427Z",
   "statistics": {
-    "totalSquads": 593,
+    "totalSquads": 594,
     "activeSquads": 0,
-    "emptySquads": 593,
+    "emptySquads": 594,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1187,
-    "failedFetches": 593,
-    "duration": "3990.5s"
+    "totalApiCalls": 1189,
+    "failedFetches": 594,
+    "duration": "3992.9s"
   },
   "squads": [
     {
@@ -1077,7 +1077,7 @@
     {
       "name": {
         "squad": "CROSS",
-        "memberCount": 30
+        "memberCount": 31
       },
       "count": 0,
       "memberStats": null,
@@ -1545,7 +1545,7 @@
     {
       "name": {
         "squad": "EXP",
-        "memberCount": 45
+        "memberCount": 46
       },
       "count": 0,
       "memberStats": null,
@@ -1716,7 +1716,7 @@
     {
       "name": {
         "squad": "FROZEN",
-        "memberCount": 17
+        "memberCount": 18
       },
       "count": 0,
       "memberStats": null,
@@ -2284,6 +2284,15 @@
       "name": {
         "squad": "INSANE",
         "memberCount": 8
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "Iron",
+        "memberCount": 1
       },
       "count": 0,
       "memberStats": null,
@@ -3633,7 +3642,7 @@
     {
       "name": {
         "squad": "RAGE",
-        "memberCount": 86
+        "memberCount": 87
       },
       "count": 0,
       "memberStats": null,
@@ -5298,7 +5307,7 @@
     {
       "name": {
         "squad": "YAY",
-        "memberCount": 27
+        "memberCount": 28
       },
       "count": 0,
       "memberStats": null,
