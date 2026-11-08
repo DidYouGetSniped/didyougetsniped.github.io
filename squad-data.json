@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-07T18:43:40.427Z",
+  "lastUpdated": "2026-11-08T18:52:53.858Z",
   "statistics": {
     "totalSquads": 594,
     "activeSquads": 0,
@@ -18,7 +18,7 @@
   "fetchInfo": {
     "totalApiCalls": 1189,
     "failedFetches": 594,
-    "duration": "3992.9s"
+    "duration": "3989.4s"
   },
   "squads": [
     {
@@ -772,6 +772,15 @@
       "name": {
         "squad": "BoA",
         "memberCount": 3
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "Bodiebag",
+        "memberCount": 1
       },
       "count": 0,
       "memberStats": null,
@@ -4822,15 +4831,6 @@
       "name": {
         "squad": "totati",
         "memberCount": 1
-      },
-      "count": 0,
-      "memberStats": null,
-      "members": []
-    },
-    {
-      "name": {
-        "squad": "TotNA",
-        "memberCount": 4
       },
       "count": 0,
       "memberStats": null,
