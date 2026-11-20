@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-11-20T07:33:54.733Z",
+  "lastUpdated": "2026-11-20T20:53:41.254Z",
   "statistics": {
-    "totalSquads": 593,
+    "totalSquads": 594,
     "activeSquads": 0,
-    "emptySquads": 593,
+    "emptySquads": 594,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1187,
-    "failedFetches": 593,
-    "duration": "3988.5s"
+    "totalApiCalls": 1189,
+    "failedFetches": 594,
+    "duration": "3993.3s"
   },
   "squads": [
     {
@@ -591,7 +591,7 @@
     {
       "name": {
         "squad": "BAB",
-        "memberCount": 1
+        "memberCount": 2
       },
       "count": 0,
       "memberStats": null,
@@ -1086,7 +1086,7 @@
     {
       "name": {
         "squad": "CROSS",
-        "memberCount": 29
+        "memberCount": 32
       },
       "count": 0,
       "memberStats": null,
@@ -1518,7 +1518,7 @@
     {
       "name": {
         "squad": "Eureka",
-        "memberCount": 6
+        "memberCount": 1
       },
       "count": 0,
       "memberStats": null,
@@ -4020,6 +4020,15 @@
     {
       "name": {
         "squad": "SDS",
+        "memberCount": 1
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "SE",
         "memberCount": 1
       },
       "count": 0,
