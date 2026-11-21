@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-11-21T07:24:30.088Z",
+  "lastUpdated": "2026-11-21T19:59:49.341Z",
   "statistics": {
-    "totalSquads": 594,
+    "totalSquads": 595,
     "activeSquads": 0,
-    "emptySquads": 594,
+    "emptySquads": 595,
     "totalMembers": 0,
     "averageMembers": 0
   },
@@ -16,9 +16,9 @@
     "totalPlayers": 0
   },
   "fetchInfo": {
-    "totalApiCalls": 1189,
-    "failedFetches": 594,
-    "duration": "3991.2s"
+    "totalApiCalls": 1191,
+    "failedFetches": 595,
+    "duration": "4009.0s"
   },
   "squads": [
     {
@@ -1131,6 +1131,15 @@
     {
       "name": {
         "squad": "Da_Guy",
+        "memberCount": 1
+      },
+      "count": 0,
+      "memberStats": null,
+      "members": []
+    },
+    {
+      "name": {
+        "squad": "DAKOTA",
         "memberCount": 1
       },
       "count": 0,
@@ -3642,7 +3651,7 @@
     {
       "name": {
         "squad": "RAGE",
-        "memberCount": 88
+        "memberCount": 89
       },
       "count": 0,
       "memberStats": null,
